@@ -1,0 +1,12 @@
+{
+  "name": "wehere-bot-4096",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tvdl-telegram-bots/wehere-bot-4096.git"
+  },
+  "author": "Kien Nguyen <kc97ble@gmail.com>",
+  "packageManager": "yarn@4.2.2",
+  "workspaces": [
+    "packages/*"
+  ]
+}
