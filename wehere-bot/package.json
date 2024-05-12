@@ -1,5 +1,6 @@
 {
   "name": "wehere-bot",
+  "main": "src/index.ts",
   "dependencies": {
     "@grammyjs/auto-retry": "^2.0.1",
     "@grammyjs/transformer-throttler": "^1.2.1",
@@ -22,8 +23,9 @@
     "unimported": "^1.31.1"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "scripts/compile-ftl.sh && tsc",
     "dev:bot": "nodemon src/bot-only.ts",
-    "dev": "nodemon src/express.ts"
+    "dev": "nodemon src/express.ts",
+    "postinstall": "scripts/compile-ftl.sh"
   }
 }
