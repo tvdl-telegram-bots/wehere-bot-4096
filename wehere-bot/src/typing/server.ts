@@ -24,6 +24,22 @@ export const PersistentThread = z.object({
   emoji: z.string().nullish(),
   createdAt: Timestamp.nullish(),
   platform: ThreadPlatform.nullish(),
+  password: z.string().uuid().nullish(),
+});
+
+/**
+ * A Pusher subscription requires the bot to notify pusher.com
+ * when there are new events. One `pusherChannelId` can subscribe
+ * to at most `threadId`.
+ */
+export type PersistentPusherSubscription = z.infer<
+  typeof PersistentPusherSubscription
+>;
+export const PersistentPusherSubscription = z.object({
+  _id: PersistentObjectId,
+  pusherChannelId: z.string().uuid(), // primary key
+  threadId: PersistentObjectId.nullish(),
+  createdAt: Timestamp.nullish(),
 });
 
 /**

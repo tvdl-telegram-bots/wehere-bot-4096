@@ -1,3 +1,5 @@
+import * as crypto from "crypto";
+
 import type { Db, WithoutId } from "mongodb";
 
 import type { ChatId, ThreadPlatform } from "@/typing/common";
@@ -83,6 +85,7 @@ export async function createThread(
     emoji: generateThreadEmoji(),
     createdAt: Date.now(),
     platform: params.platform,
+    password: crypto.randomUUID(),
   };
 
   const ack = await ctx.db.collection("thread").insertOne(thread);

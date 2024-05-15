@@ -1,5 +1,6 @@
 import { InlineKeyboard } from "grammy";
 import type { Db, WithoutId } from "mongodb";
+import Pusher from "pusher";
 
 import { getChatLocale } from "./Chat";
 
@@ -9,6 +10,7 @@ import type { PersistentThreadMessage } from "@/typing/server";
 import {
   PersistentAngelSubscription,
   PersistentMortalSubscription,
+  PersistentPusherSubscription,
 } from "@/typing/server";
 import { parseDocs } from "@/utils/array";
 import { assert } from "@/utils/assert";
@@ -18,6 +20,14 @@ import {
   formatThread,
   html,
 } from "@/utils/format";
+
+const pusher = new Pusher({
+  appId: "1803318",
+  key: "efe46299f5b76a02250a",
+  secret: "a677373a835361b58759",
+  cluster: "ap1",
+  useTLS: true,
+});
 
 export async function createMessage(
   { db }: { db: Db },
@@ -118,5 +128,21 @@ export async function notifyNewMessage(
       console.error(formatErrorDeeply(error));
       await ctx.db.collection("error").insertOne(formatErrorAsObject(error));
     }
+  }
+
+  // 3. Notify pusher.com
+  const pusherSubs = await ctx.db
+    .collection("pusher_subscription")
+    .find({ threadId: message.threadId })
+    .toArray()
+    .then(parseDocs(PersistentPusherSubscription));
+
+  console.log({ pusherSubs });
+
+  for (const sub of pusherSubs) {
+    // TODO: use id here
+    await pusher.trigger(sub.pusherChannelId, "new-message", {
+      text: message.text,
+    });
   }
 }
