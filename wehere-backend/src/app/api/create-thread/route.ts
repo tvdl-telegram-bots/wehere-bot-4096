@@ -4,7 +4,7 @@ import { createPusherSubscription } from "wehere-bot/src/bot/operations/Pusher";
 import { createThread } from "wehere-bot/src/bot/operations/Thread";
 import { formatErrorAsObject } from "wehere-bot/src/utils/format";
 
-export async function POST(_request: Request): Promise<Response> {
+export async function POST(request: Request): Promise<Response> {
   const client = await MongoClient.connect(ENV.MONGODB_URI);
   const db = client.db(ENV.MONGODB_DBNAME);
 
@@ -17,7 +17,13 @@ export async function POST(_request: Request): Promise<Response> {
 
     return new Response(
       JSON.stringify({ thread, pusherSubscription }, null, 2), //
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": request.headers.get("Origin") || "",
+        },
+      }
     );
   } catch (error) {
     return new Response(

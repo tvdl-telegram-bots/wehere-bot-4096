@@ -101,6 +101,6 @@ export async function autoReply(
     locale,
     available: availability.value,
   });
-  await createMessage(ctx, { message });
-  await notifyNewMessage(ctx, { message });
+  const persistentThreadMessage = await createMessage(ctx, { message });
+  await notifyNewMessage(ctx, { message: persistentThreadMessage });
 }

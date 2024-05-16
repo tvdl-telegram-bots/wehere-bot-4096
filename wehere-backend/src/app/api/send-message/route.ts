@@ -24,11 +24,17 @@ export async function POST(request: Request): Promise<Response> {
   await fluent.addTranslation({ locales: "en", source: FTL.en });
   await fluent.addTranslation({ locales: "vi", source: FTL.vi });
 
+  const responseHeaders = new Headers({
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": request.headers.get("Origin") || "",
+    "Access-Control-Allow-Headers": "*",
+  });
+
   try {
     if (request.headers.get("Content-Type") !== "application/json") {
       return new Response(
         JSON.stringify({ message: "invalid Content-Type" }, null, 2),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { status: 400, headers: responseHeaders }
       );
     }
 
@@ -50,21 +56,21 @@ export async function POST(request: Request): Promise<Response> {
     if (!thread) {
       return new Response(
         JSON.stringify({ message: "thread not found" }), //
-        { status: 404, headers: { "Content-Type": "application/json" } }
+        { status: 404, headers: responseHeaders }
       );
     }
 
     if (thread.password && !params.threadPassword) {
       return new Response(
         JSON.stringify({ message: "password required" }), //
-        { status: 401, headers: { "Content-Type": "application/json" } }
+        { status: 401, headers: responseHeaders }
       );
     }
 
     if (thread.password && thread.password !== params.threadPassword) {
       return new Response(
         JSON.stringify({ message: "forbidden" }), //
-        { status: 403, headers: { "Content-Type": "application/json" } }
+        { status: 403, headers: responseHeaders }
       );
     }
 
@@ -79,22 +85,32 @@ export async function POST(request: Request): Promise<Response> {
       createdAt: Date.now(),
     };
 
-    const threadMessage = await createMessage({ db }, { message });
+    const persistentThreadMessage = await createMessage({ db }, { message });
     await notifyNewMessage(
       { db, api, withLocale: fluent.withLocale.bind(fluent) },
-      { message }
+      { message: persistentThreadMessage }
     );
 
     return new Response(
-      JSON.stringify({ threadMessage }, null, 2), //
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ persistentThreadMessage }, null, 2), //
+      { status: 200, headers: responseHeaders }
     );
   } catch (error) {
     return new Response(
       JSON.stringify(formatErrorAsObject(error)), //
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: responseHeaders }
     );
   } finally {
     await client.close();
   }
+}
+
+export async function OPTIONS(request: Request): Promise<Response> {
+  return new Response(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": request.headers.get("Origin") || "",
+      "Access-Control-Allow-Headers": "*",
+    },
+  });
 }

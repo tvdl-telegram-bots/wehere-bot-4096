@@ -38,7 +38,7 @@ export async function createMessage(
 }
 
 type NotifyNewMessage_Params = {
-  message: WithoutId<PersistentThreadMessage>;
+  message: PersistentThreadMessage;
   excludesChats?: ChatId[];
 };
 
@@ -137,12 +137,7 @@ export async function notifyNewMessage(
     .toArray()
     .then(parseDocs(PersistentPusherSubscription));
 
-  console.log({ pusherSubs });
-
   for (const sub of pusherSubs) {
-    // TODO: use id here
-    await pusher.trigger(sub.pusherChannelId, "new-message", {
-      text: message.text,
-    });
+    await pusher.trigger(sub.pusherChannelId, "new-message", message);
   }
 }

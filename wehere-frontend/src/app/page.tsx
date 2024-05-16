@@ -1,95 +1,63 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-export default function Home() {
+import React from "react";
+import Pusher from "pusher-js";
+
+export default function Route() {
+  const [thread, setThread] = React.useState<any>();
+  const [pusherSubscription, setPusherSubscription] = React.useState<any>();
+
+  const createNewThread = async () => {
+    const response = await fetch("http://localhost:4096/api/create-thread", {
+      method: "POST",
+    });
+    const data = await response.json();
+    setThread(data.thread);
+    setPusherSubscription(data.pusherSubscription);
+  };
+
+  const pusherChannelId: string | undefined =
+    pusherSubscription?.pusherChannelId;
+
+  React.useEffect(() => {
+    if (!pusherChannelId) return;
+    const pusher = new Pusher("efe46299f5b76a02250a", { cluster: "ap1" });
+    const channel = pusher.subscribe(pusherChannelId);
+
+    const listener = (event: unknown) => {
+      console.log(event);
+    };
+
+    channel.bind("new-message", listener);
+
+    return () => {
+      channel.unbind("new-message", listener);
+    };
+  }, [pusherChannelId]);
+
+  const [text, setText] = React.useState("");
+
+  const sendMessage = async () => {
+    const response = await fetch("http://localhost:4096/api/send-message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        threadId: thread._id,
+        threadPassword: thread.password,
+        text: text,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+    <main className="container">
+      <h1>{`WeHere`}</h1>
+      <button onClick={() => createNewThread()}>{"New Thread"}</button>
+      <pre>{JSON.stringify({ thread, pusherSubscription }, null, 2)}</pre>
+      <input value={text} onChange={(event) => setText(event.target.value)} />
+      <button onClick={sendMessage}>{"Send Message"}</button>
     </main>
   );
 }

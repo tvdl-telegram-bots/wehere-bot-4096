@@ -1534,6 +1534,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: 10c0/c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^1.9.0":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
@@ -3724,6 +3731,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"milligram@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "milligram@npm:1.4.1"
+  dependencies:
+    normalize.css: "npm:~8.0.1"
+  checksum: 10c0/4e192485943ca62b235d397709d5ded5272b3704f3e1966ecb681ce21ad61b40539998e1a4a8d277df0442362c1848dceee52d865d321aee81501abd88bbf0a7
+  languageName: node
+  linkType: hard
+
 "mime-db@npm:1.52.0":
   version: 1.52.0
   resolution: "mime-db@npm:1.52.0"
@@ -4131,6 +4147,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"normalize.css@npm:^8.0.1, normalize.css@npm:~8.0.1":
+  version: 8.0.1
+  resolution: "normalize.css@npm:8.0.1"
+  checksum: 10c0/4ddf56d1af5ca755fa5e692e718316d8758ecb792aa96e1ad206824b5810a043763d681d6f7697d46573515f5e9690038b4c91a95c1997567128815545fb8cd7
+  languageName: node
+  linkType: hard
+
 "object-assign@npm:^4.1.1":
   version: 4.1.1
   resolution: "object-assign@npm:4.1.1"
@@ -4524,6 +4547,15 @@ __metadata:
   version: 2.3.1
   resolution: "punycode@npm:2.3.1"
   checksum: 10c0/14f76a8206bc3464f794fb2e3d3cc665ae416c01893ad7a02b23766eb07159144ee612ad67af5e84fa4479ccfe67678c4feb126b0485651b302babf66f04f9e9
+  languageName: node
+  linkType: hard
+
+"pusher-js@npm:^8.4.0-rc2":
+  version: 8.4.0-rc2
+  resolution: "pusher-js@npm:8.4.0-rc2"
+  dependencies:
+    tweetnacl: "npm:^1.0.3"
+  checksum: 10c0/3355f0e6e5bae79c27f380b987fe51a5a4df4ea9f28ef39777a76f702b0dc624d2c97e548b753402a3fb20c60558dc29a122b6e10c9b71089fe6f2a32a7dea12
   languageName: node
   linkType: hard
 
@@ -5445,7 +5477,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tweetnacl@npm:^1.0.0":
+"tweetnacl@npm:^1.0.0, tweetnacl@npm:^1.0.3":
   version: 1.0.3
   resolution: "tweetnacl@npm:1.0.3"
   checksum: 10c0/069d9df51e8ad4a89fbe6f9806c68e06c65be3c7d42f0701cc43dba5f0d6064686b238bbff206c5addef8854e3ce00c643bff59432ea2f2c639feab0ee1a93f9
@@ -5799,9 +5831,13 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
+    clsx: "npm:^2.1.1"
     eslint: "npm:^8"
     eslint-config-next: "npm:14.2.3"
+    milligram: "npm:^1.4.1"
     next: "npm:14.2.3"
+    normalize.css: "npm:^8.0.1"
+    pusher-js: "npm:^8.4.0-rc2"
     react: "npm:^18"
     react-dom: "npm:^18"
     typescript: "npm:^5"

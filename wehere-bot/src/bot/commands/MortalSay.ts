@@ -41,8 +41,11 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
   const threadId = thread._id;
   const message = composeMessage({ thread, message: msg0 });
   const shouldAutoReply = await isAutoReplyNeeded(ctx, { threadId });
-  await createMessage(ctx, { message });
-  await notifyNewMessage(ctx, { message, excludesChats: [msg0.chat.id] });
+  const persistentThreadMessage = await createMessage(ctx, { message });
+  await notifyNewMessage(ctx, {
+    message: persistentThreadMessage,
+    excludesChats: [msg0.chat.id],
+  });
   shouldAutoReply && (await autoReply(ctx, { threadId, locale }));
 });
 

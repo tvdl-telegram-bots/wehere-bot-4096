@@ -117,8 +117,8 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
 
   const threadId = angelSub.replyingToThreadId;
   const message = composeMessage({ threadId, msg0 });
-  await createMessage(ctx, { message });
-  await notifyNewMessage(ctx, { message });
+  const persistentThreadMessage = await createMessage(ctx, { message });
+  await notifyNewMessage(ctx, { message: persistentThreadMessage });
 
   if (!isMessagePlainText(msg0) && isMessageTooComplexForWeb(msg0)) {
     if (await isMortalUsingWeb(ctx, { threadId })) {
