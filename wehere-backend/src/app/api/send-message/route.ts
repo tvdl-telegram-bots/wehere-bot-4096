@@ -1,28 +1,23 @@
-import { Fluent } from "@moebius/fluent";
 import type { WithoutId } from "mongodb";
-import { MongoClient, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { ENV, FTL } from "wehere-backend/src/env";
-import { Api } from "wehere-bot";
-import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/Thread";
 import {
   createMessage,
   notifyNewMessage,
-} from "wehere-bot/src/bot/operations/ThreadMessage";
+} from "wehere-bot/src/bot/operations/message";
+import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/thread";
 import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 import * as Telegram from "wehere-bot/src/typing/telegram";
 import { formatErrorAsObject } from "wehere-bot/src/utils/format";
 import { z } from "zod";
 
-export async function POST(request: Request): Promise<Response> {
-  // TODO: db and api should be provided by wehere-bot
-  // Let's create class WeHereBot
-  const client = await MongoClient.connect(ENV.MONGODB_URI);
-  const db = client.db(ENV.MONGODB_DBNAME);
-  const api = new Api(ENV.TELEGRAM_BOT_TOKEN);
+import { createApi, createDb, createI18n, createPusher } from "@/bot";
 
-  const fluent = new Fluent();
-  await fluent.addTranslation({ locales: "en", source: FTL.en });
-  await fluent.addTranslation({ locales: "vi", source: FTL.vi });
+export async function POST(request: Request): Promise<Response> {
+  const [db, close] = await createDb(ENV);
+  const api = await createApi(ENV);
+  const i18n = await createI18n(FTL);
+  const pusher = await createPusher(ENV);
 
   const responseHeaders = new Headers({
     "Content-Type": "application/json",
@@ -87,7 +82,7 @@ export async function POST(request: Request): Promise<Response> {
 
     const persistentThreadMessage = await createMessage({ db }, { message });
     await notifyNewMessage(
-      { db, api, withLocale: fluent.withLocale.bind(fluent) },
+      { db, api, i18n, pusher },
       { message: persistentThreadMessage }
     );
 
@@ -101,7 +96,7 @@ export async function POST(request: Request): Promise<Response> {
       { status: 500, headers: responseHeaders }
     );
   } finally {
-    await client.close();
+    await close();
   }
 }
 

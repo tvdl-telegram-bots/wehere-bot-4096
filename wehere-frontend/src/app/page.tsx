@@ -21,6 +21,7 @@ export default function Route() {
 
   React.useEffect(() => {
     if (!pusherChannelId) return;
+    // TODO: get app id from env
     const pusher = new Pusher("efe46299f5b76a02250a", { cluster: "ap1" });
     const channel = pusher.subscribe(pusherChannelId);
 

@@ -1,10 +1,10 @@
 import type { Message } from "grammy/types";
 import type { WithoutId } from "mongodb";
 
-import { autoReply, isAutoReplyNeeded } from "../operations/Availability";
-import { getChatLocale } from "../operations/Chat";
-import { getThread_givenMortalChatId } from "../operations/Thread";
-import { createMessage, notifyNewMessage } from "../operations/ThreadMessage";
+import { autoReply, isAutoReplyNeeded } from "../operations/availability";
+import { getChatLocale } from "../operations/chat";
+import { createMessage, notifyNewMessage } from "../operations/message";
+import { getThread_givenMortalChatId } from "../operations/thread";
 
 import type { Command } from "@/types";
 import type {

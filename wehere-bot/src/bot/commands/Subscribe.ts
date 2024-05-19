@@ -1,7 +1,7 @@
 import { InlineKeyboard } from "grammy";
 
-import { setAngelSubscription } from "../operations/Angel";
-import { getChatLocale } from "../operations/Chat";
+import { setAngelSubscription } from "../operations/angel";
+import { getChatLocale } from "../operations/chat";
 
 import type { Command } from "@/types";
 import { nonNullable } from "@/utils/assert";

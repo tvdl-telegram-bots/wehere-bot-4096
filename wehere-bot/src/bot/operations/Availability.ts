@@ -1,7 +1,7 @@
 import type { Db } from "mongodb";
 import type { WithoutId } from "mongodb";
 
-import { createMessage, notifyNewMessage } from "./ThreadMessage";
+import { createMessage, notifyNewMessage } from "./message";
 
 import type { BotContext } from "@/types";
 import type { Locale, Timestamp } from "@/typing/common";
@@ -11,7 +11,7 @@ import {
   PersistentAvailability,
 } from "@/typing/server";
 
-type EssentialContext = Pick<BotContext, "db" | "api" | "withLocale">;
+type EssentialContext = Pick<BotContext, "db" | "api" | "i18n" | "pusher">;
 
 type ParsedAvailability = {
   value: boolean;
@@ -51,8 +51,8 @@ function composeMessage(
     originChatId: null,
     originMessageId: null,
     text: available
-      ? ctx.withLocale(locale)("html-auto-reply-when-available")
-      : ctx.withLocale(locale)("html-auto-reply-when-unavailable"),
+      ? ctx.i18n.withLocale(locale)("html-auto-reply-when-available")
+      : ctx.i18n.withLocale(locale)("html-auto-reply-when-unavailable"),
     entities: null,
     plainText: true,
     createdAt: Date.now(),

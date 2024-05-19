@@ -1,37 +1,71 @@
 import { autoRetry } from "@grammyjs/auto-retry";
 import { apiThrottler } from "@grammyjs/transformer-throttler";
 import { Fluent } from "@moebius/fluent";
-import { Bot, GrammyError, HttpError } from "grammy";
+import { Api, Bot, GrammyError, HttpError } from "grammy";
+import type { Db } from "mongodb";
 import { MongoClient } from "mongodb";
+import Pusher from "pusher";
 
 import AngelSay from "./commands/AngelSay";
 import MortalSay from "./commands/MortalSay";
 import Start from "./commands/Start";
 import Subscribe from "./commands/Subscribe";
-import { getRole } from "./operations/Role";
+import { getRole } from "./operations/role";
 
-import type { BotContext, Command } from "@/types";
-import type { Env, Ftl } from "@/typing/common";
+import type { BotContext, Command, I18n } from "@/types";
+import { PusherOptions, type Env, type Ftl } from "@/typing/common";
 import { assert, nonNullable } from "@/utils/assert";
 
-export async function createBot(env: Env, ftl: Ftl): Promise<Bot<BotContext>> {
-  // get db
+export async function createDb(
+  env: Env
+): Promise<[db: Db, close: (force?: boolean) => Promise<void>]> {
   console.log("Connecting to:", env.MONGODB_URI);
   const client = await MongoClient.connect(env.MONGODB_URI);
   const db = client.db(env.MONGODB_DBNAME);
   console.log("Connected. The db is:", env.MONGODB_DBNAME);
+  return [db, client.close.bind(client)];
+}
 
-  // get fluent
+export async function createI18n(ftl: Ftl): Promise<I18n> {
   const fluent = new Fluent();
   await fluent.addTranslation({ locales: "en", source: ftl.en });
   await fluent.addTranslation({ locales: "vi", source: ftl.vi });
+  return { withLocale: fluent.withLocale.bind(fluent) };
+}
 
-  // get bot
-  const bot = new Bot<BotContext>(env.TELEGRAM_BOT_TOKEN);
+export async function createPusher(env: Env): Promise<Pusher> {
+  const url = new URL(env.PUSHER_URI);
+  assert(url.protocol === "pusher:");
+
+  const options = PusherOptions.parse({
+    appId: url.searchParams.get("appId"),
+    key: url.searchParams.get("key"),
+    secret: url.searchParams.get("secret"),
+    cluster: url.searchParams.get("cluster"),
+    useTLS: url.searchParams.get("useTLS"),
+  });
+
+  return new Pusher(options);
+}
+
+export async function createApi(env: Env): Promise<Api> {
+  const api = new Api(env.TELEGRAM_BOT_TOKEN);
+  api.config.use(apiThrottler());
+  api.config.use(autoRetry());
+  return api;
+}
+
+export async function createBot(
+  telegramBotToken: string,
+  { db, i18n, pusher }: { db: Db; i18n: I18n; pusher: Pusher }
+): Promise<Bot<BotContext>> {
+  const bot = new Bot<BotContext>(telegramBotToken);
 
   bot.use(async (ctx, next) => {
     ctx.db = db;
-    ctx.withLocale = fluent.withLocale.bind(fluent);
+    ctx.i18n = i18n;
+    ctx.withLocale = i18n.withLocale;
+    ctx.pusher = pusher;
     await next();
   });
 

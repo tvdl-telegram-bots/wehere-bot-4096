@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import { ENV } from "wehere-backend/src/env";
-import { createPusherSubscription } from "wehere-bot/src/bot/operations/Pusher";
-import { createThread } from "wehere-bot/src/bot/operations/Thread";
+import { createPusherSubscription } from "wehere-bot/src/bot/operations/pusher";
+import { createThread } from "wehere-bot/src/bot/operations/thread";
 import { formatErrorAsObject } from "wehere-bot/src/utils/format";
 
 export async function POST(request: Request): Promise<Response> {

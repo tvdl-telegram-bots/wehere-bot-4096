@@ -7,6 +7,7 @@ export const Env = z.object({
   MONGODB_DBNAME: z.string().min(1),
   PORT: z.coerce.number().default(3070),
   HOST: z.string().default("0.0.0.0"),
+  PUSHER_URI: z.string().startsWith("pusher"),
 });
 
 export type Ftl = z.infer<typeof Ftl>;
@@ -47,4 +48,23 @@ export const ImageHandle = z.object({
   height: z.number(),
   width: z.number(),
   url: z.string(),
+});
+
+export type PusherOptions = z.infer<typeof PusherOptions>;
+export const PusherOptions = z.object({
+  appId: z.string().regex(/^[0-9]+$/),
+  key: z.string().regex(/^[0-9a-f]+$/),
+  secret: z.string().regex(/^[0-9a-f]+$/),
+  cluster: z.enum([
+    "mt1",
+    "us2",
+    "us3",
+    "eu",
+    "ap1",
+    "ap2",
+    "ap3",
+    "ap4",
+    "sa1",
+  ]),
+  useTLS: z.any().transform((value) => value === true || value === "true"),
 });

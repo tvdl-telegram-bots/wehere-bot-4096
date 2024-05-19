@@ -7,12 +7,17 @@ import {
   formatErrorDeeply,
 } from "wehere-bot/src/utils/format";
 
+import { createDb, createI18n, createPusher } from "@/bot";
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    const bot = await createBot(ENV, FTL);
+    const [db] = await createDb(ENV);
+    const i18n = await createI18n(FTL);
+    const pusher = await createPusher(ENV);
+    const bot = await createBot(ENV.TELEGRAM_BOT_TOKEN, { db, i18n, pusher });
     await webhookCallback(bot, "next-js")(req, res);
   } catch (error) {
     console.error(formatErrorDeeply(error));

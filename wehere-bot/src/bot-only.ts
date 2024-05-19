@@ -2,7 +2,7 @@ import fs from "fs";
 
 import { config } from "dotenv";
 
-import { createBot } from "./bot";
+import { createBot, createDb, createI18n, createPusher } from "./bot";
 import { Env, Ftl } from "./typing/common";
 
 config();
@@ -13,6 +13,9 @@ export const ENV = Env.parse({
     process.env.MONGODB_URI ||
     decodeURIComponent(process.env.MONGODB_URI__URLENCODED || ""),
   MONGODB_DBNAME: process.env.MONGODB_DBNAME,
+  PUSHER_URI:
+    process.env.PUSHER_URI ||
+    decodeURIComponent(process.env.PUSHER_URI__URLENCODED || ""),
 });
 
 export const FTL = Ftl.parse({
@@ -21,7 +24,10 @@ export const FTL = Ftl.parse({
 });
 
 async function main() {
-  const bot = await createBot(ENV, FTL);
+  const [db] = await createDb(ENV);
+  const i18n = await createI18n(FTL);
+  const pusher = await createPusher(ENV);
+  const bot = await createBot(ENV.TELEGRAM_BOT_TOKEN, { db, i18n, pusher });
   await bot.start();
 }
 

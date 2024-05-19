@@ -1,9 +1,9 @@
 import { InlineKeyboard } from "grammy";
 
 import type { Command } from "../../types";
-import { getAngelSubscription } from "../operations/Angel";
-import { getChatLocale } from "../operations/Chat";
-import { getThread_givenMortalChatId } from "../operations/Thread";
+import { getAngelSubscription } from "../operations/angel";
+import { getChatLocale } from "../operations/chat";
+import { getThread_givenMortalChatId } from "../operations/thread";
 
 import type { Role } from "@/typing/common";
 import { PersistentRole, PersistentThread } from "@/typing/server";

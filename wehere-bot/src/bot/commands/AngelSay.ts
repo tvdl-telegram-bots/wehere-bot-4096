@@ -2,10 +2,10 @@ import { InlineKeyboard } from "grammy";
 import type { Message } from "grammy/types";
 import type { Db, WithoutId } from "mongodb";
 
-import { getAngelSubscription } from "../operations/Angel";
-import { getChatLocale } from "../operations/Chat";
-import { getThread_givenThreadId } from "../operations/Thread";
-import { createMessage, notifyNewMessage } from "../operations/ThreadMessage";
+import { getAngelSubscription } from "../operations/angel";
+import { getChatLocale } from "../operations/chat";
+import { createMessage, notifyNewMessage } from "../operations/message";
+import { getThread_givenThreadId } from "../operations/thread";
 
 import type { BotContext, Command } from "@/types";
 import type {

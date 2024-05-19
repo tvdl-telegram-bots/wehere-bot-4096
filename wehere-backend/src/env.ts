@@ -10,6 +10,9 @@ export const ENV = Env.parse({
   MONGODB_DBNAME: process.env.MONGODB_DBNAME,
   PORT: process.env.PORT,
   HOST: process.env.HOST,
+  PUSHER_URI:
+    process.env.PUSHER_URI ||
+    decodeURIComponent(process.env.PUSHER_URI__URLENCODED || ""),
 });
 
 export const FTL = Ftl.parse({ en, vi });
