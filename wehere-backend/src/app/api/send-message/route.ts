@@ -14,15 +14,9 @@ import {
 } from "wehere-bot/src/bot/operations/message";
 import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/thread";
 import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
-import * as Telegram from "wehere-bot/src/typing/telegram";
-import { z } from "zod";
 
-const Params = z.object({
-  threadId: z.string(),
-  threadPassword: z.string().nullish(),
-  text: z.string(),
-  entities: Telegram.MessageEntity.array().nullish(),
-});
+import type { Result$SendMessage$WehereBackend as Result } from "./typing";
+import { Params$SendMessage$WehereBackend as Params } from "./typing";
 
 export const POST = withDefaultRouteHandler(async (request, ctx) => {
   const api = await createApi(ENV);
@@ -60,5 +54,5 @@ export const POST = withDefaultRouteHandler(async (request, ctx) => {
     { message: persistentThreadMessage }
   );
 
-  return createJsonResponse(200, { persistentThreadMessage });
+  return createJsonResponse(200, { persistentThreadMessage } satisfies Result);
 });

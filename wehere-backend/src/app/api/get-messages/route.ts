@@ -9,22 +9,9 @@ import { toPipeline } from "wehere-backend/src/utils/pipeline";
 import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/thread";
 import { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 import { parseDocs } from "wehere-bot/src/utils/array";
-import { z } from "zod";
 
-const Params = z.object({
-  // select
-  threadId: z.string(),
-  threadPassword: z.string().nullish(),
-  // filter
-  since: z.coerce.number().nullish(), // >=
-  after: z.coerce.number().nullish(), // >
-  prior: z.coerce.number().nullish(), // <
-  until: z.coerce.number().nullish(), // <=
-
-  // order & limit
-  order: z.enum(["asc", "des"]).nullish(),
-  limit: z.coerce.number().nullish(),
-});
+import type { Result$GetMessages$WehereBackend as Result } from "./typing";
+import { Params$GetMessages$WehereBackend as Params } from "./typing";
 
 export const GET = withDefaultRouteHandler(async (request, ctx) => {
   const url = new URL(request.url);
@@ -61,5 +48,5 @@ export const GET = withDefaultRouteHandler(async (request, ctx) => {
     .toArray()
     .then(parseDocs(PersistentThreadMessage));
 
-  return createJsonResponse(200, { messages });
+  return createJsonResponse(200, { messages } satisfies Result);
 });
