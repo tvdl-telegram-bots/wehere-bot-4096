@@ -1,0 +1,100 @@
+// "use client";
+
+// import { z } from "zod";
+// import React from "react";
+// import styles from "./index.module.scss";
+// import cx from "clsx";
+
+// // "use client";
+// // import { z } from "zod";
+// // import React from "react";
+// // import styles from "./index.module.scss";
+// // import cx from "clsx";
+
+// // type Thread = {
+// //   threadId: string;
+// //   threadPassword: string;
+// //   pusherChannelId: string;
+// //   name: string;
+// //   emoji: string;
+// // };
+
+// // type Props = {
+// //   className?: string;
+// //   style?: React.CSSProperties;
+// // };
+// // export default function PageChat({ className, style }: Props) {
+// //   const [activeThreadId, setActiveThreadId] = React.useState<string>();
+// //   const [threadHandles, setThreadHandles] = React.useState<Thread[]>([]);
+
+// //   const [text, setText] = React.useState("");
+
+// //   const sendMessage = async () => {
+// //     const activeThreadHandle = threadHandles.find(
+// //       (item) => item.threadId === activeThreadId
+// //     );
+
+// //     if (!activeThreadHandle) {
+// //       const response = await fetch("http://localhost:4096/api/create-thread", {
+// //         method: "POST",
+// //       });
+// //       const data = await response.json();
+// //       const Result = z.object({
+// //         thread: z.object({
+// //           _id: z.string(),
+// //           name: z.string().nullish(),
+// //           emoji: z.string().nullish(),
+// //           password: z.string().nullish(),
+// //         }),
+// //         pusherSubscription: z.object({
+// //           pusherChannelId: z.string(),
+// //         }),
+// //       });
+
+// //       const result = Result.parse(data);
+
+// //       setThreadHandles((items) => [
+// //         ...items,
+// //         {
+// //           threadId: result.thread._id,
+// //           threadPassword: result.thread.password || "",
+// //           pusherChannelId: result.pusherSubscription.pusherChannelId,
+// //           name: result.thread.name || "",
+// //           emoji: result.thread.emoji || "",
+// //         },
+// //       ]);
+
+// //       setActiveThreadId(result.thread._id);
+
+// //       alert("please press send again");
+// //     } else {
+// //       const response = await fetch("http://localhost:4096/api/send-message", {
+// //         method: "POST",
+// //         headers: { "Content-Type": "application/json" },
+// //         body: JSON.stringify({
+// //           threadId: activeThreadHandle.threadId,
+// //           threadPassword: activeThreadHandle.threadPassword,
+// //           text: text,
+// //         }),
+// //       });
+// //       const data = await response.json();
+// //       console.log(data);
+// //     }
+// //   };
+
+// //   return (
+// //     <div className={cx(styles.container, className)} style={style}>
+// //       <ul>
+// //         {threadHandles.map((handle) => (
+// //           <li key={handle.threadId}>{handle.threadId}</li>
+// //         ))}
+// //       </ul>
+
+// //       <textarea
+// //         value={text}
+// //         onChange={(event) => setText(event.target.value)}
+// //       />
+// //       <button onClick={sendMessage}>{"Send Message"}</button>
+// //     </div>
+// //   );
+// // }
