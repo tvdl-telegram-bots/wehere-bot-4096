@@ -4,7 +4,7 @@ import { escape } from "html-escaper";
 
 import { notNullish } from "./array";
 
-import type { PersistentThread } from "@/typing/server";
+import type { PersistentThread } from "wehere-bot/src/typing/server";
 
 export function formatThread(thread: PersistentThread) {
   return [thread.emoji || "❓", thread.name || "-"].join(" ");

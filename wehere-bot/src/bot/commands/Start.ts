@@ -1,16 +1,14 @@
 import { InlineKeyboard } from "grammy";
-
-import type { Command } from "../../types";
-import { getAngelSubscription } from "../operations/angel";
-import { getChatLocale } from "../operations/chat";
-import { getThread_givenMortalChatId } from "../operations/thread";
-
-import type { Role } from "@/typing/common";
-import { PersistentRole, PersistentThread } from "@/typing/server";
-import { parseDocs } from "@/utils/array";
-import { nonNullable } from "@/utils/assert";
-import { withDefaultErrorHandler } from "@/utils/error";
-import { formatThread, html } from "@/utils/format";
+import { getAngelSubscription } from "wehere-bot/src/bot/operations/angel";
+import { getChatLocale } from "wehere-bot/src/bot/operations/chat";
+import { getThread_givenMortalChatId } from "wehere-bot/src/bot/operations/thread";
+import type { Command } from "wehere-bot/src/types";
+import type { Role } from "wehere-bot/src/typing/common";
+import { PersistentRole, PersistentThread } from "wehere-bot/src/typing/server";
+import { parseDocs } from "wehere-bot/src/utils/array";
+import { nonNullable } from "wehere-bot/src/utils/assert";
+import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
+import { formatThread, html } from "wehere-bot/src/utils/format";
 
 const handleMessage = withDefaultErrorHandler(async (ctx) => {
   const msg0 = nonNullable(ctx.message);

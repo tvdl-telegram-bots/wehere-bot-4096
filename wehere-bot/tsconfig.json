@@ -14,7 +14,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "outDir": "dist",
-    "paths": { "@/*": ["./src/*"] },
+    "paths": { "wehere-bot/src/*": ["./src/*"] },
     "pretty": true,
     "resolveJsonModule": true,
     "rootDir": "src",

@@ -1,7 +1,7 @@
 import { nonNullable } from "./assert";
 import { html } from "./format";
 
-import type { BotContext } from "@/types";
+import type { BotContext } from "wehere-bot/src/types";
 
 export function withDefaultErrorHandler(handler: (ctx: BotContext) => void) {
   return async (ctx: BotContext) => {

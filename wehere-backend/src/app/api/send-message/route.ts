@@ -2,6 +2,12 @@ import type { WithoutId } from "mongodb";
 import { ObjectId } from "mongodb";
 import { ENV, FTL } from "wehere-backend/src/env";
 import {
+  createApi,
+  createDb,
+  createI18n,
+  createPusher,
+} from "wehere-bot/src/bot";
+import {
   createMessage,
   notifyNewMessage,
 } from "wehere-bot/src/bot/operations/message";
@@ -10,8 +16,6 @@ import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 import * as Telegram from "wehere-bot/src/typing/telegram";
 import { formatErrorAsObject } from "wehere-bot/src/utils/format";
 import { z } from "zod";
-
-import { createApi, createDb, createI18n, createPusher } from "@/bot";
 
 export async function POST(request: Request): Promise<Response> {
   const [db, close] = await createDb(ENV);

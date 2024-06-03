@@ -14,8 +14,8 @@
     "incremental": true,
     "plugins": [{ "name": "next" }],
     "paths": {
-      "@/*": ["../wehere-bot/src/*"],
-      "wehere-backend/*": ["./*"]
+      "wehere-bot/src/*": ["../wehere-bot/src/*"],
+      "wehere-backend/src/*": ["./src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

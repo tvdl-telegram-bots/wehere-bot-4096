@@ -2,12 +2,11 @@ import { MongoClient } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ENV, FTL } from "wehere-backend/src/env";
 import { createBot, webhookCallback } from "wehere-bot";
+import { createDb, createI18n, createPusher } from "wehere-bot/src/bot";
 import {
   formatErrorAsObject,
   formatErrorDeeply,
 } from "wehere-bot/src/utils/format";
-
-import { createDb, createI18n, createPusher } from "@/bot";
 
 export default async function handler(
   req: NextApiRequest,

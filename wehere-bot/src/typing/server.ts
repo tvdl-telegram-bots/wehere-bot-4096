@@ -12,7 +12,7 @@ import {
   UserId,
 } from "./common";
 
-import * as Telegram from "@/typing/telegram";
+import * as Telegram from "wehere-bot/src/typing/telegram";
 
 export type PersistentObjectId = z.infer<typeof PersistentObjectId>;
 export const PersistentObjectId = z.instanceof(ObjectId);

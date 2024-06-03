@@ -6,14 +6,14 @@ import { getChatLocale } from "../operations/chat";
 import { createMessage, notifyNewMessage } from "../operations/message";
 import { getThread_givenMortalChatId } from "../operations/thread";
 
-import type { Command } from "@/types";
+import type { Command } from "wehere-bot/src/types";
 import type {
   PersistentThread,
   PersistentThreadMessage,
-} from "@/typing/server";
-import { nonNullable } from "@/utils/assert";
-import { withDefaultErrorHandler } from "@/utils/error";
-import { isMessagePlainText } from "@/utils/format";
+} from "wehere-bot/src/typing/server";
+import { nonNullable } from "wehere-bot/src/utils/assert";
+import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
+import { isMessagePlainText } from "wehere-bot/src/utils/format";
 
 function composeMessage({
   thread,

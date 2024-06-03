@@ -7,14 +7,14 @@ import { getChatLocale } from "../operations/chat";
 import { createMessage, notifyNewMessage } from "../operations/message";
 import { getThread_givenThreadId } from "../operations/thread";
 
-import type { BotContext, Command } from "@/types";
+import type { BotContext, Command } from "wehere-bot/src/types";
 import type {
   PersistentObjectId,
   PersistentThreadMessage,
-} from "@/typing/server";
-import { nonNullable } from "@/utils/assert";
-import { withDefaultErrorHandler } from "@/utils/error";
-import { isMessagePlainText } from "@/utils/format";
+} from "wehere-bot/src/typing/server";
+import { nonNullable } from "wehere-bot/src/utils/assert";
+import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
+import { isMessagePlainText } from "wehere-bot/src/utils/format";
 
 function isMessageTooComplexForWeb(msg0: Message) {
   return msg0.entities?.some(

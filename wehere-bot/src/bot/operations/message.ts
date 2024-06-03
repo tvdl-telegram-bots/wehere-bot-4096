@@ -3,22 +3,22 @@ import type { Db, WithoutId } from "mongodb";
 
 import { getChatLocale } from "./chat";
 
-import type { BotContext } from "@/types";
-import type { ChatId } from "@/typing/common";
-import type { PersistentThreadMessage } from "@/typing/server";
+import type { BotContext } from "wehere-bot/src/types";
+import type { ChatId } from "wehere-bot/src/typing/common";
+import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 import {
   PersistentAngelSubscription,
   PersistentMortalSubscription,
   PersistentPusherSubscription,
   PersistentThread,
-} from "@/typing/server";
-import { parseDocs } from "@/utils/array";
+} from "wehere-bot/src/typing/server";
+import { parseDocs } from "wehere-bot/src/utils/array";
 import {
   formatErrorAsObject,
   formatErrorDeeply,
   formatThread,
   html,
-} from "@/utils/format";
+} from "wehere-bot/src/utils/format";
 
 async function joinPromisesGracefully(
   ctx: { db: Db },
