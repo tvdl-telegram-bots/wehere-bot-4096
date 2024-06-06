@@ -5,27 +5,27 @@ import { SERVER_ENV } from "wehere-frontend/src/env/server";
 import { withDefaultRouteHandler } from "wehere-frontend/src/utils/backend";
 import { getUrl, httpGet } from "wehere-frontend/src/utils/shared";
 
-import type { Result$GetPrevMessages } from "./typing";
-import { Params$GetPrevMessages } from "./typing";
+import type { Result$GetNextMessages } from "./typing";
+import { Params$GetNextMessages } from "./typing";
 
 export const GET = withDefaultRouteHandler(async (request) => {
   const url = new URL(request.url);
-  const params = Params$GetPrevMessages.parse({
+  const params = Params$GetNextMessages.parse({
     threadId: url.searchParams.get("threadId"),
     threadPassword: url.searchParams.get("threadPassword"),
-    prior: url.searchParams.get("prior"),
+    after: url.searchParams.get("after"),
   });
 
   const data = await httpGet(
     getUrl(SERVER_ENV.WEHERE_BACKEND_ORIGIN, "/api/get-messages", {
       threadId: params.threadId,
       threadPassword: params.threadPassword,
-      prior: params.prior,
-      order: "des",
+      after: params.after,
+      order: "asc",
     } satisfies Params$GetMessages$WehereBackend)
   ).then(Result$GetMessages$WehereBackend.parse);
 
-  const result: Result$GetPrevMessages = {
+  const result: Result$GetNextMessages = {
     messages: data.messages.map((m) => ({
       direction: m.direction,
       text: m.text,

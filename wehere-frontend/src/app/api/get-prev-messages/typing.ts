@@ -5,7 +5,7 @@ export type Params$GetPrevMessages = z.infer<typeof Params$GetPrevMessages>;
 export const Params$GetPrevMessages = z.object({
   threadId: z.string(),
   threadPassword: z.string().nullish(),
-  currentSince: z.coerce.number(),
+  prior: z.coerce.number(),
 });
 
 export type Result$GetPrevMessages = z.infer<typeof Result$GetPrevMessages>;

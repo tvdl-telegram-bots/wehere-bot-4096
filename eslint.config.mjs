@@ -17,7 +17,7 @@ export default [
     },
   },
   {
-    "files": ["**/*.ts"],
+    "files": ["**/*.ts", "**/*.tsx"],
     "plugins": { "import": EslintPluginImport },
     "rules": {
       "import/order": [

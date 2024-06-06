@@ -68,3 +68,10 @@ export const PusherOptions = z.object({
   ]),
   useTLS: z.any().transform((value) => value === true || value === "true"),
 });
+
+export type NewMessage$PusherEvent = z.infer<typeof NewMessage$PusherEvent>;
+export const NewMessage$PusherEvent = z.object({
+  direction: MessageDirection,
+  text: z.string().nullish(),
+  createdAt: Timestamp,
+});

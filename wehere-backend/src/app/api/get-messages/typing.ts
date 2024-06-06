@@ -1,12 +1,15 @@
-import { PersistentThreadMessage } from "wehere-bot/src/typing/server";
+import {
+  PersistentObjectId,
+  PersistentThreadMessage,
+} from "wehere-bot/src/typing/server";
 import { z } from "zod";
 
-export type Params$GetMessages$WehereBackend = z.infer<
+export type Params$GetMessages$WehereBackend = z.input<
   typeof Params$GetMessages$WehereBackend
 >;
 export const Params$GetMessages$WehereBackend = z.object({
   // select
-  threadId: z.string(),
+  threadId: PersistentObjectId,
   threadPassword: z.string().nullish(),
   // filter
   since: z.coerce.number().nullish(), // >=
@@ -19,7 +22,7 @@ export const Params$GetMessages$WehereBackend = z.object({
   limit: z.coerce.number().nullish(),
 });
 
-export type Result$GetMessages$WehereBackend = z.infer<
+export type Result$GetMessages$WehereBackend = z.input<
   typeof Result$GetMessages$WehereBackend
 >;
 export const Result$GetMessages$WehereBackend = z.object({

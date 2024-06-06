@@ -1,10 +1,10 @@
 import { InlineKeyboard } from "grammy";
 import type { Db, WithoutId } from "mongodb";
-
-import { getChatLocale } from "./chat";
-
 import type { BotContext } from "wehere-bot/src/types";
-import type { ChatId } from "wehere-bot/src/typing/common";
+import type {
+  ChatId,
+  NewMessage$PusherEvent,
+} from "wehere-bot/src/typing/common";
 import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 import {
   PersistentAngelSubscription,
@@ -19,6 +19,8 @@ import {
   formatThread,
   html,
 } from "wehere-bot/src/utils/format";
+
+import { getChatLocale } from "./chat";
 
 async function joinPromisesGracefully(
   ctx: { db: Db },
@@ -150,7 +152,11 @@ async function notifyPusher(
     .then(parseDocs(PersistentPusherSubscription));
 
   const promises = pusherSubs.map(async (sub) => {
-    await ctx.pusher.trigger(sub.pusherChannelId, "new-message", message);
+    await ctx.pusher.trigger(sub.pusherChannelId, "new-message", {
+      direction: message.direction,
+      text: message.text,
+      createdAt: message.createdAt,
+    } satisfies NewMessage$PusherEvent);
   });
 
   await joinPromisesGracefully(ctx, promises);

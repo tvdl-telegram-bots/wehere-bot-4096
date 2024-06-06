@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import {
   assertWithStatus,
   throws400,
@@ -17,8 +16,7 @@ export const GET = withDefaultRouteHandler(async (request, ctx) => {
   const url = new URL(request.url);
   const query = Object.fromEntries(url.searchParams.entries());
   const params = await Params.parseAsync(query).catch(throws400);
-  const threadId = ObjectId.createFromHexString(params.threadId);
-  const thread = await getThread_givenThreadId(ctx, threadId);
+  const thread = await getThread_givenThreadId(ctx, params.threadId);
 
   assertWithStatus(404, thread, "thread not found");
   if (thread.password) {
@@ -35,7 +33,7 @@ export const GET = withDefaultRouteHandler(async (request, ctx) => {
     .aggregate(
       toPipeline(function* () {
         const { since, after, prior, until, order, limit } = params;
-        yield { $match: { threadId } };
+        yield { $match: { threadId: params.threadId } };
         yield since ? { $match: { createdAt: { $gte: since } } } : undefined;
         yield after ? { $match: { createdAt: { $gt: after } } } : undefined;
         yield prior ? { $match: { createdAt: { $lt: prior } } } : undefined;
