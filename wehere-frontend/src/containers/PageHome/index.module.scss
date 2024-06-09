@@ -1,0 +1,13 @@
+.composerContainer {
+  width: 100%;
+  max-width: 800px;
+  padding: 12px;
+}
+
+.chat {
+  width: 100%;
+  max-width: 800px;
+  padding: 0 12px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}

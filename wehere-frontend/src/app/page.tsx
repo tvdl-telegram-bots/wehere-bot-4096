@@ -1,12 +1,7 @@
 "use client";
 
-import "milligram";
-import React from "react";
+import PageHome from "../containers/PageHome";
 
 export default function Route() {
-  return (
-    <main className="container">
-      <h1>{`WeHere`}</h1>
-    </main>
-  );
+  return <PageHome />;
 }
