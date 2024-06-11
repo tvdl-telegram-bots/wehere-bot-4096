@@ -1,6 +1,7 @@
 "use client";
 
 import { faker } from "@faker-js/faker";
+import { Box, Flex } from "@radix-ui/themes";
 import cx from "clsx";
 import React from "react";
 
@@ -8,7 +9,9 @@ import { useHiddenQuery } from "../PageThread/hooks/useHiddenQuery";
 import { useThreadLogic } from "../PageThread/hooks/useThreadLogic";
 
 import ChatLayout from "./components/ChatLayout";
+import MessageList from "./components/MessageList";
 import styles from "./index.module.scss";
+import { flex } from "./utils/preset";
 
 type Props = {
   className?: string;
@@ -40,11 +43,16 @@ export default function PageThreadV2({
     epoch,
   });
   return (
-    <ChatLayout
-      className={cx(styles.container, className, "container")}
-      style={style}
-    >
-      <h2>{"state.epoch"}</h2>
+    <ChatLayout className={cx(styles.container, className)} style={style}>
+      <Flex direction="column" position="absolute" inset="0">
+        <Box {...flex.soft} position="relative" inset="0">
+          <MessageList
+            className={styles.messageList}
+            threadState={api.state}
+            fill
+          />
+        </Box>
+        {/* <h2>{"state.epoch"}</h2>
       <pre>{JSON.stringify({ epoch: api.state.epoch })}</pre>
 
       <h2>{"state.priorEpochMessages"}</h2>
@@ -73,22 +81,23 @@ export default function PageThreadV2({
         {api.state.incomingMessages.map((item) => (
           <pre key={item.createdAt}>{JSON.stringify(item, null, 2)}</pre>
         ))}
-      </ul>
+      </ul> */}
 
-      <button onClick={api.loadPrevMessages} disabled={!api.loadPrevMessages}>
-        {"Load prev messages"}
-      </button>
+        <button onClick={api.loadPrevMessages} disabled={!api.loadPrevMessages}>
+          {"Load prev messages"}
+        </button>
 
-      <button onClick={api.loadNextMessages} disabled={!api.loadNextMessages}>
-        {"Load next messages"}
-      </button>
+        <button onClick={api.loadNextMessages} disabled={!api.loadNextMessages}>
+          {"Load next messages"}
+        </button>
 
-      <button
-        onClick={() => api.sendMessage?.(faker.lorem.paragraph())}
-        disabled={!api.sendMessage}
-      >
-        {"Send message"}
-      </button>
+        <button
+          onClick={() => api.sendMessage?.(faker.lorem.paragraph())}
+          disabled={!api.sendMessage}
+        >
+          {"Send message"}
+        </button>
+      </Flex>
     </ChatLayout>
   );
 }
