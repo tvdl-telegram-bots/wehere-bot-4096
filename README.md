@@ -8,6 +8,8 @@ PORT=4098 yarn workspace wehere-frontend dev
 
 TODO: remove `express` in `wehere-bot`
 
-TODO: implement ChatLayout
+TODO: implement ChatLayout (the sidebar)
 
-TODO: implement MessageList
+TODO: remove immutable js (write your own immutable 2D map)
+
+TODO: implement PageThreadV3
