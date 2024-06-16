@@ -1,5 +1,6 @@
 import Pusher from "pusher-js";
 import React from "react";
+import type { PusherClientConfig } from "wehere-bot/src/typing/common";
 import { NewMessage$PusherEvent } from "wehere-bot/src/typing/common";
 import type { Params$GetNextMessages } from "wehere-frontend/src/app/api/get-next-messages/typing";
 import { Result$GetNextMessages } from "wehere-frontend/src/app/api/get-next-messages/typing";
@@ -21,11 +22,13 @@ export function useThreadLogic({
   threadId,
   threadPassword,
   pusherChannelId,
+  pusherClientConfig,
   epoch,
 }: {
   threadId: string;
   threadPassword: string | null | undefined;
   pusherChannelId: string | null | undefined;
+  pusherClientConfig: PusherClientConfig | null | undefined;
   epoch: number;
 }) {
   const [state, setState] = React.useState(ThreadState.createByEpoch(epoch));
@@ -49,14 +52,28 @@ export function useThreadLogic({
     );
   }, []);
 
+  const pusherClientConfig_appKey = pusherClientConfig?.appKey;
+  const pusherClientConfig_cluster = pusherClientConfig?.cluster;
+
   React.useEffect(() => {
-    if (!pusherChannelId) return;
-    // TODO: get app id from env
-    const pusher = new Pusher("efe46299f5b76a02250a", { cluster: "ap1" });
+    if (
+      !pusherChannelId ||
+      !pusherClientConfig_appKey ||
+      !pusherClientConfig_cluster
+    )
+      return;
+    const pusher = new Pusher(pusherClientConfig_appKey, {
+      cluster: pusherClientConfig_cluster,
+    });
     const channel = pusher.subscribe(pusherChannelId);
     channel.bind("new-message", handleIncomingMessage);
     return () => void channel.unbind("new-message", handleIncomingMessage);
-  }, [pusherChannelId, handleIncomingMessage]);
+  }, [
+    pusherChannelId,
+    handleIncomingMessage,
+    pusherClientConfig_appKey,
+    pusherClientConfig_cluster,
+  ]);
 
   const loadPrevMessages = threadPassword
     ? async () => {

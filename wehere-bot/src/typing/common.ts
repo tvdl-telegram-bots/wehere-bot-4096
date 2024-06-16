@@ -69,6 +69,12 @@ export const PusherOptions = z.object({
   useTLS: z.any().transform((value) => value === true || value === "true"),
 });
 
+export type PusherClientConfig = z.infer<typeof PusherClientConfig>;
+export const PusherClientConfig = z.object({
+  appKey: z.string(),
+  cluster: z.string(),
+});
+
 export type NewMessage$PusherEvent = z.infer<typeof NewMessage$PusherEvent>;
 export const NewMessage$PusherEvent = z.object({
   direction: MessageDirection,

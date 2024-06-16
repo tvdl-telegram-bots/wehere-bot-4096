@@ -1,4 +1,4 @@
-import { Timestamp } from "wehere-bot/src/typing/common";
+import { PusherClientConfig, Timestamp } from "wehere-bot/src/typing/common";
 import { z } from "zod";
 
 export type Result$GetStatus$WehereBackend = z.infer<
@@ -9,4 +9,5 @@ export const Result$GetStatus$WehereBackend = z.object({
     value: z.boolean(),
     since: Timestamp.nullish(),
   }),
+  pusherClientConfig: PusherClientConfig,
 });

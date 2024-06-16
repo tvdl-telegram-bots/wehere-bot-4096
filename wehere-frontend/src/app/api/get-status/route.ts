@@ -17,6 +17,7 @@ export const GET = withDefaultRouteHandler(async () => {
       type: data.availability.value ? "available" : "unavailable",
       since: data.availability.since,
     },
+    pusherClientConfig: data.pusherClientConfig,
   };
   return createJsonResponse(200, result);
 });
