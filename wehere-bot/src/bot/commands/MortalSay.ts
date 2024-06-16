@@ -1,11 +1,5 @@
 import type { Message } from "grammy/types";
 import type { WithoutId } from "mongodb";
-
-import { autoReply, isAutoReplyNeeded } from "../operations/availability_";
-import { getChatLocale } from "../operations/chat_";
-import { createMessage, notifyNewMessage } from "../operations/message_";
-import { getThread_givenMortalChatId } from "../operations/thread_";
-
 import type { Command } from "wehere-bot/src/types";
 import type {
   PersistentThread,
@@ -14,6 +8,11 @@ import type {
 import { nonNullable } from "wehere-bot/src/utils/assert";
 import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
 import { isMessagePlainText } from "wehere-bot/src/utils/format";
+
+import { autoReply, isAutoReplyNeeded } from "../operations/availability_";
+import { getChatLocale } from "../operations/chat_";
+import { createMessage, notifyNewMessage } from "../operations/message_";
+import { getThread_givenMortalChatId } from "../operations/thread_";
 
 function composeMessage({
   thread,

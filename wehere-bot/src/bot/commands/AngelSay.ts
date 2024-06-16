@@ -1,17 +1,20 @@
 import { InlineKeyboard } from "grammy";
 import type { Message } from "grammy/types";
 import type { Db, WithoutId } from "mongodb";
-import type { BotContext, Command } from "wehere-bot/src/types";
+import type { Command } from "wehere-bot/src/types";
 import type {
   PersistentObjectId,
   PersistentThreadMessage,
 } from "wehere-bot/src/typing/server";
 import { nonNullable } from "wehere-bot/src/utils/assert";
-import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
+import {
+  withDefaultErrorHandler,
+  withReplyHtml,
+} from "wehere-bot/src/utils/error";
 import { isMessagePlainText } from "wehere-bot/src/utils/format";
+import { getWehereUrl } from "wehere-bot/src/utils/parse";
 
-import { getAngelSubscription } from "../operations/angel_";
-import { getChatLocale } from "../operations/chat_";
+import { getAngelSubscription } from "../operations/angel";
 import { createMessage, notifyNewMessage } from "../operations/message_";
 import { getThread_givenThreadId } from "../operations/thread_";
 
@@ -40,44 +43,22 @@ async function isMortalUsingWeb(
   return thread?.platform === "web";
 }
 
-async function sayYouAreNotSubscribing(ctx: BotContext) {
-  const msg0 = nonNullable(ctx.message);
-  const locale = await getChatLocale(ctx, msg0.chat.id);
+const sayYouAreNotSubscribing = withReplyHtml((ctx) =>
+  ctx.replyHtml(ctx.t("html-you-not-subscribing"), {
+    reply_markup: new InlineKeyboard().text(
+      ctx.t("text-subscribe"),
+      getWehereUrl(["subscription", "subscribe"])
+    ),
+  })
+);
 
-  await ctx.api.sendMessage(
-    msg0.chat.id,
-    ctx.i18n.withLocale(locale)("html-not-subscribing"),
-    {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard().text(
-        ctx.i18n.withLocale(locale)("text-subscribe"),
-        `wehere:/subscribe`
-      ),
-    }
-  );
-}
+const sayYouAreNotReplyingAnyone = withReplyHtml((ctx) =>
+  ctx.replyHtml(ctx.t("html-not-replying-anyone"))
+);
 
-async function sayYouAreNotReplyingAnyone(ctx: BotContext) {
-  const msg0 = nonNullable(ctx.message);
-  const locale = await getChatLocale(ctx, msg0.chat.id);
-
-  await ctx.api.sendMessage(
-    msg0.chat.id,
-    ctx.withLocale(locale)("html-not-replying-anyone"),
-    { parse_mode: "HTML" }
-  );
-}
-
-async function sayYouAreSendingComplexMessage(ctx: BotContext) {
-  const msg0 = nonNullable(ctx.message);
-  const locale = await getChatLocale(ctx, msg0.chat.id);
-
-  await ctx.api.sendMessage(
-    msg0.chat.id,
-    ctx.withLocale(locale)("html-can-only-send-plaintext"),
-    { parse_mode: "HTML" }
-  );
-}
+const sayYouAreSendingComplexMessage = withReplyHtml((ctx) =>
+  ctx.replyHtml(ctx.t("html-can-only-send-plaintext"))
+);
 
 function composeMessage({
   threadId,

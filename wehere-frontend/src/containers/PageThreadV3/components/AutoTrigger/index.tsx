@@ -1,11 +1,9 @@
-import { Badge, Button, Flex, Text } from "@radix-ui/themes";
+import { Badge, Button, Flex } from "@radix-ui/themes";
 import cx from "clsx";
 import React from "react";
 
 import { useIsGonnaVisible } from "./hooks/useIsGonnaVisible";
 import styles from "./index.module.scss";
-
-// type Status = "empty" | "clickable" |
 
 type Props = {
   className?: string;

@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { getAvailability, setAvailability } from "../operations/availability_";
 import { getChatLocale } from "../operations/chat_";
-import { getRole } from "../operations/role_";
+import { getRole } from "../operations/role";
 
 const handleMessage = withDefaultErrorHandler(async (ctx) => {
   const msg0 = nonNullable(ctx.message);
@@ -33,11 +33,11 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
     parse_mode: "HTML",
     reply_markup: new InlineKeyboard()
       .text(
-        ctx.withLocale(locale)("html-set-available"),
+        ctx.i18n.withLocale(locale)("html-set-available"),
         "wehere:/availability?value=true"
       )
       .text(
-        ctx.withLocale(locale)("html-set-unavailable"),
+        ctx.i18n.withLocale(locale)("html-set-unavailable"),
         "wehere:/availability?value=false"
       ),
   });

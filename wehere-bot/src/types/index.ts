@@ -9,8 +9,6 @@ export type I18n = {
 
 export type BotContext = Context & {
   db: Db;
-  /** @deprecated */
-  withLocale: Fluent["withLocale"];
   i18n: I18n;
   pusher: Pusher;
 };

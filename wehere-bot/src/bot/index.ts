@@ -18,8 +18,8 @@ import Availability from "./commands/Availability";
 import MortalSay from "./commands/MortalSay";
 import Reply from "./commands/Reply";
 import Start from "./commands/Start";
-import Subscribe from "./commands/Subscribe";
-import { getRole } from "./operations/role_";
+import Subscription from "./commands/Subscription";
+import { getRole } from "./operations/role";
 
 export async function createDb(
   env: Env
@@ -69,7 +69,6 @@ export async function createBot(
   bot.use(async (ctx, next) => {
     ctx.db = db;
     ctx.i18n = i18n;
-    ctx.withLocale = i18n.withLocale;
     ctx.pusher = pusher;
     await next();
   });
@@ -77,7 +76,7 @@ export async function createBot(
   bot.api.config.use(apiThrottler());
   bot.api.config.use(autoRetry());
 
-  const commands: Command[] = [Start, Subscribe, Reply, Availability];
+  const commands: Command[] = [Start, Reply, Availability, Subscription];
 
   for (const c of commands) {
     if (c.middleware) {
@@ -91,21 +90,24 @@ export async function createBot(
     }
   }
 
+  // NOTE: it seems that assert messages here are not sent to users
   bot.on("callback_query:data", async (ctx) => {
     const url = new URL(ctx.callbackQuery.data);
     assert(url.protocol === "wehere:", "invalid protocol");
-
-    for (const c of commands) {
-      if (!c.handleCallbackQuery) continue;
-      if (url.pathname !== "/" + c.commandName) continue;
-      return await c.handleCallbackQuery(ctx);
-    }
-
-    ctx.reply("Unknown callback query");
+    assert(url.pathname.startsWith("/"), "invalid pathname");
+    const pathSegments = url.pathname.split("/");
+    const command = commands.find((c) => c.commandName === pathSegments[1]);
+    assert(command, "command not found");
+    assert(command.handleCallbackQuery, "command has no handler");
+    await command.handleCallbackQuery(ctx);
   });
 
   bot.on("message::bot_command", async (ctx) => {
-    ctx.reply("Unknown command");
+    if (ctx.msg.text?.startsWith("/sub")) {
+      ctx.reply("Did you mean /subscription?");
+    } else {
+      ctx.reply("Unknown command");
+    }
   });
 
   bot.on("message", async (ctx) => {

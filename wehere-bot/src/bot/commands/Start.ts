@@ -1,5 +1,5 @@
 import { InlineKeyboard } from "grammy";
-import { getAngelSubscription } from "wehere-bot/src/bot/operations/angel_";
+import { getAngelSubscription } from "wehere-bot/src/bot/operations/angel";
 import { getChatLocale } from "wehere-bot/src/bot/operations/chat_";
 import { getThread_givenMortalChatId } from "wehere-bot/src/bot/operations/thread_";
 import type { Command } from "wehere-bot/src/types";
@@ -9,6 +9,7 @@ import { parseDocs } from "wehere-bot/src/utils/array";
 import { nonNullable } from "wehere-bot/src/utils/assert";
 import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
 import { formatThread, html } from "wehere-bot/src/utils/format";
+import { getWehereUrl } from "wehere-bot/src/utils/parse";
 
 const handleMessage = withDefaultErrorHandler(async (ctx) => {
   const msg0 = nonNullable(ctx.message);
@@ -23,13 +24,13 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
   const greetFirstUser = async () => {
     await ctx.api.sendMessage(
       msg0.chat.id,
-      ctx.withLocale(locale)("html-hello-you-alone", {
+      ctx.i18n.withLocale(locale)("html-hello-you-alone", {
         user: html.strong(html.literal(msg0.from.id)),
       }),
       {
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard().text(
-          ctx.withLocale(locale)("html-make-me-an-admin"),
+          ctx.i18n.withLocale(locale)("html-make-me-an-admin"),
           `wehere:/set_role?user=${msg0.from.id}&role=admin`
         ),
       }
@@ -39,7 +40,7 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
   const greetAdmin = async () => {
     await ctx.api.sendMessage(
       msg0.chat.id,
-      ctx.withLocale(locale)(
+      ctx.i18n.withLocale(locale)(
         "html-hello-admin",
         { user: html.strong(html.literal(msg0.from.id)) } //
       ),
@@ -53,16 +54,16 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
       await ctx.api.sendMessage(
         msg0.chat.id,
         [
-          ctx.withLocale(locale)("html-hello-angel", {
+          ctx.i18n.withLocale(locale)("html-hello-angel", {
             user: html.strong(html.literal(msg0.from.id)),
           }),
-          ctx.withLocale(locale)("html-you-not-subscribing"),
+          ctx.i18n.withLocale(locale)("html-you-not-subscribing"),
         ].join("\n\n"),
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard().text(
-            ctx.withLocale(locale)("text-subscribe"),
-            "wehere:/subscribe"
+            ctx.i18n.withLocale(locale)("text-subscribe"),
+            getWehereUrl(["subscription", "subscribe"])
           ),
         }
       );
@@ -70,17 +71,17 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
       await ctx.api.sendMessage(
         msg0.chat.id,
         [
-          ctx.withLocale(locale)(
+          ctx.i18n.withLocale(locale)(
             "html-hello-angel",
             { user: html.strong(html.literal(msg0.from.id)) } //
           ),
-          ctx.withLocale(locale)("html-you-subscribed-but-replying"),
+          ctx.i18n.withLocale(locale)("html-you-subscribed-but-replying"),
         ].join("\n\n"),
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard().text(
-            ctx.withLocale(locale)("text-unsubscribe"),
-            "wehere:/unsubscribe"
+            ctx.i18n.withLocale(locale)("text-unsubscribe"),
+            getWehereUrl(["subscription", "unsubscribe"])
           ),
         }
       );
@@ -92,11 +93,11 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
       await ctx.api.sendMessage(
         msg0.chat.id,
         [
-          ctx.withLocale(locale)(
+          ctx.i18n.withLocale(locale)(
             "html-hello-angel",
             { user: html.strong(html.literal(msg0.from.id)) } //
           ),
-          ctx.withLocale(locale)(
+          ctx.i18n.withLocale(locale)(
             "html-you-subscribed-and-replying-to",
             { thread: html.strong(html.literal(formatThread(thread))) } //
           ),
@@ -104,11 +105,11 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard().text(
-            ctx.withLocale(locale)(
+            ctx.i18n.withLocale(locale)(
               "text-stop-replying",
               { thread: formatThread(thread) } //
             ),
-            "wehere:/unsubscribe"
+            getWehereUrl(["subscription", "unsubscribe"])
           ),
         }
       );
@@ -119,7 +120,7 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
     const thread = await getThread_givenMortalChatId(ctx, msg0.chat.id);
     await ctx.api.sendMessage(
       msg0.chat.id,
-      ctx.withLocale(locale)(
+      ctx.i18n.withLocale(locale)(
         "html-hello-mortal",
         { user: html.strong(html.literal(formatThread(thread))) } //
       ),
