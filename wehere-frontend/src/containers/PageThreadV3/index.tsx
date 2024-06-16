@@ -4,7 +4,9 @@ import { Box, Flex, Text } from "@radix-ui/themes";
 import cx from "clsx";
 import React from "react";
 import useSWR from "swr";
+import { Result$GetStatus } from "wehere-frontend/src/app/api/get-status/typing";
 import { flex } from "wehere-frontend/src/utils/frontend";
+import { httpGet } from "wehere-frontend/src/utils/shared";
 
 import Composer from "../PageHome/components/Composer";
 import { useThreadDb } from "../PageHome/hooks/useThreadDb";
@@ -31,18 +33,24 @@ export default function PageThreadV3({
   epoch,
 }: Props) {
   const threadDb = useThreadDb();
+
   const swr_threadSecret = useSWR(
     threadDb ? ["thread-db:", "ReadThreadSecret", threadId] : undefined,
     () => threadDb?.get(threadId)
   );
-
   const threadPassword = swr_threadSecret.data?.threadPassword;
   const pusherChannelId = swr_threadSecret.data?.pusherChannelId;
+
+  const swr_GetStatus = useSWR("/api/get-status", (url) =>
+    httpGet(url, { cache: "no-cache" }).then(Result$GetStatus.parse)
+  );
+  const pusherClientConfig = swr_GetStatus.data?.pusherClientConfig;
 
   const api = useThreadLogic({
     threadId,
     threadPassword,
     pusherChannelId,
+    pusherClientConfig,
     epoch,
   });
 

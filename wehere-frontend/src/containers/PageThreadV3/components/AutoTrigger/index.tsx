@@ -35,8 +35,8 @@ export default function AutoTrigger({
   const handleClick = onClick
     ? async () => {
         setBusy(true);
+        setNumTrialsRemaining((value) => Math.max(value - 1, 0));
         try {
-          setNumTrialsRemaining((value) => Math.max(value - 1, 0));
           await Promise.resolve(onClick());
         } finally {
           setBusy(false);
@@ -50,8 +50,15 @@ export default function AutoTrigger({
   });
 
   React.useEffect(() => {
-    if (!isContainerGonnaVisible || busy || disabled || !handleClick) return;
-    handleClick();
+    if (
+      isContainerGonnaVisible &&
+      !busy &&
+      !disabled &&
+      handleClick &&
+      numTrialsRemaining > 0
+    ) {
+      handleClick();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isContainerGonnaVisible,
@@ -72,11 +79,23 @@ export default function AutoTrigger({
       height={height}
     >
       {disabled ? (
-        <Badge className={styles.slowlyAppear} key={1} color="gray" size="2">
+        <Badge
+          className={styles.slowlyAppear}
+          key={1}
+          color="gray"
+          variant="solid"
+          size="2"
+        >
           {labelDisabled}
         </Badge>
       ) : busy ? (
-        <Badge className={styles.slowlyAppear} key={2} color="gray" size="2">
+        <Badge
+          className={styles.slowlyAppear}
+          key={2}
+          color="gray"
+          variant="solid"
+          size="2"
+        >
           {labelBusy}
         </Badge>
       ) : (

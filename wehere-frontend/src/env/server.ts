@@ -6,5 +6,7 @@ export const ServerEnv = z.object({
 });
 
 export const SERVER_ENV = ServerEnv.parse({
-  WEHERE_BACKEND_ORIGIN: process.env.WEHERE_BACKEND_ORIGIN,
+  WEHERE_BACKEND_ORIGIN:
+    process.env.WEHERE_BACKEND_ORIGIN ||
+    decodeURIComponent(process.env.WEHERE_BACKEND_ORIGIN__URLENCODED || ""),
 });
