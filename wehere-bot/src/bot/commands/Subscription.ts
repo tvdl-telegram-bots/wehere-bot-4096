@@ -174,10 +174,10 @@ const handleCallbackQuery = withDefaultErrorHandler(async (ctx) => {
   }
 });
 
-const Subscription: Command = {
+const Subscription = {
   commandName: COMMAND_NAME,
   handleMessage,
   handleCallbackQuery,
-};
+} satisfies Command;
 
 export default Subscription;
