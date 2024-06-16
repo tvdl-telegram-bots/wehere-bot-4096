@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import * as Telegram from "wehere-bot/src/typing/telegram";
 import { z } from "zod";
 
 import {
@@ -12,10 +13,21 @@ import {
   UserId,
 } from "./common";
 
-import * as Telegram from "wehere-bot/src/typing/telegram";
-
 export type PersistentObjectId = z.infer<typeof PersistentObjectId>;
-export const PersistentObjectId = z.instanceof(ObjectId);
+export const PersistentObjectId = z
+  .union([z.string(), z.number(), z.instanceof(ObjectId)])
+  .transform((input) => {
+    switch (typeof input) {
+      case "number":
+        return ObjectId.createFromTime(input);
+      case "string":
+        return ObjectId.createFromHexString(input);
+      case "object":
+        return input;
+      default:
+        throw new TypeError("invalid object id");
+    }
+  });
 
 export type PersistentThread = z.infer<typeof PersistentThread>;
 export const PersistentThread = z.object({
@@ -67,6 +79,7 @@ export const PersistentAngelSubscription = z.object({
   updatedAt: Timestamp.nullish(),
 });
 
+export type PersistentThreadMessage = z.infer<typeof PersistentThreadMessage>;
 export const PersistentThreadMessage = z.object({
   _id: PersistentObjectId,
   threadId: PersistentObjectId,
@@ -76,10 +89,8 @@ export const PersistentThreadMessage = z.object({
   text: z.string().nullish(),
   entities: Telegram.MessageEntity.array().nullish(),
   plainText: z.boolean().nullish(),
-  createdAt: Timestamp.nullish(),
+  createdAt: Timestamp, // unique
 });
-
-export type PersistentThreadMessage = z.infer<typeof PersistentThreadMessage>;
 
 export type PersistentChat = z.infer<typeof PersistentChat>;
 export const PersistentChat = z.object({

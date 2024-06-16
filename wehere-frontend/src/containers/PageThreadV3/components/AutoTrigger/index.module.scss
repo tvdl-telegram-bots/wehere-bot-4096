@@ -1,0 +1,22 @@
+@keyframes slowlyAppear {
+  0% {
+    opacity: 0%;
+  }
+
+  48% {
+    opacity: 0%;
+  }
+
+  52% {
+    opacity: 100%;
+  }
+
+  100% {
+    opacity: 100%;
+  }
+}
+
+.slowlyAppear {
+  animation-duration: 1s;
+  animation-name: slowlyAppear;
+}

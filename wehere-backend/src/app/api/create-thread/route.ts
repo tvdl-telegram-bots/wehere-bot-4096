@@ -1,39 +1,17 @@
-import { MongoClient } from "mongodb";
-import { ENV } from "wehere-backend/src/env";
-import { createPusherSubscription } from "wehere-bot/src/bot/operations/pusher";
-import { createThread } from "wehere-bot/src/bot/operations/thread";
-import { formatErrorAsObject } from "wehere-bot/src/utils/format";
+import { createJsonResponse } from "wehere-backend/src/lib/backend/utils";
+import { withDefaultRouteHandler } from "wehere-backend/src/utils/handler";
+import { createPusherSubscription } from "wehere-bot/src/bot/operations/pusher_";
+import { createThread } from "wehere-bot/src/bot/operations/thread_";
 
-export async function POST(request: Request): Promise<Response> {
-  const client = await MongoClient.connect(ENV.MONGODB_URI);
-  const db = client.db(ENV.MONGODB_DBNAME);
+import type { Result$CreateThread$WehereBackend as Result } from "./typing";
 
-  try {
-    const thread = await createThread({ db }, { platform: "web" });
-    const pusherSubscription = await createPusherSubscription(
-      { db },
-      { threadId: thread._id }
-    );
-
-    return new Response(
-      JSON.stringify({ thread, pusherSubscription }, null, 2), //
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": request.headers.get("Origin") || "",
-        },
-      }
-    );
-  } catch (error) {
-    return new Response(
-      JSON.stringify(formatErrorAsObject(error)), //
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } finally {
-    await client.close();
-  }
-}
+export const POST = withDefaultRouteHandler(async (_request, ctx) => {
+  const thread = await createThread(ctx, { platform: "web" });
+  const pusherSubscription = await createPusherSubscription(ctx, {
+    threadId: thread._id,
+  });
+  return createJsonResponse(200, {
+    thread,
+    pusherSubscription,
+  } satisfies Result);
+});

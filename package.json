@@ -17,7 +17,10 @@
     "eslint": "^9.2.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.34.2",
+    "eslint-plugin-react-hooks": "^5.1.0-rc-fb9a90fa48-20240614",
     "globals": "^15.2.0",
+    "prettier": "^3.3.2",
     "tsconfig-paths": "^4.2.0",
     "typescript-eslint": "^7.8.0"
   },

@@ -14,10 +14,12 @@ import {
 import { assert, nonNullable } from "wehere-bot/src/utils/assert";
 
 import AngelSay from "./commands/AngelSay";
+import Availability from "./commands/Availability";
 import MortalSay from "./commands/MortalSay";
+import Reply from "./commands/Reply";
 import Start from "./commands/Start";
 import Subscribe from "./commands/Subscribe";
-import { getRole } from "./operations/role";
+import { getRole } from "./operations/role_";
 
 export async function createDb(
   env: Env
@@ -75,7 +77,7 @@ export async function createBot(
   bot.api.config.use(apiThrottler());
   bot.api.config.use(autoRetry());
 
-  const commands: Command[] = [Start, Subscribe];
+  const commands: Command[] = [Start, Subscribe, Reply, Availability];
 
   for (const c of commands) {
     if (c.middleware) {

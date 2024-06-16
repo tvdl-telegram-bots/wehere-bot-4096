@@ -1,7 +1,7 @@
 import { InlineKeyboard } from "grammy";
-import { getAngelSubscription } from "wehere-bot/src/bot/operations/angel";
-import { getChatLocale } from "wehere-bot/src/bot/operations/chat";
-import { getThread_givenMortalChatId } from "wehere-bot/src/bot/operations/thread";
+import { getAngelSubscription } from "wehere-bot/src/bot/operations/angel_";
+import { getChatLocale } from "wehere-bot/src/bot/operations/chat_";
+import { getThread_givenMortalChatId } from "wehere-bot/src/bot/operations/thread_";
 import type { Command } from "wehere-bot/src/types";
 import type { Role } from "wehere-bot/src/typing/common";
 import { PersistentRole, PersistentThread } from "wehere-bot/src/typing/server";

@@ -1,12 +1,6 @@
 import { InlineKeyboard } from "grammy";
 import type { Message } from "grammy/types";
 import type { Db, WithoutId } from "mongodb";
-
-import { getAngelSubscription } from "../operations/angel";
-import { getChatLocale } from "../operations/chat";
-import { createMessage, notifyNewMessage } from "../operations/message";
-import { getThread_givenThreadId } from "../operations/thread";
-
 import type { BotContext, Command } from "wehere-bot/src/types";
 import type {
   PersistentObjectId,
@@ -15,6 +9,11 @@ import type {
 import { nonNullable } from "wehere-bot/src/utils/assert";
 import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
 import { isMessagePlainText } from "wehere-bot/src/utils/format";
+
+import { getAngelSubscription } from "../operations/angel_";
+import { getChatLocale } from "../operations/chat_";
+import { createMessage, notifyNewMessage } from "../operations/message_";
+import { getThread_givenThreadId } from "../operations/thread_";
 
 function isMessageTooComplexForWeb(msg0: Message) {
   return msg0.entities?.some(
@@ -47,11 +46,11 @@ async function sayYouAreNotSubscribing(ctx: BotContext) {
 
   await ctx.api.sendMessage(
     msg0.chat.id,
-    ctx.withLocale(locale)("html-not-subscribing"),
+    ctx.i18n.withLocale(locale)("html-not-subscribing"),
     {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard().text(
-        ctx.withLocale(locale)("text-subscribe"),
+        ctx.i18n.withLocale(locale)("text-subscribe"),
         `wehere:/subscribe`
       ),
     }

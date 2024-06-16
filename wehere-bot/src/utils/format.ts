@@ -1,13 +1,12 @@
 import { HttpError } from "grammy";
 import type { Message } from "grammy/types";
 import { escape } from "html-escaper";
+import type { PersistentThread } from "wehere-bot/src/typing/server";
 
 import { notNullish } from "./array";
 
-import type { PersistentThread } from "wehere-bot/src/typing/server";
-
 export function formatThread(thread: PersistentThread) {
-  return [thread.emoji || "❓", thread.name || "-"].join(" ");
+  return [thread.emoji || "❓", thread.name || "-"].join("\u00a0"); // U+00A0 No-Break Space (NBSP)
 }
 
 export function formatErrorShallowly(error: unknown) {

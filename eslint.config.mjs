@@ -1,32 +1,39 @@
-/* eslint "@stylistic/js/quote-props": ["warn", "always"] */
-
 import globals from "globals";
 import EslintJs from "@eslint/js";
 import TypescriptEslint from "typescript-eslint";
 import EslintPluginImport from "eslint-plugin-import";
-import EslintPluginJs from "@stylistic/eslint-plugin-js";
+import EslintPluginReact_Configs_Recommended from "eslint-plugin-react/configs/recommended.js";
+import EslintPluginReactHooks from "eslint-plugin-react-hooks";
 
 /** @type {import('eslint').Linter.Config} */
-// prettier-ignore
 export default [
   EslintJs.configs.recommended,
   ...TypescriptEslint.configs.recommended,
   {
-    "languageOptions": {
-      "globals": { ...globals.browser, ...globals.node },
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
     },
   },
   {
-    "files": ["**/*.ts"],
-    "plugins": { "import": EslintPluginImport },
-    "rules": {
+    files: ["**/*.ts", "**/*.tsx"],
+    ...EslintPluginReact_Configs_Recommended,
+    settings: { react: { version: "detect" } },
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    plugins: {
+      "import": EslintPluginImport,
+      "react-hooks": EslintPluginReactHooks,
+    },
+    rules: {
+      ...EslintPluginReactHooks.configs.recommended.rules,
       "import/order": [
         "error",
         {
           "newlines-between": "always",
           "alphabetize": {
-            "order": "asc",
-            "caseInsensitive": true,
+            order: "asc",
+            caseInsensitive: true,
           },
         },
       ],
@@ -34,20 +41,14 @@ export default [
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
-          "varsIgnorePattern": "^_",
-          "argsIgnorePattern": "^_",
+          varsIgnorePattern: "^_",
+          argsIgnorePattern: "^_",
         },
       ],
       "@typescript-eslint/consistent-type-imports": "warn",
     },
   },
   {
-    "files": ["**/*.mjs"],
-    "plugins": {
-      "@stylistic/js": EslintPluginJs,
-    },
-  },
-  {
-    "ignores": ["**/dist"],
+    ignores: ["**/dist"],
   },
 ];

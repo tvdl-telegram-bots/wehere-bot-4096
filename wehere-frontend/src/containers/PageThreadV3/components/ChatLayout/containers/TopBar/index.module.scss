@@ -1,0 +1,10 @@
+.container {
+  padding: var(--space-2);
+}
+
+.avatar {
+  border-radius: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 1px var(--black-a5);
+}
