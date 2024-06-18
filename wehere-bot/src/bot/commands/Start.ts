@@ -13,6 +13,7 @@ import { getWehereUrl } from "wehere-bot/src/utils/parse";
 
 import { getRole } from "../operations/role";
 
+import Availability from "./Availability";
 import Subscription from "./Subscription";
 
 // TODO: add set_role
@@ -46,11 +47,13 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
   switch (role) {
     case "admin": {
       await sayHelloAdmin(ctx, from.id);
+      await Availability.handleMessage(ctx);
       await Subscription.handleMessage(ctx);
       break;
     }
     case "angel": {
       await sayHelloAngel(ctx, from.id);
+      await Availability.handleMessage(ctx);
       await Subscription.handleMessage(ctx);
       break;
     }
