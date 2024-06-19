@@ -29,6 +29,7 @@ export const GET = withDefaultRouteHandler(async (request) => {
     messages: data.messages.map((m) => ({
       direction: m.direction,
       text: m.text,
+      entities: m.entities,
       createdAt: m.createdAt,
     })),
   };

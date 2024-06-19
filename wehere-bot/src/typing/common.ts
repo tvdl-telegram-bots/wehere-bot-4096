@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import * as Telegram from "./telegram";
+
 export type Env = z.infer<typeof Env>;
 export const Env = z.object({
   TELEGRAM_BOT_TOKEN: z.string(),
@@ -79,5 +81,6 @@ export type NewMessage$PusherEvent = z.infer<typeof NewMessage$PusherEvent>;
 export const NewMessage$PusherEvent = z.object({
   direction: MessageDirection,
   text: z.string().nullish(),
+  entities: Telegram.MessageEntity.array().nullish(),
   createdAt: Timestamp,
 });

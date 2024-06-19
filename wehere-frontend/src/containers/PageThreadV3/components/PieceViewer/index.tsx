@@ -2,8 +2,10 @@ import { Box, Flex } from "@radix-ui/themes";
 import cx from "clsx";
 import React from "react";
 import type { MessageDirection } from "wehere-bot/src/typing/common";
+import type * as Telegram from "wehere-bot/src/typing/telegram";
 
 import { getPieceDirection, type Piece } from "../../objects/Piece";
+import RichTextViewer from "../RichTextViewer";
 
 import styles from "./index.module.scss";
 
@@ -24,7 +26,11 @@ function Root({ className, style, piece }: Props$Root) {
 
   return (
     <Box className={cx(styles.Root, className)} style={style}>
-      <Balloon direction={direction} text={piece.payload.text} />
+      <Balloon
+        direction={direction}
+        text={piece.payload.text}
+        entities={piece.payload.entities}
+      />
     </Box>
   );
 }
@@ -34,9 +40,16 @@ type Props$Balloon = {
   style?: React.CSSProperties;
   direction: MessageDirection;
   text: string | null | undefined;
+  entities: Telegram.MessageEntity[] | null | undefined;
 };
 
-function Balloon({ className, style, direction, text }: Props$Balloon) {
+function Balloon({
+  className,
+  style,
+  direction,
+  text,
+  entities,
+}: Props$Balloon) {
   const DIRECTION: Record<MessageDirection, string> = {
     from_angel: styles.direction_fromAngel,
     from_mortal: styles.direction_fromMortal,
@@ -55,7 +68,12 @@ function Balloon({ className, style, direction, text }: Props$Balloon) {
             : undefined
       }
     >
-      <Box className={styles.content}>{text}</Box>
+      <RichTextViewer
+        className={styles.content}
+        text={text || ""}
+        entities={entities || []}
+        unstyled={["b", "i", "p", "u"]}
+      />
     </Flex>
   );
 }

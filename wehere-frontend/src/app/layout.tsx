@@ -1,6 +1,8 @@
 import { Theme } from "@radix-ui/themes";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import React from "react";
+
 import "normalize.css";
 import "@radix-ui/themes/styles.css";
 import "./global.css";

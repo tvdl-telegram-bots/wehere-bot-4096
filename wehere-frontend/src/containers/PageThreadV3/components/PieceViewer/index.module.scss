@@ -15,5 +15,13 @@
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-3);
     white-space: pre-wrap;
+
+    p {
+      margin: 0;
+    }
+
+    b {
+      font-weight: 600;
+    }
   }
 }

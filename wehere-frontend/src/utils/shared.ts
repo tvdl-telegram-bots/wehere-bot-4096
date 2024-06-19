@@ -40,7 +40,7 @@ export async function httpGet(
 ): Promise<unknown> {
   const response = await fetch(url, {
     signal: options.signal,
-    cache: options.cache,
+    cache: options.cache || "no-cache",
   });
   if (!response.ok) {
     const text = await response.text().catch(() => undefined);

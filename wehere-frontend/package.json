@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "npx eslint src/",
+    "lint:fix": "npx eslint src/ --fix"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
@@ -17,6 +19,10 @@
     "milligram": "^1.4.1",
     "next": "14.2.3",
     "normalize.css": "^8.0.1",
+    "prosemirror-model": "^1.21.1",
+    "prosemirror-state": "^1.4.3",
+    "prosemirror-transform": "^1.9.0",
+    "prosemirror-view": "^1.33.8",
     "pusher-js": "^8.4.0-rc2",
     "react": "^18",
     "react-dom": "^18",
