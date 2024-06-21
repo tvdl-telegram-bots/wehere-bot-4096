@@ -39,7 +39,7 @@ export type ReplyHtml = RawApi["sendMessage"] extends (
     ) => Promise<R>
   : never;
 
-type InjectedContext$WithTranslate = {
+export type InjectedContext$WithTranslate = {
   t: Translate;
   replyHtml: ReplyHtml;
 };
@@ -56,10 +56,8 @@ export function withReplyHtml<OtherArgs extends unknown[]>(
     const t = ctx.i18n.withLocale(locale);
     const replyHtml: ReplyHtml = (text, other) =>
       ctx.api.sendMessage(chat.id, text, { parse_mode: "HTML", ...other });
-    const newContext = Object.assign(
-      { ...ctx } as BotContext,
-      { t, replyHtml } //
+    await Promise.resolve(
+      handler(Object.assign(ctx, { t, replyHtml }), ...otherArgs)
     );
-    await Promise.resolve(handler(newContext, ...otherArgs));
   };
 }

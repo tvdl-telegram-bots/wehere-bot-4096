@@ -48,13 +48,13 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
     case "admin": {
       await sayHelloAdmin(ctx, from.id);
       await Availability.handleMessage(ctx);
-      await Subscription.handleMessage(ctx);
+      await Subscription.handleMessage?.(ctx);
       break;
     }
     case "angel": {
       await sayHelloAngel(ctx, from.id);
       await Availability.handleMessage(ctx);
-      await Subscription.handleMessage(ctx);
+      await Subscription.handleMessage?.(ctx);
       break;
     }
     case "mortal": {
