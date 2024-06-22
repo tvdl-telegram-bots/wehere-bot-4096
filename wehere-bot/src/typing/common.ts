@@ -42,6 +42,9 @@ export type Role = z.infer<typeof Role>;
 export const Locale = z.enum(["en", "vi"]);
 export type Locale = z.infer<typeof Locale>;
 
+export type Entities = z.infer<typeof Entities>;
+export const Entities = Telegram.MessageEntity.array();
+
 export type ImageHandle = z.infer<typeof ImageHandle>;
 export const ImageHandle = z.object({
   id: z.string(),
@@ -89,4 +92,12 @@ export type TemplateKey = z.infer<typeof TemplateKey>;
 export const TemplateKey = z.enum([
   "auto_reply_when_available",
   "auto_reply_when_unavailable",
+  "starting_question_1_prompt",
+  "starting_question_1_answer",
+  "starting_question_2_prompt",
+  "starting_question_2_answer",
+  "starting_question_3_prompt",
+  "starting_question_3_answer",
+  "starting_question_4_prompt",
+  "starting_question_4_answer",
 ]);

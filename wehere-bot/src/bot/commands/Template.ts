@@ -34,12 +34,28 @@ async function checkAngelRole(ctx: BotContext & InjectedContext$WithTranslate) {
 function formatKey(
   ctx: InjectedContext$WithTranslate,
   key: PersistentTemplate["key"]
-) {
+): string {
   switch (key) {
     case "auto_reply_when_available":
       return ctx.t("text-template-auto-reply-when-available");
     case "auto_reply_when_unavailable":
       return ctx.t("text-template-auto-reply-when-unavailable");
+    case "starting_question_1_prompt":
+      return ctx.t("text-template-starting-question-1-prompt");
+    case "starting_question_1_answer":
+      return ctx.t("text-template-starting-question-1-answer");
+    case "starting_question_2_prompt":
+      return ctx.t("text-template-starting-question-2-prompt");
+    case "starting_question_2_answer":
+      return ctx.t("text-template-starting-question-2-answer");
+    case "starting_question_3_prompt":
+      return ctx.t("text-template-starting-question-3-prompt");
+    case "starting_question_3_answer":
+      return ctx.t("text-template-starting-question-3-answer");
+    case "starting_question_4_prompt":
+      return ctx.t("text-template-starting-question-4-prompt");
+    case "starting_question_4_answer":
+      return ctx.t("text-template-starting-question-4-answer");
   }
 }
 
@@ -76,6 +92,7 @@ $.route("/", async (ctx) => {
 });
 
 $.route("/select_template_key", async (ctx) => {
+  await checkAngelRole(ctx);
   const url = nonNullable(ctx.url);
   const key = TemplateKey.parse(url.searchParams.get("key"));
   const template = await readTemplate(ctx, key);
@@ -97,6 +114,7 @@ $.route("/select_template_key", async (ctx) => {
 });
 
 $.route("/delete_template_key", async (ctx) => {
+  await checkAngelRole(ctx);
   const url = nonNullable(ctx.url);
   const key = TemplateKey.parse(url.searchParams.get("key"));
   await deleteTemplate(ctx, key);
@@ -106,6 +124,16 @@ $.route("/delete_template_key", async (ctx) => {
       html.b(html.literal(formatKey(ctx, key))),
     ].join("\n")
   );
+});
+
+$.route("/reply_mortal", async (ctx) => {
+  const url = nonNullable(ctx.url);
+  const key = TemplateKey.parse(url.searchParams.get("key"));
+  const template = await readTemplate(ctx, key);
+  assert(template, "template not found");
+  await ctx.api.sendMessage(nonNullable(ctx.chat).id, template.text || "", {
+    entities: template.entities || undefined,
+  });
 });
 
 $.route("/select_dead_message", async (ctx) => {
@@ -132,6 +160,7 @@ $.route("/select_dead_message", async (ctx) => {
 });
 
 $.route("/use_dead_message", async (ctx) => {
+  await checkAngelRole(ctx);
   const url = nonNullable(ctx.url);
   const deadMessageId = PersistentObjectId.parse(url.searchParams.get("id"));
   const key = PersistentTemplate.shape.key.parse(url.searchParams.get("key"));

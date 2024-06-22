@@ -1,17 +1,19 @@
 import { InlineKeyboard } from "grammy";
 import { getThread_givenMortalChatId } from "wehere-bot/src/bot/operations/thread_";
 import type { Command } from "wehere-bot/src/types";
-import type { UserId } from "wehere-bot/src/typing/common";
+import type { TemplateKey, UserId } from "wehere-bot/src/typing/common";
 import type { PersistentThread } from "wehere-bot/src/typing/server";
+import { doesExist } from "wehere-bot/src/utils/array";
 import { nonNullable } from "wehere-bot/src/utils/assert";
 import {
   withDefaultErrorHandler,
   withReplyHtml,
 } from "wehere-bot/src/utils/error";
 import { formatThread, html } from "wehere-bot/src/utils/format";
-import { getWehereUrl } from "wehere-bot/src/utils/parse";
+import { getWehereTinyurl, getWehereUrl } from "wehere-bot/src/utils/parse";
 
 import { getRole } from "../operations/role";
+import { readTemplate } from "../operations/template";
 
 import Availability from "./Availability";
 import Subscription from "./Subscription";
@@ -34,11 +36,32 @@ const sayHelloAngel = withReplyHtml((ctx, userId: UserId) =>
   ctx.replyHtml(ctx.t("html-hello-angel", { user: html.literal(userId) }))
 );
 
-const sayHelloMortal = withReplyHtml((ctx, thread: PersistentThread) =>
-  ctx.replyHtml(
-    ctx.t("html-hello-mortal", { user: html.literal(formatThread(thread)) })
-  )
-);
+const sayHelloMortal = withReplyHtml(async (ctx, thread: PersistentThread) => {
+  const toButton = async (promptKey: TemplateKey, answerKey: TemplateKey) => {
+    const template = await readTemplate(ctx, promptKey);
+    if (!template?.text) return undefined;
+    const url = await getWehereTinyurl(ctx, "template", "/reply_mortal", {
+      key: answerKey,
+    });
+    return InlineKeyboard.text(template.text, url);
+  };
+
+  const buttons = await Promise.all([
+    toButton("starting_question_1_prompt", "starting_question_1_answer"),
+    toButton("starting_question_2_prompt", "starting_question_2_answer"),
+    toButton("starting_question_3_prompt", "starting_question_3_answer"),
+    toButton("starting_question_4_prompt", "starting_question_4_answer"),
+  ]).then((array) => array.filter(doesExist));
+
+  await ctx.replyHtml(
+    ctx.t("html-hello-mortal", { user: html.literal(formatThread(thread)) }),
+    {
+      reply_markup: buttons.length
+        ? InlineKeyboard.from(buttons.map((b) => [b]))
+        : undefined,
+    }
+  );
+});
 
 const handleMessage = withDefaultErrorHandler(async (ctx) => {
   const from = nonNullable(ctx.from);
