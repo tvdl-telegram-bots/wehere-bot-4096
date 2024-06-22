@@ -5,7 +5,7 @@ import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
 import { parseCallbackQueryData } from "wehere-bot/src/utils/parse";
 import { z } from "zod";
 
-import { getAvailability, setAvailability } from "../operations/availability_";
+import { getAvailability, setAvailability } from "../operations/availability";
 import { getChatLocale } from "../operations/chat_";
 import { getRole } from "../operations/role";
 

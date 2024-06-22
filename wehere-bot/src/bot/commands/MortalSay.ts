@@ -9,7 +9,7 @@ import { nonNullable } from "wehere-bot/src/utils/assert";
 import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
 import { isMessagePlainText } from "wehere-bot/src/utils/format";
 
-import { autoReply, isAutoReplyNeeded } from "../operations/availability_";
+import { autoReply, isAutoReplyNeeded } from "../operations/availability";
 import { getChatLocale } from "../operations/chat_";
 import { createMessage, notifyNewMessage } from "../operations/message";
 import { getThread_givenMortalChatId } from "../operations/thread_";

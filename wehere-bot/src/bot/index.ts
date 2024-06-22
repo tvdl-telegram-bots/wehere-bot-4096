@@ -148,6 +148,7 @@ export async function createBot(
   });
 
   bot.catch((err) => {
+    if (err.error === false) return;
     const ctx = err.ctx;
     console.error(`Error while handling update ${ctx.update.update_id}:`);
     const e = err.error;

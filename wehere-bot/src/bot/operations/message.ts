@@ -74,8 +74,10 @@ async function notifyMortals(
           message.originChatId,
           message.originMessageId
         );
-      } else if (message.plainText && message.text) {
-        await ctx.api.sendMessage(sub.chatId, message.text);
+      } else if (message.text) {
+        await ctx.api.sendMessage(sub.chatId, message.text, {
+          entities: message.entities || undefined,
+        });
       } else {
         throw new Error("invalid message", { cause: { message } });
       }
@@ -134,8 +136,21 @@ async function notifyAngels(
         sub.chatId,
         message.originChatId,
         message.originMessageId,
-        { reply_to_message_id: msg1.message_id }
+        { reply_parameters: { message_id: msg1.message_id } }
       );
+    } else if (message.text) {
+      const msg1 = await ctx.api.sendMessage(
+        sub.chatId,
+        subject,
+        { parse_mode: "HTML", reply_markup: keyboard } //
+      );
+
+      await ctx.api.sendMessage(sub.chatId, message.text, {
+        parse_mode: "HTML",
+        reply_markup: keyboard,
+        entities: message.entities || undefined,
+        reply_parameters: { message_id: msg1.message_id },
+      });
     } else {
       throw new Error("invalid message", { cause: { message } });
     }

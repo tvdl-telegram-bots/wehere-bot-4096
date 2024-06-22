@@ -1,7 +1,7 @@
 import { ENV } from "wehere-backend/src/env";
 import { createJsonResponse } from "wehere-backend/src/lib/backend/utils";
 import { withDefaultRouteHandler } from "wehere-backend/src/utils/handler";
-import { getAvailability } from "wehere-bot/src/bot/operations/availability_";
+import { getAvailability } from "wehere-bot/src/bot/operations/availability";
 import { PusherClientConfig } from "wehere-bot/src/typing/common";
 
 import type { Result$GetStatus$WehereBackend as Result } from "./typing";

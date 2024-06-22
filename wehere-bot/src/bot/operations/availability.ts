@@ -9,6 +9,7 @@ import {
 } from "wehere-bot/src/typing/server";
 
 import { createMessage, notifyNewMessage } from "./message";
+import { getTemplate } from "./template";
 
 type EssentialContext = Pick<BotContext, "db" | "api" | "i18n" | "pusher">;
 
@@ -49,24 +50,32 @@ export async function getAvailability(ctx: {
   }
 }
 
-function composeMessage(
+async function composeMessage(
   ctx: EssentialContext,
   {
     threadId,
     locale,
     available,
   }: { threadId: PersistentObjectId; locale: Locale; available: boolean }
-): WithoutId<PersistentThreadMessage> {
+): Promise<WithoutId<PersistentThreadMessage>> {
+  const customTemplate = available
+    ? await getTemplate(ctx, "auto_reply_when_available")
+    : await getTemplate(ctx, "auto_reply_when_unavailable");
+  const text = customTemplate
+    ? customTemplate.text
+    : available
+      ? ctx.i18n.withLocale(locale)("html-auto-reply-when-available")
+      : ctx.i18n.withLocale(locale)("html-auto-reply-when-unavailable");
+  const entities = customTemplate?.entities || undefined;
+
   return {
     threadId,
     direction: "from_angel",
     originChatId: null,
     originMessageId: null,
-    text: available
-      ? ctx.i18n.withLocale(locale)("html-auto-reply-when-available")
-      : ctx.i18n.withLocale(locale)("html-auto-reply-when-unavailable"),
-    entities: null,
-    plainText: true,
+    text,
+    entities,
+    plainText: !!text && text.length <= 2048 && !entities?.length,
     createdAt: Date.now(),
   };
 }
@@ -108,7 +117,7 @@ export async function autoReply(
   { threadId, locale }: { threadId: PersistentObjectId; locale: Locale }
 ) {
   const availability = await getAvailability(ctx);
-  const message = composeMessage(ctx, {
+  const message = await composeMessage(ctx, {
     threadId,
     locale,
     available: availability.value,
