@@ -11,7 +11,7 @@ import { isMessagePlainText } from "wehere-bot/src/utils/format";
 
 import { autoReply, isAutoReplyNeeded } from "../operations/availability_";
 import { getChatLocale } from "../operations/chat_";
-import { createMessage, notifyNewMessage } from "../operations/message_";
+import { createMessage, notifyNewMessage } from "../operations/message";
 import { getThread_givenMortalChatId } from "../operations/thread_";
 
 function composeMessage({

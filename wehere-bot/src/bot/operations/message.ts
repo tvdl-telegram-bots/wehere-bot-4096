@@ -5,7 +5,10 @@ import type {
   ChatId,
   NewMessage$PusherEvent,
 } from "wehere-bot/src/typing/common";
-import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
+import type {
+  PersistentDeadMessage,
+  PersistentThreadMessage,
+} from "wehere-bot/src/typing/server";
 import {
   PersistentAngelSubscription,
   PersistentMortalSubscription,
@@ -177,4 +180,12 @@ export async function notifyNewMessage(
     notifyAngels(ctx, message),
     notifyPusher(ctx, message),
   ]);
+}
+
+export async function createDeadMessage(
+  ctx: { db: Db },
+  { message }: { message: WithoutId<PersistentDeadMessage> }
+): Promise<PersistentDeadMessage> {
+  const ack = await ctx.db.collection("dead_message").insertOne(message);
+  return { _id: ack.insertedId, ...message };
 }

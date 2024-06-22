@@ -13,7 +13,4 @@ TODO: IntroConvo
 TODO: RichText display with prosemirror
 TODO: info page
 TODO: a mechanism to authenticate
-TODO: integrate AngelActionOnMessage
-TODO: change PersistentAutoReplyMessage to PersistentPreparedMessage { message, purpose }
-TODO: think about removing PersistentChat or move AngelActionOnMessage to PersistentChat
-TODO: actually, when angel says somthing and not replying to anyone, ask angel what do you want with this message. By doing so, we avoid AngelActionOnMessage. Make threadId in PersistentThreadMessage optional.
+TODO: migrate to getWehereUrlV2

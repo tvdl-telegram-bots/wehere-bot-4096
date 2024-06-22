@@ -3,7 +3,7 @@ import { apiThrottler } from "@grammyjs/transformer-throttler";
 import { Fluent } from "@moebius/fluent";
 import { Api, Bot, GrammyError, HttpError } from "grammy";
 import type { Db } from "mongodb";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import Pusher from "pusher";
 import type { BotContext, Command, I18n } from "wehere-bot/src/types";
 import {
@@ -13,12 +13,15 @@ import {
 } from "wehere-bot/src/typing/common";
 import { assert, nonNullable } from "wehere-bot/src/utils/assert";
 
+import { PersistentTinyurl } from "../typing/server";
+
 import AngelSay from "./commands/AngelSay";
 import Availability from "./commands/Availability";
 import MortalSay from "./commands/MortalSay";
 import Reply from "./commands/Reply";
 import Start from "./commands/Start";
 import Subscription from "./commands/Subscription";
+import Template from "./commands/Template";
 import { getRole } from "./operations/role";
 
 export async function createDb(
@@ -76,7 +79,13 @@ export async function createBot(
   bot.api.config.use(apiThrottler());
   bot.api.config.use(autoRetry());
 
-  const commands: Command[] = [Start, Reply, Availability, Subscription];
+  const commands: Command[] = [
+    Start,
+    Reply,
+    Availability,
+    Subscription,
+    Template,
+  ];
 
   for (const c of commands) {
     if (c.middleware) {
@@ -92,14 +101,32 @@ export async function createBot(
 
   // NOTE: it seems that assert messages here are not sent to users
   bot.on("callback_query:data", async (ctx) => {
-    const url = new URL(ctx.callbackQuery.data);
+    let url = new URL(ctx.callbackQuery.data);
+
+    if (url.protocol === "wehere+tinyurl:") {
+      const resolvedUrl = await ctx.db
+        .collection("tinyurl")
+        .findOne(ObjectId.createFromHexString(url.host))
+        .then((doc) => PersistentTinyurl.parse(doc).url);
+      url = new URL(resolvedUrl);
+    }
+
     assert(url.protocol === "wehere:", "invalid protocol");
-    assert(url.pathname.startsWith("/"), "invalid pathname");
-    const pathSegments = url.pathname.split("/");
-    const command = commands.find((c) => c.commandName === pathSegments[1]);
-    assert(command, "command not found");
-    assert(command.handleCallbackQuery, "command has no handler");
-    await command.handleCallbackQuery(ctx);
+    ctx.url = url;
+
+    if (url.host) {
+      const command = commands.find((c) => c.commandName === url.host);
+      assert(command, "command not found");
+      assert(command.handleCallbackQuery, "command has no handler");
+      await command.handleCallbackQuery(ctx);
+    } else {
+      assert(url.pathname.startsWith("/"), "invalid pathname");
+      const pathSegments = url.pathname.split("/");
+      const command = commands.find((c) => c.commandName === pathSegments[1]);
+      assert(command, "command not found");
+      assert(command.handleCallbackQuery, "command has no handler");
+      await command.handleCallbackQuery(ctx);
+    }
   });
 
   bot.on("message::bot_command", async (ctx) => {
@@ -116,7 +143,7 @@ export async function createBot(
     if (role === "mortal") {
       return await MortalSay.handleMessage(ctx);
     } else {
-      return await AngelSay.handleMessage(ctx);
+      return await AngelSay.handleMessage?.(ctx);
     }
   });
 

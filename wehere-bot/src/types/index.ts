@@ -11,6 +11,7 @@ export type BotContext = Context & {
   db: Db;
   i18n: I18n;
   pusher: Pusher;
+  url?: URL;
 };
 
 export type Command = {

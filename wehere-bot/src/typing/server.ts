@@ -69,6 +69,29 @@ export const PersistentMortalSubscription = z.object({
   updatedAt: Timestamp.nullish(),
 });
 
+export type PersistentTinyurl = z.infer<typeof PersistentTinyurl>;
+export const PersistentTinyurl = z.object({
+  _id: PersistentObjectId,
+  url: z.string(),
+});
+
+export type PersistentTemplate = z.infer<typeof PersistentTemplate>;
+export const PersistentTemplate = z.object({
+  _id: PersistentObjectId,
+  key: z.enum(["auto_reply_when_available", "auto_reply_when_unavailable"]),
+  text: z.string().nullish(),
+  entities: Telegram.MessageEntity.array().nullish(),
+  createdAt: Timestamp.nullish(),
+});
+
+export type PersistentDeadMessage = z.infer<typeof PersistentDeadMessage>;
+export const PersistentDeadMessage = z.object({
+  _id: PersistentObjectId,
+  text: z.string().nullish(),
+  entities: Telegram.MessageEntity.array().nullish(),
+  createdAt: Timestamp.nullish(),
+});
+
 export type PersistentAngelSubscription = z.infer<
   typeof PersistentAngelSubscription
 >;

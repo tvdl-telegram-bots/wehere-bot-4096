@@ -1,73 +1,81 @@
 import { InlineKeyboard } from "grammy";
 import type { Message } from "grammy/types";
-import type { Db, WithoutId } from "mongodb";
-import type { Command } from "wehere-bot/src/types";
+import type { ObjectId, WithoutId } from "mongodb";
+import type { BotContext$CommandBuilder } from "wehere-bot/src/classes/CommandBuilder";
+import { CommandBuilder } from "wehere-bot/src/classes/CommandBuilder";
 import type {
-  PersistentObjectId,
+  PersistentAngelSubscription,
   PersistentThreadMessage,
 } from "wehere-bot/src/typing/server";
 import { nonNullable } from "wehere-bot/src/utils/assert";
-import {
-  withDefaultErrorHandler,
-  withReplyHtml,
-} from "wehere-bot/src/utils/error";
 import { isMessagePlainText } from "wehere-bot/src/utils/format";
-import { getWehereUrl } from "wehere-bot/src/utils/parse";
+import { getWehereTinyurl, getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 
 import { getAngelSubscription } from "../operations/angel";
-import { createMessage, notifyNewMessage } from "../operations/message_";
+import {
+  createDeadMessage,
+  createMessage,
+  notifyNewMessage,
+} from "../operations/message";
 import { getThread_givenThreadId } from "../operations/thread_";
 
-function isMessageTooComplexForWeb(msg0: Message) {
-  return msg0.entities?.some(
-    (ent) =>
-      ![
-        "url",
-        "bold",
-        "italic",
-        "underline",
-        "strikethrough",
-        "code",
-        "pre",
-        "text_link",
-      ].includes(ent.type)
-  );
-}
+const $ = new CommandBuilder("angel_say");
 
-async function isMortalUsingWeb(
-  ctx: { db: Db },
-  { threadId }: { threadId: PersistentObjectId }
-) {
-  const thread = await getThread_givenThreadId(ctx, threadId) //
-    .catch(() => undefined);
-  return thread?.platform === "web";
-}
-
-const sayYouAreNotSubscribing = withReplyHtml((ctx) =>
-  ctx.replyHtml(ctx.t("html-you-not-subscribing"), {
+async function checkAngelSubscription(
+  ctx: BotContext$CommandBuilder
+): Promise<PersistentAngelSubscription> {
+  const chat = nonNullable(ctx.chat);
+  const angelSubscription = await getAngelSubscription(ctx, {
+    chatId: chat.id,
+  });
+  if (angelSubscription) return angelSubscription;
+  await ctx.replyHtml(ctx.t("html-you-not-subscribing"), {
     reply_markup: new InlineKeyboard().text(
       ctx.t("text-subscribe"),
-      getWehereUrl(["subscription", "subscribe"])
+      getWehereUrlV2("subscription", "/subscribe")
     ),
-  })
-);
+  });
+  throw false;
+}
 
-const sayYouAreNotReplyingAnyone = withReplyHtml((ctx) =>
-  ctx.replyHtml(ctx.t("html-not-replying-anyone"))
-);
+async function checkTargetThreadId(
+  ctx: BotContext$CommandBuilder,
+  angelSubscription: PersistentAngelSubscription
+): Promise<ObjectId> {
+  const targetThreadId = angelSubscription.replyingToThreadId;
+  if (targetThreadId) return targetThreadId;
 
-const sayYouAreSendingComplexMessage = withReplyHtml((ctx) =>
-  ctx.replyHtml(ctx.t("html-can-only-send-plaintext"))
-);
+  const msg0 = nonNullable(ctx.message);
+  const persistentDeadMessage = await createDeadMessage(ctx, {
+    message: {
+      text: msg0.text,
+      entities: msg0.entities,
+      createdAt: Date.now(),
+    },
+  });
+
+  await ctx.replyHtml(ctx.t("html-not-replying-anyone"));
+
+  await ctx.replyHtml(ctx.t("html-below-actions-dead-message"), {
+    reply_parameters: { message_id: msg0.message_id },
+    reply_markup: new InlineKeyboard().text(
+      "Dùng làm mẫu",
+      await getWehereTinyurl(ctx, "template", "/from_dead_message", {
+        id: persistentDeadMessage._id,
+      })
+    ),
+  });
+  throw false;
+}
 
 function composeMessage({
   threadId,
   msg0: msg0,
 }: {
-  threadId: PersistentObjectId;
+  threadId: ObjectId;
   msg0: Message;
 }): WithoutId<PersistentThreadMessage> {
-  const message: WithoutId<PersistentThreadMessage> = {
+  return {
     threadId,
     direction: "from_angel",
     originChatId: msg0.chat.id,
@@ -77,39 +85,42 @@ function composeMessage({
     plainText: isMessagePlainText(msg0),
     createdAt: Date.now(),
   };
-
-  return message;
 }
 
-const handleMessage = withDefaultErrorHandler(async (ctx) => {
+const WEB_FRIENDLY_ENTITIES = [
+  "url",
+  "bold",
+  "italic",
+  "underline",
+  "strikethrough",
+  "code",
+  "pre",
+  "text_link",
+];
+
+async function warnIfMessageTooComplexForWeb(
+  ctx: BotContext$CommandBuilder,
+  threadId: ObjectId
+) {
   const msg0 = nonNullable(ctx.message);
-  const angelSub = await getAngelSubscription(ctx, { chatId: msg0.chat.id });
-
-  if (!angelSub) {
-    await sayYouAreNotSubscribing(ctx);
+  if (!msg0.entities) return;
+  if (msg0.entities.every((ent) => WEB_FRIENDLY_ENTITIES.includes(ent.type)))
     return;
-  }
+  const thread = await getThread_givenThreadId(ctx, threadId) //
+    .catch(() => undefined);
+  if (thread?.platform !== "web") return;
+  await ctx.replyHtml(ctx.t("html-can-only-send-plaintext"));
+}
 
-  if (!angelSub.replyingToThreadId) {
-    await sayYouAreNotReplyingAnyone(ctx);
-    return;
-  }
-
-  const threadId = angelSub.replyingToThreadId;
+$.route("/", async (ctx) => {
+  const msg0 = nonNullable(ctx.message);
+  const angelSubscription = await checkAngelSubscription(ctx);
+  const threadId = await checkTargetThreadId(ctx, angelSubscription);
   const message = composeMessage({ threadId, msg0 });
   const persistentThreadMessage = await createMessage(ctx, { message });
   await notifyNewMessage(ctx, { message: persistentThreadMessage });
-
-  if (!isMessagePlainText(msg0) && isMessageTooComplexForWeb(msg0)) {
-    if (await isMortalUsingWeb(ctx, { threadId })) {
-      await sayYouAreSendingComplexMessage(ctx);
-    }
-  }
+  await warnIfMessageTooComplexForWeb(ctx, threadId);
 });
 
-const AngelSay = {
-  commandName: "angel_say",
-  handleMessage,
-} satisfies Command;
-
+const AngelSay = $.build();
 export default AngelSay;

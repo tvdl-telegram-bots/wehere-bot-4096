@@ -1,7 +1,7 @@
 import type { ObjectId } from "mongodb";
-import type { ZodType } from "zod";
+import type { ZodType, ZodTypeDef } from "zod";
 
-export function parseDocs<T>(schema: ZodType<T>) {
+export function parseDocs<T>(schema: ZodType<T, ZodTypeDef, unknown>) {
   return (array: unknown[]) =>
     array.flatMap((item) => {
       try {
@@ -22,6 +22,10 @@ export function compareObjectId(a: ObjectId, b: ObjectId) {
 }
 
 export function notNullish<T>(value: T | null | undefined): value is T {
+  return value != null;
+}
+
+export function doesExist<T>(value: T | null | undefined): value is T {
   return value != null;
 }
 

@@ -8,7 +8,7 @@ import {
   PersistentAvailability,
 } from "wehere-bot/src/typing/server";
 
-import { createMessage, notifyNewMessage } from "./message_";
+import { createMessage, notifyNewMessage } from "./message";
 
 type EssentialContext = Pick<BotContext, "db" | "api" | "i18n" | "pusher">;
 

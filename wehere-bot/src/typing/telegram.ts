@@ -5,11 +5,11 @@ export const User = z.object({
   id: z.number(),
   is_bot: z.boolean(),
   first_name: z.string(),
-  last_name: z.string().nullish(), // optional field
-  username: z.string().nullish(), // optional field
-  language_code: z.string().nullish(), // optional field
-  is_premium: z.boolean().nullish(), // optional field
-  added_to_attachment_menu: z.boolean().nullish(), // optional field
+  last_name: z.string().optional(),
+  username: z.string().optional(),
+  language_code: z.string().optional(),
+  is_premium: z.literal(true).optional(),
+  added_to_attachment_menu: z.literal(true).optional(),
 });
 
 const AbstractMessageEntity = z.object({

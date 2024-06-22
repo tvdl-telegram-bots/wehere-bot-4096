@@ -3,6 +3,9 @@ import { assert, nonNullable } from "../utils/assert";
 import type { InjectedContext$WithTranslate } from "../utils/error";
 import { withReplyHtml } from "../utils/error";
 
+export type BotContext$CommandBuilder = BotContext &
+  InjectedContext$WithTranslate;
+
 export class CommandBuilder {
   public readonly commandName: string;
   public readonly routes: Record<string, (ctx: BotContext) => Promise<void>>;
@@ -25,16 +28,22 @@ export class CommandBuilder {
       commandName: this.commandName,
       handleMessage: this.routes["/"] || undefined,
       handleCallbackQuery: async (ctx) => {
-        const data = nonNullable(ctx.callbackQuery?.data);
-        const url = new URL(data);
-        const route = Object.keys(this.routes).find(
-          (route) =>
-            url.pathname === "/" + this.commandName + route ||
-            (route === "/" && url.pathname === "/" + this.commandName)
-        );
-        const handler = route ? this.routes[route] : undefined;
-        assert(handler, `invalid pathname: ${url.pathname}`);
-        await Promise.resolve(handler(ctx));
+        if (ctx.url?.host) {
+          const handler = this.routes[ctx.url.pathname || "/"];
+          assert(handler, `invalid pathname: ${ctx.url.pathname}`);
+          await Promise.resolve(handler(ctx));
+        } else {
+          const data = nonNullable(ctx.callbackQuery?.data);
+          const url = new URL(data);
+          const route = Object.keys(this.routes).find(
+            (route) =>
+              url.pathname === "/" + this.commandName + route ||
+              (route === "/" && url.pathname === "/" + this.commandName)
+          );
+          const handler = route ? this.routes[route] : undefined;
+          assert(handler, `invalid pathname: ${url.pathname}`);
+          await Promise.resolve(handler(ctx));
+        }
       },
     };
   }
