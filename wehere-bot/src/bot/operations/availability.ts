@@ -9,7 +9,7 @@ import {
 } from "wehere-bot/src/typing/server";
 
 import { createMessage, notifyNewMessage } from "./message";
-import { getTemplate } from "./template";
+import { readTemplate } from "./template";
 
 type EssentialContext = Pick<BotContext, "db" | "api" | "i18n" | "pusher">;
 
@@ -59,8 +59,8 @@ async function composeMessage(
   }: { threadId: PersistentObjectId; locale: Locale; available: boolean }
 ): Promise<WithoutId<PersistentThreadMessage>> {
   const customTemplate = available
-    ? await getTemplate(ctx, "auto_reply_when_available")
-    : await getTemplate(ctx, "auto_reply_when_unavailable");
+    ? await readTemplate(ctx, "auto_reply_when_available")
+    : await readTemplate(ctx, "auto_reply_when_unavailable");
   const text = customTemplate
     ? customTemplate.text
     : available

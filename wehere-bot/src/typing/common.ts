@@ -84,3 +84,9 @@ export const NewMessage$PusherEvent = z.object({
   entities: Telegram.MessageEntity.array().nullish(),
   createdAt: Timestamp,
 });
+
+export type TemplateKey = z.infer<typeof TemplateKey>;
+export const TemplateKey = z.enum([
+  "auto_reply_when_available",
+  "auto_reply_when_unavailable",
+]);

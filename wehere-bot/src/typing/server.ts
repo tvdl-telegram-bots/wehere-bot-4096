@@ -8,6 +8,7 @@ import {
   MessageDirection,
   MessageId,
   Role,
+  TemplateKey,
   ThreadPlatform,
   Timestamp,
   UserId,
@@ -78,7 +79,7 @@ export const PersistentTinyurl = z.object({
 export type PersistentTemplate = z.infer<typeof PersistentTemplate>;
 export const PersistentTemplate = z.object({
   _id: PersistentObjectId,
-  key: z.enum(["auto_reply_when_available", "auto_reply_when_unavailable"]),
+  key: TemplateKey,
   text: z.string().nullish(),
   entities: Telegram.MessageEntity.array().nullish(),
   createdAt: Timestamp.nullish(),

@@ -1,4 +1,5 @@
-import type { Db, WithoutId } from "mongodb";
+import type { Db } from "mongodb";
+import type { TemplateKey } from "wehere-bot/src/typing/common";
 import type { PersistentObjectId } from "wehere-bot/src/typing/server";
 import {
   PersistentDeadMessage,
@@ -6,17 +7,34 @@ import {
 } from "wehere-bot/src/typing/server";
 import { parseDocs } from "wehere-bot/src/utils/array";
 
-export async function getTemplate(
+export async function getTemplates(ctx: {
+  db: Db;
+}): Promise<PersistentTemplate[]> {
+  return await ctx.db
+    .collection("template")
+    .find()
+    .toArray()
+    .then(parseDocs(PersistentTemplate));
+}
+
+export async function readTemplate(
   ctx: { db: Db },
-  key: PersistentTemplate["key"]
+  key: TemplateKey
 ): Promise<PersistentTemplate | undefined> {
-  const docs = await ctx.db
+  return await ctx.db
     .collection("template")
     .find({ key }, { sort: { _id: -1 }, limit: 1 })
     .toArray()
-    .then(parseDocs(PersistentTemplate));
+    .then(parseDocs(PersistentTemplate))
+    .then((array) => array[0]);
+}
 
-  return docs[0];
+export async function deleteTemplate(
+  ctx: { db: Db },
+  key: TemplateKey
+): Promise<number> {
+  const ack = await ctx.db.collection("template").deleteOne({ key });
+  return ack.deletedCount;
 }
 
 export async function setTemplate_fromDeadMessage(
@@ -34,12 +52,15 @@ export async function setTemplate_fromDeadMessage(
     .findOne(deadMessageId)
     .then(PersistentDeadMessage.parse);
 
-  const template: WithoutId<PersistentTemplate> = {
-    key,
-    text: persistentDeadMessage.text,
-    entities: persistentDeadMessage.entities,
-    createdAt: Date.now(),
-  };
-
-  await ctx.db.collection("template").insertOne(template);
+  await ctx.db.collection("template").updateOne(
+    { key },
+    {
+      $set: {
+        text: persistentDeadMessage.text,
+        entities: persistentDeadMessage.entities,
+        createdAt: Date.now(),
+      },
+    },
+    { upsert: true }
+  );
 }
