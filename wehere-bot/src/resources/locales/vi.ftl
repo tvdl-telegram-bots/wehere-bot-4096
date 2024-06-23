@@ -57,3 +57,14 @@ text-template-starting-question-3-prompt = Hội thoại khởi động số 3 (
 text-template-starting-question-3-answer = Hội thoại khởi động số 3 (trả lời)
 text-template-starting-question-4-prompt = Hội thoại khởi động số 4 (câu hỏi)
 text-template-starting-question-4-answer = Hội thoại khởi động số 4 (trả lời)
+text-use-as-template = Dùng làm tin nhắn mẫu
+text-view-template = Xem tin nhắn mẫu
+
+html-template-not-set =
+    Tin nhắn mẫu chưa được đặt.
+
+    Để cài đặt tin nhắn mẫu, làm theo các bước sau:
+
+    1. Đảm bảo rằng bạn đang không trả lời ai (kiểm tra bằng lệnh /subscription)
+
+    2. Nhập tin nhắn, rồi chọn "Dùng làm tin nhắn mẫu"

@@ -56,3 +56,14 @@ text-template-starting-question-3-prompt = Starting question 3 (prompt)
 text-template-starting-question-3-answer = Starting question 3 (answer)
 text-template-starting-question-4-prompt = Starting question 4 (prompt)
 text-template-starting-question-4-answer = Starting question 4 (answer)
+text-use-as-template = Use as template
+text-view-template = View template
+
+html-template-not-set =
+    Template message not set.
+
+    To set up a template message, follow these steps:
+
+    1. Make sure you are not replying to anyone (check with the command /subscription).
+
+    2. Enter the message, then select "Use as template message".

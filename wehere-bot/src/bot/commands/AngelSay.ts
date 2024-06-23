@@ -59,7 +59,7 @@ async function checkTargetThreadId(
   await ctx.replyHtml(ctx.t("html-below-actions-dead-message"), {
     reply_parameters: { message_id: msg0.message_id },
     reply_markup: new InlineKeyboard().text(
-      "Dùng làm mẫu",
+      ctx.t("text-use-as-template"),
       await getWehereTinyurl(ctx, "template", "/select_dead_message", {
         id: persistentDeadMessage._id,
       })
