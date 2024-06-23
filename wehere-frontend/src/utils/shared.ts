@@ -17,11 +17,17 @@ export function getUrl(
     : origin + path;
 }
 
-export async function httpPost(url: string, body: unknown): Promise<unknown> {
+export async function httpPost(
+  url: string,
+  body: unknown,
+  options: { signal?: AbortSignal; cache?: RequestCache } = {}
+): Promise<unknown> {
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body, null, 2),
+    signal: options.signal,
+    cache: options.cache || "no-cache",
   });
   if (!response.ok) {
     const text = await response.text().catch(() => undefined);

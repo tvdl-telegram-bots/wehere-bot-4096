@@ -27,6 +27,7 @@ export function withErrorHandling<OwnContext>(
       }
       return await handler(request, { ...context });
     } catch (error) {
+      console.error(error);
       if (error instanceof ErrorWithStatus) {
         return createJsonResponse(
           error.status,

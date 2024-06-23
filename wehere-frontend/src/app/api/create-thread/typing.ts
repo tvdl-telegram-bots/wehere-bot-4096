@@ -4,9 +4,7 @@ import { z } from "zod";
 
 export type Params$CreateThread = z.input<typeof Params$CreateThread>;
 export const Params$CreateThread = z.object({
-  initialMessage: z.object({
-    text: z.string(),
-  }),
+  initialMessages: z.object({ text: z.string() }).array(),
 });
 
 export type Result$CreateThread = z.input<typeof Result$CreateThread>;
@@ -17,5 +15,5 @@ export const Result$CreateThread = z.object({
   threadEmoji: z.string().nullish(),
   threadCreatedAt: Timestamp,
   pusherChannelId: z.string(),
-  initialMessage: ThreadMessage,
+  initialMessages: ThreadMessage.array(),
 });

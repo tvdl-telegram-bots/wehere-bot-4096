@@ -7,6 +7,7 @@ import { throws400 } from "wehere-backend/src/lib/backend/errors";
 import { createJsonResponse } from "wehere-backend/src/lib/backend/utils";
 import { nonNullable } from "wehere-bot/src/utils/assert";
 import { SERVER_ENV } from "wehere-frontend/src/env/server";
+import type { ThreadMessage } from "wehere-frontend/src/typing/common";
 import { withDefaultRouteHandler } from "wehere-frontend/src/utils/backend";
 import { getUrl, httpPost } from "wehere-frontend/src/utils/shared";
 
@@ -20,14 +21,23 @@ export const POST = withDefaultRouteHandler(async (request) => {
     {}
   ).then(Result$CreateThread$WehereBackend.parse);
 
-  const data_sendMessage = await httpPost(
-    getUrl(SERVER_ENV.WEHERE_BACKEND_ORIGIN, "/api/send-message"),
-    {
-      text: params.initialMessage.text,
-      threadId: data_createThread.thread._id.toHexString(),
-      threadPassword: data_createThread.thread.password,
-    } satisfies Params$SendMessage$WehereBackend
-  ).then(Result$SendMessage$WehereBackend.parse);
+  const sentMessages: ThreadMessage[] = [];
+  for (const m of params.initialMessages) {
+    const data_sendMessage = await httpPost(
+      getUrl(SERVER_ENV.WEHERE_BACKEND_ORIGIN, "/api/send-message"),
+      {
+        text: m.text,
+        threadId: data_createThread.thread._id.toHexString(),
+        threadPassword: data_createThread.thread.password,
+      } satisfies Params$SendMessage$WehereBackend
+    ).then(Result$SendMessage$WehereBackend.parse);
+    sentMessages.push({
+      direction: data_sendMessage.persistentThreadMessage.direction,
+      text: data_sendMessage.persistentThreadMessage.text,
+      entities: data_sendMessage.persistentThreadMessage.entities,
+      createdAt: data_sendMessage.persistentThreadMessage.createdAt,
+    });
+  }
 
   return createJsonResponse(200, {
     threadId: data_createThread.thread._id.toHexString(),
@@ -36,10 +46,6 @@ export const POST = withDefaultRouteHandler(async (request) => {
     threadEmoji: data_createThread.thread.emoji,
     threadCreatedAt: nonNullable(data_createThread.thread.createdAt),
     pusherChannelId: data_createThread.pusherSubscription.pusherChannelId,
-    initialMessage: {
-      direction: data_sendMessage.persistentThreadMessage.direction,
-      text: data_sendMessage.persistentThreadMessage.text,
-      createdAt: data_sendMessage.persistentThreadMessage.createdAt,
-    },
+    initialMessages: sentMessages,
   } satisfies Result);
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Text } from "@radix-ui/themes";
+import { Box, Button, Dialog, Flex, Progress, Text } from "@radix-ui/themes";
 import cx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -49,6 +49,8 @@ type Props = {
 
 export default function PageHome({ className, style }: Props) {
   const [busy, setBusy] = React.useState(false);
+  const [abortController, setAbortController] =
+    React.useState<AbortController>();
   const router = useRouter();
   const threadDb = useThreadDb();
 
@@ -60,12 +62,19 @@ export default function PageHome({ className, style }: Props) {
 
   const handleSubmit = threadDb
     ? async (text: string) => {
+        const abortController = new AbortController();
+        setAbortController(abortController);
         setBusy(true);
         try {
+          const signal = abortController.signal;
           const result = await httpPost(
             getUrl(location.origin, "/api/create-thread"), //
-            { initialMessage: { text } } satisfies Params$CreateThread
+            { initialMessages: [{ text }] } satisfies Params$CreateThread,
+            { signal }
           ).then(Result$CreateThread.parse);
+          signal.throwIfAborted();
+          setAbortController(undefined);
+
           await threadDb.set({
             threadId: result.threadId,
             threadPassword: result.threadPassword,
@@ -75,7 +84,12 @@ export default function PageHome({ className, style }: Props) {
             pusherChannelId: result.pusherChannelId,
           });
           router.push(getUrl(location.origin, `/t/${result.threadId}`));
+        } catch (error) {
+          const isAbortError =
+            error instanceof DOMException && error.name == "AbortError";
+          if (!isAbortError) throw error;
         } finally {
+          setAbortController(undefined);
           setBusy(false);
         }
       }
@@ -97,6 +111,26 @@ export default function PageHome({ className, style }: Props) {
       style={style}
       activePage={{ type: "home" }}
     >
+      <Dialog.Root open={busy}>
+        <Dialog.Content
+          style={{ "--cursor-button": "pointer" } as React.CSSProperties}
+        >
+          <Flex align="center" justify="center" direction="column" gap="4">
+            {/* TODO: use template here */}
+            <Text align="center">{"Đang kết nối tới Trạm Lắng Nghe"}</Text>
+            <Box width="80%" asChild>
+              <Progress duration={"10s"} />
+            </Box>
+            <Button
+              variant="surface"
+              onClick={() => abortController?.abort()}
+              disabled={!abortController}
+            >
+              {"Hủy kết nối"}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
       <Flex
         direction="column"
         position="absolute"
@@ -115,6 +149,7 @@ export default function PageHome({ className, style }: Props) {
                 />
                 <Text className={styles.description} color="gray">
                   {
+                    // TODO: use template here
                     "WeHere là dự án tâm lý do Thư viện Dương Liễu sáng lập, nhằm chia sẻ kiến thức, câu chuyện, sự kiện về sức khỏe tinh thần của người trẻ."
                   }
                 </Text>
