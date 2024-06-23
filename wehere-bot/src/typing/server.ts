@@ -74,6 +74,7 @@ export type PersistentTinyurl = z.infer<typeof PersistentTinyurl>;
 export const PersistentTinyurl = z.object({
   _id: PersistentObjectId,
   url: z.string(),
+  updatedAt: Timestamp.nullish(),
 });
 
 export type PersistentTemplate = z.infer<typeof PersistentTemplate>;

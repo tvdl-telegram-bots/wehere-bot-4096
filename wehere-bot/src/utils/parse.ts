@@ -80,6 +80,13 @@ export async function getWehereTinyurl(
   query: InputQuery = {}
 ): Promise<string> {
   const url = getWehereUrlV2(command, path, query);
-  const doc = await ctx.db.collection("tinyurl").insertOne({ url });
-  return `wehere+tinyurl://${doc.insertedId.toHexString()}`;
+  const doc = await ctx.db
+    .collection("tinyurl")
+    .findOneAndUpdate(
+      { url },
+      { $set: { updatedAt: Date.now() } },
+      { upsert: true, returnDocument: "after" }
+    );
+  assert(doc, "doc not created");
+  return `wehere+tinyurl://${doc._id}`;
 }

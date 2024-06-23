@@ -17,4 +17,3 @@ TODO: migrate to getWehereUrlV2
 TODO: make home page intro a template
 TODO: allow to send multiple initial messages
 TODO: show a dialog when sending the initial messages
-TODO: let getWehereTinyurl upsert
