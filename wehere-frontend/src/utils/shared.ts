@@ -63,9 +63,9 @@ export function doesExist<T>(value: T | null | undefined): value is T {
 
 export function minElement<T>(
   values: (T | null | undefined)[],
-  defaultValue: T
+  initialValue: T
 ): T {
-  let result = defaultValue;
+  let result = initialValue;
   for (const value of values) {
     if (value != null && value < result) {
       result = value;
@@ -76,9 +76,9 @@ export function minElement<T>(
 
 export function maxElement<T>(
   values: (T | null | undefined)[],
-  defaultValue: T
+  initialValue: T
 ): T {
-  let result = defaultValue;
+  let result = initialValue;
   for (const value of values) {
     if (value != null && value > result) {
       result = value;

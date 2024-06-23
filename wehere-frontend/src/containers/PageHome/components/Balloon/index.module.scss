@@ -1,0 +1,42 @@
+@keyframes appear {
+  from {
+    opacity: 0%;
+  }
+
+  to {
+    opacity: 100%;
+  }
+}
+
+.container {
+  &.direction_fromAngel {
+    --bg: var(--accent-3);
+    justify-content: start;
+  }
+
+  &.direction_fromMortal {
+    --bg: var(--accent-4);
+    justify-content: end;
+  }
+}
+
+.content {
+  position: relative;
+  animation-duration: 100ms;
+  animation-name: appear;
+  animation-delay: var(--delay);
+  animation-fill-mode: both;
+  max-width: 80%;
+  background-color: var(--bg);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-3);
+  white-space: pre-wrap;
+
+  p {
+    margin: 0;
+  }
+
+  b {
+    font-weight: 600;
+  }
+}

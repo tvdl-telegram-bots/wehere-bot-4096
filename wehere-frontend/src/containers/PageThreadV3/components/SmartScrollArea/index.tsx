@@ -59,10 +59,14 @@ export default class SmartScrollArea extends React.Component<
       snapshot.stickToBottom
     ) {
       // new elements appended
-      container.scrollTop = container.scrollHeight;
+      setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+      }, 0);
     } else if (this.props.minChildKey < prevProps.minChildKey) {
       // new elements prepended
-      container.scrollTop = container.scrollHeight - snapshot.scrollDelta;
+      setTimeout(() => {
+        container.scrollTop = container.scrollHeight - snapshot.scrollDelta;
+      }, 0);
     }
   }
 

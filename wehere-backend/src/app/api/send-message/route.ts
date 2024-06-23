@@ -11,7 +11,7 @@ import { createApi, createI18n, createPusher } from "wehere-bot/src/bot";
 import {
   createMessage,
   notifyNewMessage,
-} from "wehere-bot/src/bot/operations/message_";
+} from "wehere-bot/src/bot/operations/message";
 import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/thread_";
 import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 
