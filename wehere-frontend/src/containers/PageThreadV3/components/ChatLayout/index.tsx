@@ -30,12 +30,17 @@ export default function ChatLayout({
       style={style}
       direction="row"
     >
-      <Box className={styles.left} position="relative" {...flex.hard}>
+      <Box
+        className={styles.left}
+        {...flex.hard}
+        position="relative"
+        display={{ initial: "none", sm: "block" }}
+      >
         <SideBarV2 activePage={activePage} fill />
       </Box>
       <Flex direction="column" {...flex.soft}>
         <Box className={styles.top} {...flex.hard} position="relative">
-          <TopBar fill />
+          <TopBar activePage={activePage} fill />
         </Box>
         <Box className={styles.content} {...flex.soft}>
           {children}

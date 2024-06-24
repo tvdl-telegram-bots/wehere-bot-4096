@@ -143,7 +143,7 @@ export default function PageHome({ className, style }: Props) {
             <Flex position="absolute" inset="0" justify="center" align="center">
               <Flex direction="column" gap="2" align="center">
                 <Image
-                  className={styles.logo}
+                  className={cx(styles.logo, styles.hideIfWindowTooShort)}
                   src={pngLogoColor}
                   alt="WeHere"
                 />
@@ -186,6 +186,7 @@ export default function PageHome({ className, style }: Props) {
         >
           {startingQuestions ? (
             <StartingQuestionSelect
+              className={styles.hideIfWindowTooShort}
               questions={startingQuestions}
               onSelect={(q) =>
                 setMessages((m) => [

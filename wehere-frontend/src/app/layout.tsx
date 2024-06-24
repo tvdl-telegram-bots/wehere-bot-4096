@@ -6,6 +6,7 @@ import React from "react";
 import "normalize.css";
 import "@radix-ui/themes/styles.css";
 import "./global.css";
+import WehereTheme from "../components/WehereTheme";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -27,14 +28,7 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className={roboto.className}>
-        <Theme
-          style={{ "--cursor-button": "pointer" } as React.CSSProperties}
-          accentColor="indigo"
-          grayColor="slate"
-          radius="medium"
-        >
-          {children}
-        </Theme>
+        <WehereTheme>{children}</WehereTheme>
       </body>
     </html>
   );

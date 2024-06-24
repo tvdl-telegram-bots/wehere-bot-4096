@@ -121,10 +121,11 @@ type Props$Root = {
   className?: string;
   style?: React.CSSProperties;
   activePage?: ActivePage;
+  transparent?: boolean;
   fill: true;
 };
 
-function Root({ className, style, activePage }: Props$Root) {
+function Root({ className, style, activePage, transparent }: Props$Root) {
   const [epoch, setEpoch] = React.useState<number>();
 
   const threadDb = useThreadDb();
@@ -143,7 +144,11 @@ function Root({ className, style, activePage }: Props$Root) {
 
   return (
     <Flex
-      className={cx(styles.Root, className)}
+      className={cx(
+        styles.Root,
+        className,
+        transparent ? styles.transparent : undefined
+      )}
       style={style}
       position="absolute"
       inset="0"

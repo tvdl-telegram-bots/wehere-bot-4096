@@ -39,6 +39,7 @@ export default function StartingQuestionSelect({
       {questions.map((q, index) => (
         <Box key={index} asChild {...flex.soft}>
           <Button
+            className={styles.button}
             variant="surface"
             color={openedQuestions.includes(q.prompt.key) ? "green" : undefined}
             onClick={() => {
@@ -51,12 +52,14 @@ export default function StartingQuestionSelect({
             ) : (
               <QuestionMarkCircledIcon />
             )}
-            <RichTextViewer
-              className={styles.buttonLabel}
-              text={q.prompt.text || ""}
-              entities={q.prompt.entities || []}
-              unstyled={["b", "i", "p", "u"]}
-            />
+            <Flex minHeight="32px" align="center" py="1" asChild>
+              <RichTextViewer
+                className={styles.buttonLabel}
+                text={q.prompt.text || ""}
+                entities={q.prompt.entities || []}
+                unstyled={["b", "i", "p", "u"]}
+              />
+            </Flex>
           </Button>
         </Box>
       ))}
