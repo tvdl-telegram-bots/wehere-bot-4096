@@ -6,6 +6,7 @@ import "normalize.css";
 import "@radix-ui/themes/styles.css";
 import "./global.css";
 import WehereTheme from "../components/WehereTheme";
+import { SERVER_ENV } from "../env/server";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -17,6 +18,9 @@ const roboto = Roboto({
 // https://nextjs.org/docs/app/building-your-application/optimizing/metadata#dynamic-metadata
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    metadataBase: SERVER_ENV.METADATA_BASE
+      ? new URL(SERVER_ENV.METADATA_BASE)
+      : undefined,
     title: "WeHere",
     description:
       "Dự án tâm lý do Thư viện Dương Liễu sáng lập, nhằm chia sẻ kiến thức, câu chuyện, sự kiện về sức khỏe tinh thần của người trẻ.",
