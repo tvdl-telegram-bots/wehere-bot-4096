@@ -36,6 +36,7 @@ export default function Composer({
     >
       <Box {...flex.soft} asChild>
         <TextArea
+          size="3" // must be >=16px to avoid iOS from zooming on focus
           value={text}
           disabled={disabled}
           onChange={(e) => setText(e.target.value)}

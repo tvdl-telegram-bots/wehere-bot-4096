@@ -1,4 +1,3 @@
-import { Theme } from "@radix-ui/themes";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import React from "react";
@@ -14,10 +13,15 @@ const roboto = Roboto({
   subsets: ["latin", "vietnamese"],
 });
 
-export const metadata: Metadata = {
-  title: "WeHere",
-  description: "WeHere",
-};
+// TODO: apply template here
+// https://nextjs.org/docs/app/building-your-application/optimizing/metadata#dynamic-metadata
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "WeHere",
+    description:
+      "Dự án tâm lý do Thư viện Dương Liễu sáng lập, nhằm chia sẻ kiến thức, câu chuyện, sự kiện về sức khỏe tinh thần của người trẻ.",
+  };
+}
 
 export default function RootLayout({
   children,
