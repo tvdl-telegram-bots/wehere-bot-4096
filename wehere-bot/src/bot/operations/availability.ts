@@ -81,7 +81,7 @@ async function composeMessage(
 }
 
 export async function isAutoReplyNeeded(
-  ctx: EssentialContext,
+  ctx: { db: Db },
   { threadId }: { threadId: PersistentObjectId }
 ) {
   try {
