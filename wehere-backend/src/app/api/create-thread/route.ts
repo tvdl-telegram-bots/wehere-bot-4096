@@ -5,6 +5,9 @@ import { createThread } from "wehere-bot/src/bot/operations/thread_";
 
 import type { Result$CreateThread$WehereBackend as Result } from "./typing";
 
+// https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#maxduration
+export const maxDuration = 60;
+
 export const POST = withDefaultRouteHandler(async (_request, ctx) => {
   const thread = await createThread(ctx, { platform: "web" });
   const pusherSubscription = await createPusherSubscription(ctx, {

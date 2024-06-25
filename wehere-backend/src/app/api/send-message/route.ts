@@ -9,6 +9,10 @@ import { createJsonResponse } from "wehere-backend/src/lib/backend/utils";
 import { withDefaultRouteHandler } from "wehere-backend/src/utils/handler";
 import { createApi, createI18n, createPusher } from "wehere-bot/src/bot";
 import {
+  autoReply,
+  isAutoReplyNeeded,
+} from "wehere-bot/src/bot/operations/availability";
+import {
   createMessage,
   notifyNewMessage,
 } from "wehere-bot/src/bot/operations/message";
@@ -17,6 +21,9 @@ import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 
 import type { Result$SendMessage$WehereBackend as Result } from "./typing";
 import { Params$SendMessage$WehereBackend as Params } from "./typing";
+
+// https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#maxduration
+export const maxDuration = 60;
 
 export const POST = withDefaultRouteHandler(async (request, ctx) => {
   const api = await createApi(ENV);
@@ -49,17 +56,17 @@ export const POST = withDefaultRouteHandler(async (request, ctx) => {
   };
 
   // TODO: Currently, auto reply causes timeout. Let's optimize to handle within 10 seconds. Or find another way.
-  // const shouldAutoReply = await isAutoReplyNeeded(ctx, { threadId });
+  const shouldAutoReply = await isAutoReplyNeeded(ctx, { threadId });
   const persistentThreadMessage = await createMessage(ctx, { message });
   await notifyNewMessage(
     { ...ctx, api, i18n, pusher },
     { message: persistentThreadMessage }
   );
-  // shouldAutoReply &&
-  //   (await autoReply(
-  //     { ...ctx, api, i18n, pusher },
-  //     { threadId, locale: "vi" } // TODO: there is no language preference for web yet
-  //   ));
+  shouldAutoReply &&
+    (await autoReply(
+      { ...ctx, api, i18n, pusher },
+      { threadId, locale: "vi" } // TODO: there is no language preference for web yet
+    ));
 
   return createJsonResponse(200, { persistentThreadMessage } satisfies Result);
 });
