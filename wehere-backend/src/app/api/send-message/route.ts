@@ -9,10 +9,6 @@ import { createJsonResponse } from "wehere-backend/src/lib/backend/utils";
 import { withDefaultRouteHandler } from "wehere-backend/src/utils/handler";
 import { createApi, createI18n, createPusher } from "wehere-bot/src/bot";
 import {
-  autoReply,
-  isAutoReplyNeeded,
-} from "wehere-bot/src/bot/operations/availability";
-import {
   createMessage,
   notifyNewMessage,
 } from "wehere-bot/src/bot/operations/message";
@@ -52,17 +48,18 @@ export const POST = withDefaultRouteHandler(async (request, ctx) => {
     createdAt: Date.now(),
   };
 
-  const shouldAutoReply = await isAutoReplyNeeded(ctx, { threadId });
+  // TODO: Currently, auto reply causes timeout. Let's optimize to handle within 10 seconds. Or find another way.
+  // const shouldAutoReply = await isAutoReplyNeeded(ctx, { threadId });
   const persistentThreadMessage = await createMessage(ctx, { message });
   await notifyNewMessage(
     { ...ctx, api, i18n, pusher },
     { message: persistentThreadMessage }
   );
-  shouldAutoReply &&
-    (await autoReply(
-      { ...ctx, api, i18n, pusher },
-      { threadId, locale: "vi" } // TODO: there is no language preference for web yet
-    ));
+  // shouldAutoReply &&
+  //   (await autoReply(
+  //     { ...ctx, api, i18n, pusher },
+  //     { threadId, locale: "vi" } // TODO: there is no language preference for web yet
+  //   ));
 
   return createJsonResponse(200, { persistentThreadMessage } satisfies Result);
 });
