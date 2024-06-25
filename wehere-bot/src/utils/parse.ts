@@ -36,27 +36,27 @@ function toSearch(query: InputQuery) {
   return search.size ? "?" + search : "";
 }
 
-export function getWehereUrl(
-  baseUrl: string | string[],
-  query: InputQuery = {}
-) {
-  const resolvedBaseUrl = Array.isArray(baseUrl)
-    ? "wehere:/" + baseUrl.join("/")
-    : baseUrl.startsWith("wehere:/")
-      ? baseUrl
-      : baseUrl.startsWith("/")
-        ? "wehere:/" + baseUrl.slice(1)
-        : "wehere:/" + baseUrl;
-  const search = new URLSearchParams();
-  for (const [key, value] of Object.entries(query)) {
-    if (value != null) {
-      search.append(key, value.toString());
-    }
-  }
-  return search.size > 0
-    ? resolvedBaseUrl + "?" + search.toString()
-    : resolvedBaseUrl;
-}
+// export function getWehereUrl(
+//   baseUrl: string | string[],
+//   query: InputQuery = {}
+// ) {
+//   const resolvedBaseUrl = Array.isArray(baseUrl)
+//     ? "wehere:/" + baseUrl.join("/")
+//     : baseUrl.startsWith("wehere:/")
+//       ? baseUrl
+//       : baseUrl.startsWith("/")
+//         ? "wehere:/" + baseUrl.slice(1)
+//         : "wehere:/" + baseUrl;
+//   const search = new URLSearchParams();
+//   for (const [key, value] of Object.entries(query)) {
+//     if (value != null) {
+//       search.append(key, value.toString());
+//     }
+//   }
+//   return search.size > 0
+//     ? resolvedBaseUrl + "?" + search.toString()
+//     : resolvedBaseUrl;
+// }
 
 export function getWehereUrlV2(
   command: string,

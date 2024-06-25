@@ -5,7 +5,7 @@ import { PersistentThread } from "wehere-bot/src/typing/server";
 import { nonNullable } from "wehere-bot/src/utils/assert";
 import type { InjectedContext$WithTranslate } from "wehere-bot/src/utils/error";
 import { formatThread, html } from "wehere-bot/src/utils/format";
-import { getWehereUrl } from "wehere-bot/src/utils/parse";
+import { getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 
 import {
   getAngelSubscription,
@@ -32,7 +32,7 @@ $.route("/", async (ctx) => {
     await ctx.replyHtml(ctx.t("html-you-not-subscribing"), {
       reply_markup: new InlineKeyboard().text(
         ctx.t("text-subscribe"),
-        getWehereUrl("/subscription/subscribe")
+        getWehereUrlV2("subscription", "/subscribe")
       ),
     });
     throw false;
@@ -42,7 +42,7 @@ $.route("/", async (ctx) => {
     await ctx.replyHtml(ctx.t("html-you-subscribed-but-replying"), {
       reply_markup: new InlineKeyboard().text(
         ctx.t("text-unsubscribe"),
-        getWehereUrl("/subscription/unsubscribe")
+        getWehereUrlV2("subscription", "/unsubscribe")
       ),
     });
     throw false;
@@ -62,11 +62,11 @@ $.route("/", async (ctx) => {
       reply_markup: new InlineKeyboard()
         .text(
           ctx.t("text-stop-replying", { thread: formatThread(thread) }),
-          getWehereUrl("/subscription/renew")
+          getWehereUrlV2("subscription", "/renew")
         )
         .text(
           ctx.t("text-unsubscribe"), //
-          getWehereUrl("/subscription/unsubscribe")
+          getWehereUrlV2("subscription", "/unsubscribe")
         ),
     }
   );
@@ -85,7 +85,7 @@ $.route("/subscribe", async (ctx) => {
   await ctx.replyHtml(ctx.t("html-alright-you-subscribing"), {
     reply_markup: new InlineKeyboard().text(
       ctx.t("text-unsubscribe"),
-      getWehereUrl("/subscription/unsubscribe")
+      getWehereUrlV2("subscription", "/unsubscribe")
     ),
   });
 });
@@ -98,7 +98,7 @@ $.route("/unsubscribe", async (ctx) => {
   await ctx.replyHtml(ctx.t("html-done-you-unsubscribed"), {
     reply_markup: new InlineKeyboard().text(
       ctx.t("text-subscribe"),
-      getWehereUrl("/subscription/subscribe")
+      getWehereUrlV2("subscription", "/subscribe")
     ),
   });
 });
@@ -115,7 +115,7 @@ $.route("/renew", async (ctx) => {
   await ctx.replyHtml(ctx.t("html-alright-you-stopped-replying"), {
     reply_markup: new InlineKeyboard().text(
       ctx.t("text-unsubscribe"),
-      getWehereUrl("/subscription/unsubscribe")
+      getWehereUrlV2("subscription", "/unsubscribe")
     ),
   });
 });

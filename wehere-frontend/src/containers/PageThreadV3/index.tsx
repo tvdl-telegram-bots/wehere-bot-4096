@@ -118,7 +118,8 @@ export default function PageThreadV3({
                   className={styles.autoTriggerContainer}
                   position="absolute"
                   top="0"
-                  width="100%"
+                  left="0"
+                  right="0"
                   justify="center"
                   align="center"
                 >

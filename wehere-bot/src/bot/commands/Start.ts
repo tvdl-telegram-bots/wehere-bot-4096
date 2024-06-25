@@ -10,7 +10,7 @@ import {
   withReplyHtml,
 } from "wehere-bot/src/utils/error";
 import { formatThread, html } from "wehere-bot/src/utils/format";
-import { getWehereTinyurl, getWehereUrl } from "wehere-bot/src/utils/parse";
+import { getWehereTinyurl, getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 
 import { getRole } from "../operations/role";
 import { readTemplate } from "../operations/template";
@@ -23,7 +23,7 @@ const sayHelloFirstUser = withReplyHtml((ctx, userId: UserId) =>
   ctx.replyHtml(ctx.t("html-hello-you-alone", { user: html.literal(userId) }), {
     reply_markup: new InlineKeyboard().text(
       ctx.t("html-make-me-an-admin"),
-      getWehereUrl("set_role", { user: userId, role: "admin" })
+      getWehereUrlV2("set_role", "/", { user: userId, role: "admin" })
     ),
   })
 );

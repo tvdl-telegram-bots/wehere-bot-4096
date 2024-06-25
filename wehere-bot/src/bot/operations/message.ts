@@ -146,7 +146,6 @@ async function notifyAngels(
       );
 
       await ctx.api.sendMessage(sub.chatId, message.text, {
-        parse_mode: "HTML",
         reply_markup: keyboard,
         entities: message.entities || undefined,
         reply_parameters: { message_id: msg1.message_id },
