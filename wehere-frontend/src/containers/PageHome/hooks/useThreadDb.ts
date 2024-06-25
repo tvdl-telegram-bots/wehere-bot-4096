@@ -72,6 +72,10 @@ class ThreadDb {
     const [head, ...tail] = encode(threadSecret);
     await IdbKeyval.set(head, tail, this.store);
   }
+
+  async del(threadId: string) {
+    await IdbKeyval.del(threadId, this.store);
+  }
 }
 
 export function useThreadDb() {

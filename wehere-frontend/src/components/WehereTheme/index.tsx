@@ -26,7 +26,6 @@ export default function WehereTheme({
     <Theme
       className={cx(styles.container, className)}
       style={style}
-      //   style={{ ...style, "--cursor-button": "pointer" } as React.CSSProperties}
       accentColor="indigo"
       grayColor="slate"
       radius="medium"

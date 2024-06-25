@@ -15,6 +15,7 @@ type Props = {
   content?: React.ReactNode;
   children?: React.ReactNode;
   activePage?: ActivePage;
+  slotRightOnTopBar?: React.ReactNode;
 };
 
 export default function ChatLayout({
@@ -23,6 +24,7 @@ export default function ChatLayout({
   content,
   children = content,
   activePage,
+  slotRightOnTopBar,
 }: Props) {
   return (
     <Flex
@@ -40,7 +42,7 @@ export default function ChatLayout({
       </Box>
       <Flex direction="column" {...flex.soft}>
         <Box className={styles.top} {...flex.hard} position="relative">
-          <TopBar activePage={activePage} fill />
+          <TopBar activePage={activePage} slotRight={slotRightOnTopBar} fill />
         </Box>
         <Box className={styles.content} {...flex.soft}>
           {children}

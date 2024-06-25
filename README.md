@@ -11,4 +11,4 @@ TODO: use prosemirror to compose rich text
 TODO: use friendly display name
 TODO: a mechanism to authenticate
 TODO: info page
-TODO: allow to delete a thread
+TODO: SSR

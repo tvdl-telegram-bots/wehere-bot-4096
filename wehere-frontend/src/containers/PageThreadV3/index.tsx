@@ -1,10 +1,19 @@
 "use client";
 
-import { Box, Flex, Text } from "@radix-ui/themes";
+import {
+  Box,
+  ChevronDownIcon,
+  DropdownMenu,
+  Flex,
+  IconButton,
+  Text,
+} from "@radix-ui/themes";
 import cx from "clsx";
+import { useRouter } from "next/navigation";
 import React from "react";
 import useSWR from "swr";
 import { Result$GetStatus } from "wehere-frontend/src/app/api/get-status/typing";
+import WehereTheme from "wehere-frontend/src/components/WehereTheme";
 import { flex } from "wehere-frontend/src/utils/frontend";
 import { httpGet } from "wehere-frontend/src/utils/shared";
 
@@ -32,7 +41,16 @@ export default function PageThreadV3({
   threadId,
   epoch,
 }: Props) {
+  const router = useRouter();
   const threadDb = useThreadDb();
+  const deleteThread = threadDb
+    ? async () => {
+        if (window.confirm("Bạn có chắc muốn xóa cuộc trò chuyện này?")) {
+          await threadDb.del(threadId);
+          router.push("/");
+        }
+      }
+    : undefined;
 
   const swr_threadSecret = useSWR(
     threadDb ? ["thread-db:", "ReadThreadSecret", threadId] : undefined,
@@ -66,6 +84,25 @@ export default function PageThreadV3({
       className={cx(styles.container, className)}
       style={style}
       activePage={{ type: "thread", threadId }}
+      slotRightOnTopBar={
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <IconButton variant="ghost" color="gray">
+              <ChevronDownIcon width="16px" height="16px" />
+            </IconButton>
+          </DropdownMenu.Trigger>
+          <WehereTheme asChild>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item
+                onClick={deleteThread}
+                disabled={!deleteThread}
+              >
+                {"Xóa cuộc trò chuyện"}
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </WehereTheme>
+        </DropdownMenu.Root>
+      }
     >
       <Flex direction="column" position="absolute" inset="0" align="center">
         <Box position="relative" width="100%" {...flex.soft}>
