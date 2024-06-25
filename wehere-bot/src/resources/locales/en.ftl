@@ -58,6 +58,11 @@ text-template-starting-question-4-prompt = Starting question 4 (prompt)
 text-template-starting-question-4-answer = Starting question 4 (answer)
 text-use-as-template = Use as template
 text-view-template = View template
+text-template-welcome-message = Welcome message (home page)
+text-template-connection-remarks-when-available = Remarks on connection dialog (when available)
+text-template-connection-remarks-when-unavailable = Remarks on connection dialog (when unavailable)
+text-template-opengraph-title = Page title (og:title)
+text-template-opengraph-description = Page description (og:description)
 
 html-template-not-set =
     Template message not set.

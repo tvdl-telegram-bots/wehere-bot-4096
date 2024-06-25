@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import React from "react";
+import { Result$GetTemplates$WehereBackend } from "wehere-backend/src/app/api/get-templates/typing";
+
+import WehereTheme from "../components/WehereTheme";
+import { SERVER_ENV } from "../env/server";
+import { getUrl, httpGet } from "../utils/shared";
 
 import "normalize.css";
 import "@radix-ui/themes/styles.css";
 import "./global.css";
-import WehereTheme from "../components/WehereTheme";
-import { SERVER_ENV } from "../env/server";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -14,15 +17,21 @@ const roboto = Roboto({
   subsets: ["latin", "vietnamese"],
 });
 
-// TODO: apply template here
 // https://nextjs.org/docs/app/building-your-application/optimizing/metadata#dynamic-metadata
 export async function generateMetadata(): Promise<Metadata> {
+  const data = await httpGet(
+    getUrl(SERVER_ENV.WEHERE_BACKEND_ORIGIN, "/api/get-templates"),
+    { cache: "default" }
+  ).then(Result$GetTemplates$WehereBackend.parse);
+
   return {
     metadataBase: SERVER_ENV.METADATA_BASE
       ? new URL(SERVER_ENV.METADATA_BASE)
       : undefined,
-    title: "WeHere",
+    title:
+      data.templates.find((t) => t.key === "opengraph_title")?.text || "WeHere",
     description:
+      data.templates.find((t) => t.key === "opengraph_description")?.text ||
       "Dự án tâm lý do Thư viện Dương Liễu sáng lập, nhằm chia sẻ kiến thức, câu chuyện, sự kiện về sức khỏe tinh thần của người trẻ.",
   };
 }

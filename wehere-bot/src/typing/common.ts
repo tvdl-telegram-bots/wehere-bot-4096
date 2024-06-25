@@ -100,4 +100,9 @@ export const TemplateKey = z.enum([
   "starting_question_3_answer",
   "starting_question_4_prompt",
   "starting_question_4_answer",
+  "welcome_message", // the intro on home page
+  "connection_remarks_when_available", // text when connecting
+  "connection_remarks_when_unavailable", // text when connecting
+  "opengraph_title",
+  "opengraph_description",
 ]);

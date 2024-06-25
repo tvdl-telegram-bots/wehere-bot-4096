@@ -6,8 +6,8 @@ import { Box, Button, Flex } from "@radix-ui/themes";
 import cx from "clsx";
 import React from "react";
 import type { TemplateKey } from "wehere-bot/src/typing/common";
-import type { StartingQuestion } from "wehere-frontend/src/app/api/get-starting-questions/typing";
 import RichTextViewer from "wehere-frontend/src/containers/PageThreadV3/components/RichTextViewer";
+import type { StartingQuestion } from "wehere-frontend/src/typing/common";
 import { flex } from "wehere-frontend/src/utils/frontend";
 
 import styles from "./index.module.scss";

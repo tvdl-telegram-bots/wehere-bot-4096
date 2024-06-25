@@ -10,6 +10,16 @@
   max-width: 800px;
 }
 
+.dialogDescription {
+  p {
+    margin: 0;
+  }
+
+  b: {
+    font-weight: 600;
+  }
+}
+
 .inputArea {
   box-sizing: border-box;
   padding: var(--space-2) var(--space-4);
@@ -24,6 +34,14 @@
 .description {
   max-width: 600px;
   text-align: center;
+
+  p {
+    margin: 0;
+  }
+
+  b: {
+    font-weight: 600;
+  }
 }
 
 @media (max-height: 600px) {

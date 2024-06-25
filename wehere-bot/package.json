@@ -6,7 +6,6 @@
     "@grammyjs/transformer-throttler": "^1.2.1",
     "@moebius/fluent": "^1.1.0",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
     "grammy": "^1.22.4",
     "html-escaper": "^3.0.3",
     "mongodb": "^6.6.1",
@@ -14,7 +13,6 @@
     "zod": "^3.23.6"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
     "@types/html-escaper": "^3",
     "@types/node": "^20",
     "nodemon": "^3.1.0",
@@ -26,7 +24,6 @@
   "scripts": {
     "build": "scripts/compile-ftl.sh && tsc",
     "dev:bot": "nodemon src/bot-only.ts",
-    "dev": "nodemon src/express.ts",
     "postinstall": "scripts/compile-ftl.sh"
   }
 }

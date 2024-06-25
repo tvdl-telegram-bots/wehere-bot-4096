@@ -1,4 +1,9 @@
-import { MessageDirection, Timestamp } from "wehere-bot/src/typing/common";
+import {
+  Entities,
+  MessageDirection,
+  TemplateKey,
+  Timestamp,
+} from "wehere-bot/src/typing/common";
 import * as Telegram from "wehere-bot/src/typing/telegram";
 import { z } from "zod";
 
@@ -41,4 +46,17 @@ export const ThreadSecret = z.object({
   threadEmoji: z.string().nullish(),
   threadCreatedAt: Timestamp,
   pusherChannelId: z.string().nullish(),
+});
+
+export type Template = z.infer<typeof Template>;
+export const Template = z.object({
+  key: TemplateKey,
+  text: z.string().nullish(),
+  entities: Entities.nullish(),
+});
+
+export type StartingQuestion = z.infer<typeof StartingQuestion>;
+export const StartingQuestion = z.object({
+  prompt: Template,
+  answer: Template,
 });

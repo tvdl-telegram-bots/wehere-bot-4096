@@ -48,6 +48,11 @@ const TEMPLATE_KEY_LAYOUT_INFO: Record<TemplateKey, LayoutInfo> = {
   starting_question_3_answer: { row: 1, col: 5, label: "B6" },
   starting_question_4_prompt: { row: 1, col: 6, label: "B7" },
   starting_question_4_answer: { row: 1, col: 7, label: "B8" },
+  welcome_message: { row: 2, col: 0, label: "C1" },
+  connection_remarks_when_available: { row: 2, col: 1, label: "C2" },
+  connection_remarks_when_unavailable: { row: 2, col: 2, label: "C3" },
+  opengraph_title: { row: 2, col: 3, label: "C4" },
+  opengraph_description: { row: 2, col: 4, label: "C5" },
 };
 
 async function getInlineKeyboardMarkup(
@@ -90,6 +95,16 @@ function formatKey(
       return ctx.t("text-template-starting-question-4-prompt");
     case "starting_question_4_answer":
       return ctx.t("text-template-starting-question-4-answer");
+    case "welcome_message":
+      return ctx.t("text-template-welcome-message");
+    case "connection_remarks_when_available":
+      return ctx.t("text-template-connection-remarks-when-available");
+    case "connection_remarks_when_unavailable":
+      return ctx.t("text-template-connection-remarks-when-unavailable");
+    case "opengraph_title":
+      return ctx.t("text-template-opengraph-title");
+    case "opengraph_description":
+      return ctx.t("text-template-opengraph-description");
   }
 }
 

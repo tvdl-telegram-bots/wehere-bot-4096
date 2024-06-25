@@ -59,6 +59,11 @@ text-template-starting-question-4-prompt = Hội thoại khởi động số 4 (
 text-template-starting-question-4-answer = Hội thoại khởi động số 4 (trả lời)
 text-use-as-template = Dùng làm tin nhắn mẫu
 text-view-template = Xem tin nhắn mẫu
+text-template-welcome-message = Đoạn văn giới thiệu (trên trang chủ)
+text-template-connection-remarks-when-available = Lời nhắc khi kết nối (có mặt)
+text-template-connection-remarks-when-unavailable = Lời nhắc khi kết nối (vắng mặt)
+text-template-opengraph-title = Tiêu đề trang (og:title)
+text-template-opengraph-description = Mô tả trang (og:description)
 
 html-template-not-set =
     Tin nhắn mẫu chưa được đặt.

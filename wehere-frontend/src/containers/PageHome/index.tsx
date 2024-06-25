@@ -15,7 +15,9 @@ import {
   Result$CreateThread,
   type Params$CreateThread,
 } from "wehere-frontend/src/app/api/create-thread/typing";
-import { Result$GetStartingQuestions } from "wehere-frontend/src/app/api/get-starting-questions/typing";
+import { Result$GetStatus } from "wehere-frontend/src/app/api/get-status/typing";
+import { Result$GetTemplates } from "wehere-frontend/src/app/api/get-templates/typing";
+import WehereTheme from "wehere-frontend/src/components/WehereTheme";
 import { flex } from "wehere-frontend/src/utils/frontend";
 import {
   getUrl,
@@ -26,6 +28,7 @@ import {
 } from "wehere-frontend/src/utils/shared";
 
 import ChatLayout from "../PageThreadV3/components/ChatLayout";
+import RichTextViewer from "../PageThreadV3/components/RichTextViewer";
 import SmartScrollArea from "../PageThreadV3/components/SmartScrollArea";
 
 import pngLogoColor from "./assets/logo-color.png";
@@ -54,11 +57,24 @@ export default function PageHome({ className, style }: Props) {
   const router = useRouter();
   const threadDb = useThreadDb();
 
-  const swr_GetStartingQuestions = useSWR(
-    "/api/get-starting-questions",
-    (url) => httpGet(url).then(Result$GetStartingQuestions.parse)
+  const swr_GetStatus = useSWR("/api/get-status", (url) =>
+    httpGet(url, { cache: "no-cache" }).then(Result$GetStatus.parse)
   );
-  const startingQuestions = swr_GetStartingQuestions.data?.questions;
+  const availability = swr_GetStatus.data?.availability.type;
+
+  const swr_GetTemplates = useSWR("/api/get-templates", (url) =>
+    httpGet(url, { cache: "default" }).then(Result$GetTemplates.parse)
+  );
+  const welcomeMessage = swr_GetTemplates.data?.welcomeMessage;
+  const connectionRemarks = swr_GetTemplates.data?.connectionRemarks;
+  const startingQuestions = swr_GetTemplates.data?.startingQuestions;
+
+  const resolvedConnectionRemark =
+    availability === "available"
+      ? connectionRemarks?.whenAvailable
+      : availability === "unavailable"
+        ? connectionRemarks?.whenUnavailable
+        : undefined;
 
   const handleSubmit = threadDb
     ? async (text: string) => {
@@ -112,24 +128,33 @@ export default function PageHome({ className, style }: Props) {
       activePage={{ type: "home" }}
     >
       <Dialog.Root open={busy}>
-        <Dialog.Content
-          style={{ "--cursor-button": "pointer" } as React.CSSProperties}
-        >
-          <Flex align="center" justify="center" direction="column" gap="4">
-            {/* TODO: use template here */}
-            <Text align="center">{"Đang kết nối tới Trạm Lắng Nghe"}</Text>
-            <Box width="80%" asChild>
-              <Progress duration={"10s"} />
-            </Box>
-            <Button
-              variant="surface"
-              onClick={() => abortController?.abort()}
-              disabled={!abortController}
-            >
-              {"Hủy kết nối"}
-            </Button>
-          </Flex>
-        </Dialog.Content>
+        <WehereTheme asChild>
+          <Dialog.Content>
+            <Flex align="center" justify="center" direction="column" gap="4">
+              <Text align="center" weight="bold" size="4" color="gray">
+                {"Đang kết nối"}
+              </Text>
+              {resolvedConnectionRemark ? (
+                <RichTextViewer
+                  className={styles.dialogDescription}
+                  text={resolvedConnectionRemark.text || ""}
+                  entities={resolvedConnectionRemark.entities || []}
+                  unstyled={["b", "i", "p", "u"]}
+                />
+              ) : undefined}
+              <Box width="80%" asChild>
+                <Progress duration="10s" />
+              </Box>
+              <Button
+                variant="surface"
+                onClick={() => abortController?.abort()}
+                disabled={!abortController}
+              >
+                {"Hủy kết nối"}
+              </Button>
+            </Flex>
+          </Dialog.Content>
+        </WehereTheme>
       </Dialog.Root>
       <Flex
         direction="column"
@@ -147,12 +172,14 @@ export default function PageHome({ className, style }: Props) {
                   src={pngLogoColor}
                   alt="WeHere"
                 />
-                <Text className={styles.description} color="gray">
-                  {
-                    // TODO: use template here
-                    "WeHere là dự án tâm lý do Thư viện Dương Liễu sáng lập, nhằm chia sẻ kiến thức, câu chuyện, sự kiện về sức khỏe tinh thần của người trẻ."
-                  }
-                </Text>
+                {welcomeMessage ? (
+                  <RichTextViewer
+                    className={styles.description}
+                    text={welcomeMessage.text || ""}
+                    entities={welcomeMessage.entities || []}
+                    unstyled={["b", "i", "p", "u"]}
+                  />
+                ) : undefined}
               </Flex>
             </Flex>
           ) : (
