@@ -52,6 +52,7 @@ type Props = {
 
 export default function PageHome({ className, style }: Props) {
   const [busy, setBusy] = React.useState(false);
+  const [leaving, setLeaving] = React.useState(false);
   const [abortController, setAbortController] =
     React.useState<AbortController>();
   const router = useRouter();
@@ -99,6 +100,7 @@ export default function PageHome({ className, style }: Props) {
             threadCreatedAt: result.threadCreatedAt,
             pusherChannelId: result.pusherChannelId,
           });
+          setLeaving(true);
           router.push(getUrl(location.origin, `/t/${result.threadId}`));
         } catch (error) {
           const isAbortError =
@@ -127,23 +129,31 @@ export default function PageHome({ className, style }: Props) {
       style={style}
       activePage={{ type: "home" }}
     >
-      <Dialog.Root open={busy}>
+      <Dialog.Root open={busy || leaving}>
         <WehereTheme asChild>
           <Dialog.Content>
             <Flex align="center" justify="center" direction="column" gap="4">
-              <Text align="center" weight="bold" size="4" color="gray">
-                {"Đang kết nối"}
-              </Text>
-              {resolvedConnectionRemark ? (
-                <RichTextViewer
-                  className={styles.dialogDescription}
-                  text={resolvedConnectionRemark.text || ""}
-                  entities={resolvedConnectionRemark.entities || []}
-                  unstyled={["b", "i", "p", "u"]}
-                />
-              ) : undefined}
+              {leaving ? (
+                <Text align="center" weight="bold" size="4">
+                  {"Đang chuyển hướng..."}
+                </Text>
+              ) : (
+                <>
+                  <Text align="center" weight="bold" size="4" color="gray">
+                    {"Đang kết nối"}
+                  </Text>
+                  {resolvedConnectionRemark ? (
+                    <RichTextViewer
+                      className={styles.dialogDescription}
+                      text={resolvedConnectionRemark.text || ""}
+                      entities={resolvedConnectionRemark.entities || []}
+                      unstyled={["b", "i", "p", "u"]}
+                    />
+                  ) : undefined}
+                </>
+              )}
               <Box width="80%" asChild>
-                <Progress duration="10s" />
+                <Progress duration="20s" />
               </Box>
               <Button
                 variant="surface"
