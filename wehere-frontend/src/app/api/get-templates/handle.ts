@@ -34,7 +34,12 @@ function toStartingQuestion(
 export async function handle$GetTemplates(): Promise<Result> {
   const data = await httpGet(
     getUrl(SERVER_ENV.WEHERE_BACKEND_ORIGIN, "/api/get-templates"),
-    { cache: "default" }
+    {
+      cache: "force-cache",
+      next: {
+        revalidate: 60, // https://nextjs.org/docs/app/api-reference/functions/fetch#optionsnextrevalidate
+      },
+    }
   ).then(Result$GetTemplates$WehereBackend.parse);
 
   const welcomeMessage = toTemplate(data.templates, "welcome_message");

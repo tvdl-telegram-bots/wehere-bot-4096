@@ -42,11 +42,19 @@ export async function httpPost(
 
 export async function httpGet(
   url: string,
-  options: { signal?: AbortSignal; cache: RequestCache }
+  options: {
+    signal?: AbortSignal;
+    cache: RequestCache;
+    next?: NextFetchRequestConfig; // https://nextjs.org/docs/app/api-reference/functions/fetch
+  }
 ): Promise<unknown> {
   const response = await fetch(url, {
     signal: options.signal,
-    cache: options.cache || "no-cache",
+    cache:
+      options.next?.revalidate != null
+        ? undefined
+        : options.cache || "no-cache",
+    next: options.next,
   });
   if (!response.ok) {
     const text = await response.text().catch(() => undefined);

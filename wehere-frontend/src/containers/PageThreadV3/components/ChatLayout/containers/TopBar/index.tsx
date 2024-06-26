@@ -76,6 +76,10 @@ export default function TopBar({
             {"WeHere"}
           </Text>
           <Text
+            className={cx(
+              styles.availability,
+              !availability?.type ? styles.loading : undefined
+            )}
             size="1"
             weight="light"
             color="gray"
