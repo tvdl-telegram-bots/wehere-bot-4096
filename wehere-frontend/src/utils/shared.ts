@@ -42,7 +42,7 @@ export async function httpPost(
 
 export async function httpGet(
   url: string,
-  options: { signal?: AbortSignal; cache?: RequestCache } = {}
+  options: { signal?: AbortSignal; cache: RequestCache }
 ): Promise<unknown> {
   const response = await fetch(url, {
     signal: options.signal,

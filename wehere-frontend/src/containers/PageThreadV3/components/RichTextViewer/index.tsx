@@ -33,9 +33,15 @@ export default function RichTextViewer({
 
   return (
     <div
-      className={cx(styles.container, className)}
+      className={cx(
+        styles.container,
+        className,
+        container ? styles.mounted : undefined
+      )}
       style={style}
       ref={setContainer}
-    />
+    >
+      {container ? undefined : text}
+    </div>
   );
 }

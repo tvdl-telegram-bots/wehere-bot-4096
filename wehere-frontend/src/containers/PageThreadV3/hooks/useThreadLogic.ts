@@ -82,7 +82,8 @@ export function useThreadLogic({
             threadId,
             threadPassword: threadPassword,
             prior: state.oldestTimestamp(),
-          } satisfies Params$GetPrevMessages)
+          } satisfies Params$GetPrevMessages),
+          { cache: "no-cache" }
         ).then(Result$GetPrevMessages.parse);
         if (data.messages.length > 0) {
           setState((state) => state.withNewPriorEpochMessages(data.messages));
@@ -99,7 +100,8 @@ export function useThreadLogic({
             threadId,
             threadPassword: threadPassword,
             after: state.newestTimestamp(),
-          } satisfies Params$GetNextMessages)
+          } satisfies Params$GetNextMessages),
+          { cache: "no-cache" }
         ).then(Result$GetNextMessages.parse);
         setState((state) => state.withNewSinceEpochMessages(data.messages));
       }
@@ -144,7 +146,7 @@ export function useThreadLogic({
           threadPassword: threadPassword,
           after: state_newestTimestamp,
         } satisfies Params$GetNextMessages),
-        { signal }
+        { cache: "no-cache", signal }
       ).then(Result$GetNextMessages.parse);
       signal.throwIfAborted();
 

@@ -22,7 +22,8 @@ export const GET = withDefaultRouteHandler(async (request) => {
       threadPassword: params.threadPassword,
       after: params.after,
       order: "asc",
-    } satisfies Params$GetMessages$WehereBackend)
+    } satisfies Params$GetMessages$WehereBackend),
+    { cache: "no-cache" }
   ).then(Result$GetMessages$WehereBackend.parse);
 
   const result: Result = {

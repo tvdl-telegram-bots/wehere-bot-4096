@@ -29,19 +29,13 @@ export default function TopBar({
   activePage,
   slotRight,
 }: Props) {
-  const swr_GetStatus = useSWR("/api/get-status", (url) =>
-    httpGet(url, { cache: "no-cache" }).then(Result$GetStatus.parse)
+  const swr_GetStatus = useSWR(
+    "/api/get-status",
+    (url) => httpGet(url, { cache: "no-cache" }).then(Result$GetStatus.parse),
+    { refreshInterval: 60000 } // refresh every 1 minute
   );
   const availability = swr_GetStatus.data?.availability;
-  const [currentTime, setCurrentTime] = React.useState<number>();
-
-  React.useEffect(() => {
-    setCurrentTime(Date.now());
-    const id = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 60000);
-    return () => void clearInterval(id);
-  }, []);
+  const serverTimestamp = swr_GetStatus.data?.serverTimestamp;
 
   return (
     <Flex
@@ -91,7 +85,7 @@ export default function TopBar({
                 : undefined
             }
           >
-            {formatAvailability(availability, currentTime)}
+            {formatAvailability(availability, serverTimestamp)}
           </Text>
         </Flex>
       </Flex>

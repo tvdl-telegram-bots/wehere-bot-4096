@@ -34,7 +34,7 @@ import SmartScrollArea from "../PageThreadV3/components/SmartScrollArea";
 import pngLogoColor from "./assets/logo-color.png";
 import Balloon from "./components/Balloon";
 import Composer from "./components/Composer";
-import StartingQuestionSelect from "./components/TemplateQuestionSelect";
+import StartingQuestionSelect from "./components/StartingQuestionSelect";
 import { useThreadDb } from "./hooks/useThreadDb";
 import styles from "./index.module.scss";
 

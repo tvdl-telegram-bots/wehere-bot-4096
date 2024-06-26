@@ -52,12 +52,12 @@ export default function PageThreadV3({
       }
     : undefined;
 
-  const swr_threadSecret = useSWR(
+  const swr_ReadThreadSecret = useSWR(
     threadDb ? ["thread-db:", "ReadThreadSecret", threadId] : undefined,
     () => threadDb?.get(threadId)
   );
-  const threadPassword = swr_threadSecret.data?.threadPassword;
-  const pusherChannelId = swr_threadSecret.data?.pusherChannelId;
+  const threadPassword = swr_ReadThreadSecret.data?.threadPassword;
+  const pusherChannelId = swr_ReadThreadSecret.data?.pusherChannelId;
 
   const swr_GetStatus = useSWR("/api/get-status", (url) =>
     httpGet(url, { cache: "no-cache" }).then(Result$GetStatus.parse)
