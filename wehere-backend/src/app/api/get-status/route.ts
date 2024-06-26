@@ -6,6 +6,8 @@ import { PusherClientConfig } from "wehere-bot/src/typing/common";
 
 import type { Result$GetStatus$WehereBackend as Result } from "./typing";
 
+export const dynamic = "force-dynamic";
+
 export const GET = withDefaultRouteHandler(async (_request, ctx) => {
   const availability = await getAvailability(ctx);
   const pusherUrl = new URL(ENV.PUSHER_URI);

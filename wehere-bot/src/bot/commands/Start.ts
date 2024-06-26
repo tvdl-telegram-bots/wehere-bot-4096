@@ -70,13 +70,13 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
   switch (role) {
     case "admin": {
       await sayHelloAdmin(ctx, from.id);
-      await Availability.handleMessage(ctx);
+      await Availability.handleMessage?.(ctx);
       await Subscription.handleMessage?.(ctx);
       break;
     }
     case "angel": {
       await sayHelloAngel(ctx, from.id);
-      await Availability.handleMessage(ctx);
+      await Availability.handleMessage?.(ctx);
       await Subscription.handleMessage?.(ctx);
       break;
     }

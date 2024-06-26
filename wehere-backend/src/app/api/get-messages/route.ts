@@ -12,6 +12,8 @@ import { parseDocs } from "wehere-bot/src/utils/array";
 import type { Result$GetMessages$WehereBackend as Result } from "./typing";
 import { Params$GetMessages$WehereBackend as Params } from "./typing";
 
+export const dynamic = "force-dynamic";
+
 export const GET = withDefaultRouteHandler(async (request, ctx) => {
   const url = new URL(request.url);
   const query = Object.fromEntries(url.searchParams.entries());

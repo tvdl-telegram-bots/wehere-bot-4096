@@ -1,74 +1,80 @@
 import { InlineKeyboard } from "grammy";
-import type { Command } from "wehere-bot/src/types";
-import { assert, nonNullable } from "wehere-bot/src/utils/assert";
-import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
-import { parseCallbackQueryData } from "wehere-bot/src/utils/parse";
+import type { BotContext$CommandBuilder } from "wehere-bot/src/classes/CommandBuilder";
+import { CommandBuilder } from "wehere-bot/src/classes/CommandBuilder";
+import { nonNullable } from "wehere-bot/src/utils/assert";
+import { html } from "wehere-bot/src/utils/format";
+import { getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 import { z } from "zod";
 
 import { getAvailability, setAvailability } from "../operations/availability";
-import { getChatLocale } from "../operations/chat_";
 import { getRole } from "../operations/role";
 
-const handleMessage = withDefaultErrorHandler(async (ctx) => {
-  const msg0 = nonNullable(ctx.message);
-  const role = await getRole(ctx, msg0.from.id);
-  const locale = await getChatLocale(ctx, msg0.chat.id);
+const $ = new CommandBuilder("availability");
 
-  if (role === "mortal") {
-    ctx.api.sendMessage(
-      msg0.chat.id,
-      ctx.i18n.withLocale(locale)("html-forbidden"),
-      { parse_mode: "HTML" }
-    );
-    return;
-  }
+async function checkAngelRole(ctx: BotContext$CommandBuilder) {
+  const from = nonNullable(ctx.from);
+  const role = await getRole(ctx, from.id);
+  if (role !== "mortal") return;
+  await ctx.replyHtml(
+    ctx.t("html-you-not-angel", { user: html.literal(from.id) })
+  );
+  throw false;
+}
 
-  assert(["angel", "admin"].includes(role), "forbidden");
+function getInlineKeyboard(
+  ctx: BotContext$CommandBuilder,
+  params: { theOppositeValue: boolean }
+): InlineKeyboard {
+  return InlineKeyboard.from([
+    [
+      params.theOppositeValue
+        ? InlineKeyboard.text(
+            ctx.t("text-set-available"),
+            getWehereUrlV2("availability", "/set", { value: true })
+          )
+        : InlineKeyboard.text(
+            ctx.t("text-set-unavailable"),
+            getWehereUrlV2("availability", "/set", { value: false })
+          ),
+    ],
+  ]);
+}
+
+$.route("/", async (ctx) => {
+  await checkAngelRole(ctx);
   const availability = await getAvailability(ctx);
-  const messageBody = availability.value
-    ? ctx.i18n.withLocale(locale)("html-we-are-available")
-    : ctx.i18n.withLocale(locale)("html-we-are-unavailable");
 
-  await ctx.api.sendMessage(msg0.chat.id, messageBody, {
-    parse_mode: "HTML",
-    reply_markup: new InlineKeyboard()
-      .text(
-        ctx.i18n.withLocale(locale)("html-set-available"),
-        "wehere:/availability?value=true"
-      )
-      .text(
-        ctx.i18n.withLocale(locale)("html-set-unavailable"),
-        "wehere:/availability?value=false"
-      ),
-  });
-});
-
-const Params = z.object({
-  value: z.enum(["true", "false"]).transform((value) => value === "true"),
-});
-
-const handleCallbackQuery = withDefaultErrorHandler(async (ctx) => {
-  const msg0 = nonNullable(ctx.callbackQuery?.message);
-  const data = nonNullable(ctx.callbackQuery?.data);
-  const { query } = parseCallbackQueryData(data);
-  const locale = await getChatLocale(ctx, msg0.chat.id);
-  const params = Params.parse(query);
-  await setAvailability(ctx, { value: params.value });
-
-  const messageBody = params.value
-    ? ctx.i18n.withLocale(locale)("html-we-are-available")
-    : ctx.i18n.withLocale(locale)("html-we-are-unavailable");
-  await ctx.api.sendMessage(
-    msg0.chat.id, //
-    messageBody,
-    { parse_mode: "HTML" }
+  await ctx.replyHtml(
+    availability.value
+      ? ctx.t("html-we-are-available")
+      : ctx.t("html-we-are-unavailable"),
+    {
+      reply_markup: getInlineKeyboard(ctx, {
+        theOppositeValue: !availability.value,
+      }),
+    }
   );
 });
 
-const Availability = {
-  commandName: "availability",
-  handleMessage,
-  handleCallbackQuery,
-} satisfies Command;
+$.route("/set", async (ctx) => {
+  await checkAngelRole(ctx);
+  const url = nonNullable(ctx.url);
+  const Boolean = z
+    .enum(["true", "false"])
+    .transform((value) => value === "true");
+  const value = Boolean.parse(url.searchParams.get("value"));
+  await setAvailability(ctx, { value });
+  await ctx.replyHtml(
+    value
+      ? ctx.t("html-we-are-available") //
+      : ctx.t("html-we-are-unavailable"),
+    {
+      reply_markup: getInlineKeyboard(ctx, {
+        theOppositeValue: !value,
+      }),
+    }
+  );
+});
 
+const Availability = $.build();
 export default Availability;
