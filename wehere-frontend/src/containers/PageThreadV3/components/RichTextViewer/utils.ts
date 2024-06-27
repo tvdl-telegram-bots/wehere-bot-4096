@@ -1,4 +1,4 @@
-import type { Node} from "prosemirror-model";
+import type { Node } from "prosemirror-model";
 import { Schema } from "prosemirror-model";
 import type { Step } from "prosemirror-transform";
 import { AddMarkStep } from "prosemirror-transform";
@@ -38,6 +38,42 @@ export const schema = new Schema({
       parseDOM: [{ tag: "u" }, { tag: "ins" }],
       toDOM: () => ["u", 0],
     },
+    url: {
+      toDOM: () => ["a", 0],
+    },
+    text_link: {
+      attrs: {
+        href: {},
+        title: { default: null },
+      },
+      inclusive: false,
+      parseDOM: [
+        {
+          tag: "a[href]",
+          getAttrs(dom: HTMLElement) {
+            return {
+              href: dom.getAttribute("href"),
+              title: dom.getAttribute("title"),
+            };
+          },
+        },
+      ],
+      toDOM(node) {
+        const { href, title } = node.attrs;
+        return [
+          "a",
+          {
+            href,
+            title,
+            rel:
+              href.startsWith("/") && !href.startsWith("//")
+                ? undefined
+                : "noreferrer",
+          },
+          0,
+        ];
+      },
+    },
   },
 });
 
@@ -52,6 +88,14 @@ function toStep(entity: Telegram.MessageEntity): Step | undefined {
       return new AddMarkStep(from, to, schema.mark("italic"));
     case "underline":
       return new AddMarkStep(from, to, schema.mark("underline"));
+    case "text_link":
+      return new AddMarkStep(
+        from,
+        to,
+        schema.mark("text_link", { href: entity.url })
+      );
+    case "url":
+      return new AddMarkStep(from, to, schema.mark("url"));
   }
 }
 

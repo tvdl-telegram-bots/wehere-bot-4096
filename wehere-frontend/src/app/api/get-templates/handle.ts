@@ -43,6 +43,7 @@ export async function handle$GetTemplates(): Promise<Result> {
   ).then(Result$GetTemplates$WehereBackend.parse);
 
   const welcomeMessage = toTemplate(data.templates, "welcome_message");
+  const aboutDescription = toTemplate(data.templates, "about_description");
 
   const connectionRemarks = {
     whenAvailable: toTemplate(
@@ -80,6 +81,7 @@ export async function handle$GetTemplates(): Promise<Result> {
 
   return {
     welcomeMessage,
+    aboutDescription,
     connectionRemarks,
     startingQuestions,
   };

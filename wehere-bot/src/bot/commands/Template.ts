@@ -8,7 +8,10 @@ import {
   PersistentTemplate,
 } from "wehere-bot/src/typing/server";
 import { assert, nonNullable } from "wehere-bot/src/utils/assert";
-import type { InjectedContext$WithTranslate } from "wehere-bot/src/utils/error";
+import type {
+  InjectedContext$WithTranslate,
+  Translate,
+} from "wehere-bot/src/utils/error";
 import { html } from "wehere-bot/src/utils/format";
 import { getWehereTinyurl } from "wehere-bot/src/utils/parse";
 
@@ -53,6 +56,7 @@ const TEMPLATE_KEY_LAYOUT_INFO: Record<TemplateKey, LayoutInfo> = {
   connection_remarks_when_unavailable: { row: 2, col: 2, label: "C3" },
   opengraph_title: { row: 2, col: 3, label: "C4" },
   opengraph_description: { row: 2, col: 4, label: "C5" },
+  about_description: { row: 2, col: 5, label: "C6" },
 };
 
 async function getInlineKeyboardMarkup(
@@ -70,10 +74,7 @@ async function getInlineKeyboardMarkup(
   return InlineKeyboard.from(rows.filter((r) => r.length > 0));
 }
 
-function formatKey(
-  ctx: InjectedContext$WithTranslate,
-  key: PersistentTemplate["key"]
-): string {
+function formatKey(ctx: { t: Translate }, key: TemplateKey): string {
   switch (key) {
     case "auto_reply_when_available":
       return ctx.t("text-template-auto-reply-when-available");
@@ -105,6 +106,8 @@ function formatKey(
       return ctx.t("text-template-opengraph-title");
     case "opengraph_description":
       return ctx.t("text-template-opengraph-description");
+    case "about_description":
+      return ctx.t("text-template-about-description");
   }
 }
 

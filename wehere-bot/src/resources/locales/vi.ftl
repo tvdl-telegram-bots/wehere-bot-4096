@@ -64,6 +64,7 @@ text-template-connection-remarks-when-available = Lời nhắc khi kết nối (
 text-template-connection-remarks-when-unavailable = Lời nhắc khi kết nối (vắng mặt)
 text-template-opengraph-title = Tiêu đề trang (og:title)
 text-template-opengraph-description = Mô tả trang (og:description)
+text-template-about-description = Về chúng tôi
 
 html-template-not-set =
     Tin nhắn mẫu chưa được đặt.

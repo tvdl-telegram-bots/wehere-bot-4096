@@ -106,4 +106,5 @@ export const TemplateKey = z.enum([
   "connection_remarks_when_unavailable", // text when connecting
   "opengraph_title",
   "opengraph_description",
+  "about_description", // description on about page
 ]);

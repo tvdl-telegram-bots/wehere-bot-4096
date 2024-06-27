@@ -57,7 +57,7 @@ export default function StartingQuestionSelect({
                 className={styles.buttonLabel}
                 text={q.prompt.text || ""}
                 entities={q.prompt.entities || []}
-                unstyled={["b", "i", "p", "u"]}
+                unstyled={["a", "b", "i", "p", "u"]}
               />
             </Flex>
           </Button>

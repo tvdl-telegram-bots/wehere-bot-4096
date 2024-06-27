@@ -38,7 +38,7 @@ export default function Balloon({
         className={styles.content}
         text={text || ""}
         entities={entities || []}
-        unstyled={["b", "i", "p", "u"]}
+        unstyled={["a", "b", "i", "p", "u"]}
       />
     </Flex>
   );

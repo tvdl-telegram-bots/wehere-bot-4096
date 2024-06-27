@@ -155,13 +155,22 @@ function Root({ className, style, activePage, transparent }: Props$Root) {
       direction="column"
       gap="2"
     >
-      <Item
-        height="40px"
-        href="/"
-        emoji="🏠"
-        label="Trang chủ"
-        active={activePage?.type === "home"}
-      />
+      <Flex direction="column">
+        <Item
+          height="40px"
+          href="/"
+          emoji="🏠"
+          label="Trang chủ"
+          active={activePage?.type === "home"}
+        />
+        <Item
+          height="40px"
+          href="/about"
+          emoji="📞"
+          label="Về chúng tôi"
+          active={activePage?.type === "about"}
+        />
+      </Flex>
       <Flex className={styles.viewport} direction="column">
         {(pieces || []).map((p) => {
           switch (p.type) {

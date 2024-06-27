@@ -147,7 +147,7 @@ export default function PageHome({ className, style }: Props) {
                       className={styles.dialogDescription}
                       text={resolvedConnectionRemark.text || ""}
                       entities={resolvedConnectionRemark.entities || []}
-                      unstyled={["b", "i", "p", "u"]}
+                      unstyled={["a", "b", "i", "p", "u"]}
                     />
                   ) : undefined}
                 </>
@@ -187,7 +187,7 @@ export default function PageHome({ className, style }: Props) {
                     className={styles.description}
                     text={welcomeMessage.text || ""}
                     entities={welcomeMessage.entities || []}
-                    unstyled={["b", "i", "p", "u"]}
+                    unstyled={["a", "b", "i", "p", "u"]}
                   />
                 ) : undefined}
               </Flex>

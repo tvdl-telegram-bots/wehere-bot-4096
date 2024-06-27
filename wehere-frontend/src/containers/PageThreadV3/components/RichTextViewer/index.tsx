@@ -12,7 +12,7 @@ type Props = {
   style?: React.CSSProperties;
   text: string;
   entities: Telegram.MessageEntity[];
-  unstyled: true | ["b", "i", "p", "u"];
+  unstyled: true | ["a", "b", "i", "p", "u"];
 };
 
 export default function RichTextViewer({

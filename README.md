@@ -11,3 +11,4 @@ TODO: use Sentry to record errors in Telegram bot
 TODO: use friendly display name
 TODO: a mechanism to authenticate
 TODO: info page
+TODO: consider to have `<RichTextViewer variant=<"unstyled" | "default">>`
