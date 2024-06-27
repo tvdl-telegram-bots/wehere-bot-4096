@@ -8,7 +8,7 @@ import type {
   PersistentThreadMessage,
 } from "wehere-bot/src/typing/server";
 import { nonNullable } from "wehere-bot/src/utils/assert";
-import { isMessagePlainText } from "wehere-bot/src/utils/format";
+import { html, isMessagePlainText } from "wehere-bot/src/utils/format";
 import { getWehereTinyurl, getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 
 import { getAngelSubscription } from "../operations/angel";
@@ -46,6 +46,22 @@ async function checkTargetThreadId(
   if (targetThreadId) return targetThreadId;
 
   const msg0 = nonNullable(ctx.message);
+  if (
+    msg0.text?.startsWith("wehere:") &&
+    msg0.entities?.some((entity) => entity.type === "pre")
+  ) {
+    const url = new URL(msg0.text);
+    const obj = {
+      host: url.host,
+      pathname: url.pathname,
+      searchParams: Object.fromEntries(url.searchParams.entries()),
+    };
+    await ctx.replyHtml(html.pre(html.literal(JSON.stringify(obj, null, 2))), {
+      reply_markup: new InlineKeyboard().text(msg0.text),
+    });
+    throw false;
+  }
+
   const persistentDeadMessage = await createDeadMessage(ctx, {
     message: {
       text: msg0.text,
