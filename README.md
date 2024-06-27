@@ -7,6 +7,7 @@ PORT=4098 yarn workspace wehere-frontend dev
 ```
 
 TODO: use prosemirror to compose rich text
+TODO: use Sentry to record errors in Telegram bot
 TODO: use friendly display name
 TODO: a mechanism to authenticate
 TODO: info page

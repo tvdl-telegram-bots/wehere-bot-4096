@@ -4,6 +4,8 @@ import vi from "wehere-bot/dist/resources/locales/vi.json";
 
 export const ENV = Env.parse({
   TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+  TELEGRAM_BOT_API_SECRET_TOKEN:
+    process.env.TELEGRAM_BOT_API_SECRET_TOKEN || undefined,
   MONGODB_URI:
     process.env.MONGODB_URI ||
     decodeURIComponent(process.env.MONGODB_URI__URLENCODED || ""),

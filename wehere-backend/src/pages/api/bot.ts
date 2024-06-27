@@ -17,7 +17,11 @@ export default async function handler(
     const i18n = await createI18n(FTL);
     const pusher = await createPusher(ENV);
     const bot = await createBot(ENV.TELEGRAM_BOT_TOKEN, { db, i18n, pusher });
-    await webhookCallback(bot, "next-js")(req, res);
+    await webhookCallback(bot, "next-js", {
+      // https://core.telegram.org/bots/api#setwebhook
+      // https://grammy.dev/ref/core/webhookoptions#secrettoken
+      secretToken: ENV.TELEGRAM_BOT_API_SECRET_TOKEN || undefined,
+    })(req, res);
   } catch (error) {
     console.error(formatErrorDeeply(error));
     res.status(299).json(formatErrorAsObject(error));

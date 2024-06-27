@@ -5,6 +5,7 @@ import * as Telegram from "./telegram";
 export type Env = z.infer<typeof Env>;
 export const Env = z.object({
   TELEGRAM_BOT_TOKEN: z.string(),
+  TELEGRAM_BOT_API_SECRET_TOKEN: z.string().nullish(),
   MONGODB_URI: z.string().startsWith("mongodb"),
   MONGODB_DBNAME: z.string().min(1),
   PORT: z.coerce.number().default(3070),

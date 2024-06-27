@@ -1,4 +1,3 @@
-import { Box } from "@radix-ui/themes";
 import cx from "clsx";
 import React from "react";
 
@@ -72,17 +71,13 @@ export default class SmartScrollArea extends React.Component<
 
   render() {
     return (
-      <Box
+      <div
         className={cx(styles.container, this.props.className)}
         style={this.props.style}
         ref={this.containerRef}
-        overflowX="hidden"
-        overflowY="auto"
-        position="absolute"
-        inset="0"
       >
         {this.props.children}
-      </Box>
+      </div>
     );
   }
 }
