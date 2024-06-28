@@ -11,7 +11,7 @@ import { nonNullable } from "wehere-bot/src/utils/assert";
 import { html, isMessagePlainText } from "wehere-bot/src/utils/format";
 import { getWehereTinyurl, getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 
-import { getAngelSubscription } from "../operations/angel";
+import { readAngelSubscription } from "../operations/angel";
 import {
   createDeadMessage,
   createMessage,
@@ -25,10 +25,8 @@ async function checkAngelSubscription(
   ctx: BotContext$CommandBuilder
 ): Promise<PersistentAngelSubscription> {
   const chat = nonNullable(ctx.chat);
-  const angelSubscription = await getAngelSubscription(ctx, {
-    chatId: chat.id,
-  });
-  if (angelSubscription) return angelSubscription;
+  const angel = await readAngelSubscription(ctx, { chatId: chat.id });
+  if (angel) return angel;
   await ctx.replyHtml(ctx.t("html-you-not-subscribing"), {
     reply_markup: new InlineKeyboard().text(
       ctx.t("text-subscribe"),
@@ -40,9 +38,9 @@ async function checkAngelSubscription(
 
 async function checkTargetThreadId(
   ctx: BotContext$CommandBuilder,
-  angelSubscription: PersistentAngelSubscription
+  angel: PersistentAngelSubscription
 ): Promise<ObjectId> {
-  const targetThreadId = angelSubscription.replyingToThreadId;
+  const targetThreadId = angel.replyingToThreadId;
   if (targetThreadId) return targetThreadId;
 
   const msg0 = nonNullable(ctx.message);
@@ -130,8 +128,8 @@ async function warnIfMessageTooComplexForWeb(
 
 $.route("/", async (ctx) => {
   const msg0 = nonNullable(ctx.message);
-  const angelSubscription = await checkAngelSubscription(ctx);
-  const threadId = await checkTargetThreadId(ctx, angelSubscription);
+  const angel = await checkAngelSubscription(ctx);
+  const threadId = await checkTargetThreadId(ctx, angel);
   const message = composeMessage({ threadId, msg0 });
   const persistentThreadMessage = await createMessage(ctx, { message });
   await notifyNewMessage(ctx, { message: persistentThreadMessage });

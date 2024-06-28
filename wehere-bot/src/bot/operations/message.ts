@@ -25,7 +25,7 @@ import {
 
 import { getChatLocale } from "./chat_";
 
-async function joinPromisesGracefully(
+export async function joinPromisesGracefully(
   ctx: { db: Db },
   promises: Promise<void>[]
 ) {
@@ -90,7 +90,7 @@ async function notifyAngels(
   ctx: EssentialContext,
   message: PersistentThreadMessage
 ) {
-  const angelSubs = await ctx.db
+  const angels = await ctx.db
     .collection("angel_subscription")
     .find()
     .toArray()
@@ -109,7 +109,7 @@ async function notifyAngels(
           `(${html.strong(html.literal(formatThread(thread)))})`,
         ].join(" ");
 
-  const promises: Promise<void>[] = angelSubs.map(async (sub) => {
+  const promises: Promise<void>[] = angels.map(async (sub) => {
     const locale = await getChatLocale(ctx, sub.chatId);
     const keyboard =
       message.direction === "from_mortal"

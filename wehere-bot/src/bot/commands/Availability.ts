@@ -23,11 +23,11 @@ async function checkAngelRole(ctx: BotContext$CommandBuilder) {
 
 function getInlineKeyboard(
   ctx: BotContext$CommandBuilder,
-  params: { theOppositeValue: boolean }
+  params: { newValue: boolean }
 ): InlineKeyboard {
   return InlineKeyboard.from([
     [
-      params.theOppositeValue
+      params.newValue
         ? InlineKeyboard.text(
             ctx.t("text-set-available"),
             getWehereUrlV2("availability", "/set", { value: true })
@@ -50,7 +50,7 @@ $.route("/", async (ctx) => {
       : ctx.t("html-we-are-unavailable"),
     {
       reply_markup: getInlineKeyboard(ctx, {
-        theOppositeValue: !availability.value,
+        newValue: !availability.value,
       }),
     }
   );
@@ -70,7 +70,7 @@ $.route("/set", async (ctx) => {
       : ctx.t("html-we-are-unavailable"),
     {
       reply_markup: getInlineKeyboard(ctx, {
-        theOppositeValue: !value,
+        newValue: !value,
       }),
     }
   );

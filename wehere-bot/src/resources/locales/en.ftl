@@ -64,6 +64,7 @@ text-template-connection-remarks-when-unavailable = Remarks on connection dialog
 text-template-opengraph-title = Page title (og:title)
 text-template-opengraph-description = Page description (og:description)
 text-template-about-description = About us
+html-please-update-availability = Please double check availability.
 
 html-template-not-set =
     Template message not set.

@@ -1,8 +1,17 @@
 import type { Db } from "mongodb";
 import type { ChatId } from "wehere-bot/src/typing/common";
 import { PersistentAngelSubscription } from "wehere-bot/src/typing/server";
+import { parseDocs } from "wehere-bot/src/utils/array";
 
-export async function getAngelSubscription(
+export async function getAngelSubscriptions(ctx: { db: Db }) {
+  return await ctx.db
+    .collection("angel_subscription")
+    .find()
+    .toArray()
+    .then(parseDocs(PersistentAngelSubscription));
+}
+
+export async function readAngelSubscription(
   ctx: { db: Db },
   { chatId }: { chatId: ChatId }
 ) {

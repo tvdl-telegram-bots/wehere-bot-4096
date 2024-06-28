@@ -8,7 +8,7 @@ import { formatThread, html } from "wehere-bot/src/utils/format";
 import { getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 
 import {
-  getAngelSubscription,
+  readAngelSubscription,
   setAngelSubscription,
 } from "../operations/angel";
 import { getRole } from "../operations/role";
@@ -26,9 +26,8 @@ const $ = new CommandBuilder("subscription");
 $.route("/", async (ctx) => {
   await checkAngelRole(ctx);
   const chat = nonNullable(ctx.chat);
-  const angelSub = await getAngelSubscription(ctx, { chatId: chat.id });
-
-  if (!angelSub) {
+  const angel = await readAngelSubscription(ctx, { chatId: chat.id });
+  if (!angel) {
     await ctx.replyHtml(ctx.t("html-you-not-subscribing"), {
       reply_markup: new InlineKeyboard().text(
         ctx.t("text-subscribe"),
@@ -38,7 +37,7 @@ $.route("/", async (ctx) => {
     throw false;
   }
 
-  if (!angelSub.replyingToThreadId) {
+  if (!angel.replyingToThreadId) {
     await ctx.replyHtml(ctx.t("html-you-subscribed-but-replying"), {
       reply_markup: new InlineKeyboard().text(
         ctx.t("text-unsubscribe"),
@@ -50,7 +49,7 @@ $.route("/", async (ctx) => {
 
   const thread = await ctx.db
     .collection("thread")
-    .findOne(angelSub.replyingToThreadId)
+    .findOne(angel.replyingToThreadId)
     .then((doc) => PersistentThread.parse(doc));
 
   await ctx.replyHtml(
