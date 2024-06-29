@@ -18,5 +18,4 @@ TODO: a mechanism to authenticate
 TODO: consider to have `<RichTextViewer variant=<"unstyled" | "default">>`
 TODO: use collection `config` to store availability and schedule
 TODO: use template to reply mortal when they type /start
-TODO: dark mode
 ```

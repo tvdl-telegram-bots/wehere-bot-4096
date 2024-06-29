@@ -1,11 +1,14 @@
-import { Flex, Text } from "@radix-ui/themes";
+import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { Box, Button, Flex, Text } from "@radix-ui/themes";
 import cx from "clsx";
 import Link from "next/link";
 import React from "react";
 import useSWR from "swr";
 import type { Timestamp } from "wehere-bot/src/typing/common";
+import { useThemeControl } from "wehere-frontend/src/components/WehereTheme/utils";
 import { useThreadDb } from "wehere-frontend/src/containers/PageHome/hooks/useThreadDb";
 import type { ThreadSecret } from "wehere-frontend/src/typing/common";
+import { flex } from "wehere-frontend/src/utils/frontend";
 
 import type { ActivePage } from "../../components/ChatLayout/types";
 
@@ -117,6 +120,31 @@ function toSortedPieces(epoch: Timestamp, threadSecrets: ThreadSecret[]) {
   );
 }
 
+type ThemeSwitcher$Props = {
+  className?: string;
+  style?: React.CSSProperties;
+};
+
+function ThemeSwitcher({ className, style }: ThemeSwitcher$Props) {
+  const themeControl = useThemeControl();
+
+  return (
+    <Box className={cx(styles.ThemeSwitcher, className)} style={style}>
+      <Button
+        variant="ghost"
+        color="gray"
+        style={{ width: "100%", height: "40px" }}
+        onClick={() => {
+          themeControl.setDark(!themeControl.dark);
+        }}
+      >
+        {themeControl.dark ? <MoonIcon /> : <SunIcon />}
+        <Text>{"Chế độ Sáng/Tối"}</Text>
+      </Button>
+    </Box>
+  );
+}
+
 type Props$Root = {
   className?: string;
   style?: React.CSSProperties;
@@ -155,7 +183,7 @@ function Root({ className, style, activePage, transparent }: Props$Root) {
       direction="column"
       gap="2"
     >
-      <Flex direction="column">
+      <Flex direction="column" {...flex.hard}>
         <Item
           height="40px"
           href="/"
@@ -171,7 +199,7 @@ function Root({ className, style, activePage, transparent }: Props$Root) {
           active={activePage?.type === "about"}
         />
       </Flex>
-      <Flex className={styles.viewport} direction="column">
+      <Flex className={styles.viewport} direction="column" {...flex.soft}>
         {(pieces || []).map((p) => {
           switch (p.type) {
             case "heading":
@@ -203,6 +231,9 @@ function Root({ className, style, activePage, transparent }: Props$Root) {
           }
         })}
       </Flex>
+      <Box {...flex.hard} asChild>
+        <ThemeSwitcher />
+      </Box>
     </Flex>
   );
 }
