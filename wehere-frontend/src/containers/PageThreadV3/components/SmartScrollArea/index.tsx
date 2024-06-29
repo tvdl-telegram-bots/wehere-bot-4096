@@ -44,6 +44,14 @@ export default class SmartScrollArea extends React.Component<
     };
   }
 
+  componentDidMount() {
+    const container = this.containerRef.current;
+    if (!container) return;
+    setTimeout(() => {
+      container.scrollTop = container.scrollHeight;
+    }, 0);
+  }
+
   componentDidUpdate(
     prevProps: Props,
     _prevState: Record<string, never>,
