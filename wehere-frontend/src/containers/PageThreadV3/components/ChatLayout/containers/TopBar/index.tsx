@@ -5,6 +5,7 @@ import Image from "next/image";
 import React from "react";
 import useSWR from "swr";
 import { Result$GetStatus } from "wehere-frontend/src/app/api/get-status/typing";
+import Logo from "wehere-frontend/src/components/Logo";
 import { flex } from "wehere-frontend/src/utils/frontend";
 import { httpGet } from "wehere-frontend/src/utils/shared";
 
@@ -69,7 +70,7 @@ export default function TopBar({
           height="32px"
           position="relative"
         >
-          <Image src={pngLogoColor} alt="WeHere Logo" fill />
+          <Logo fill />
         </Box>
         <Flex direction="column">
           <Text size="2" weight="bold" color="gray" highContrast>

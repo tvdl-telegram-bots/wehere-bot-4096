@@ -2,14 +2,13 @@
 
 import { Box, Container, Flex } from "@radix-ui/themes";
 import cx from "clsx";
-import Image from "next/image";
 import React from "react";
 import useSWR from "swr";
 import { Result$GetTemplates } from "wehere-frontend/src/app/api/get-templates/typing";
+import Logo from "wehere-frontend/src/components/Logo";
 import WehereTheme from "wehere-frontend/src/components/WehereTheme";
 import { httpGet } from "wehere-frontend/src/utils/shared";
 
-import pngLogoColor from "../PageHome/assets/logo-color.png";
 import RichTextViewer from "../PageThreadV3/components/RichTextViewer";
 
 import InfoLayout from "./components/InfoLayout";
@@ -35,8 +34,16 @@ export default function PageAbout({ className, style }: Props) {
         activePage={{ type: "about" }}
       >
         <Container size="2">
-          <Flex justify="center" mt="8" mb="4">
-            <Image className={styles.logo} src={pngLogoColor} alt="WeHere" />
+          <Flex
+            justify="center"
+            mt="8"
+            mb="4"
+            mx="auto"
+            width="120px"
+            height="120px"
+            position="relative"
+          >
+            <Logo fill />
           </Flex>
           <Box p="2">
             {aboutDescription ? (

@@ -17,6 +17,7 @@ import {
 } from "wehere-frontend/src/app/api/create-thread/typing";
 import { Result$GetStatus } from "wehere-frontend/src/app/api/get-status/typing";
 import { Result$GetTemplates } from "wehere-frontend/src/app/api/get-templates/typing";
+import Logo from "wehere-frontend/src/components/Logo";
 import WehereTheme from "wehere-frontend/src/components/WehereTheme";
 import { flex } from "wehere-frontend/src/utils/frontend";
 import {
@@ -183,11 +184,9 @@ export default function PageHome({ className, style }: Props) {
                 align="center"
               >
                 <Flex direction="column" gap="2" align="center">
-                  <Image
-                    className={cx(styles.logo, styles.hideIfWindowTooShort)}
-                    src={pngLogoColor}
-                    alt="WeHere"
-                  />
+                  <Flex width="180px" height="180px" position="relative">
+                    <Logo fill />
+                  </Flex>
                   {welcomeMessage ? (
                     <RichTextViewer
                       className={styles.description}

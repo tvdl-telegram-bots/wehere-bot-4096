@@ -1,0 +1,29 @@
+.image {
+  opacity: 100%;
+  transition-property: opacity;
+  transition-duration: 500ms;
+}
+
+:global(.dark) .image {
+  filter: grayscale(100%);
+}
+
+:global(.dark) .container.loaded .image {
+  opacity: 0;
+}
+
+.colorMatte {
+  background-color: var(--white-a12);
+  mask-image: var(--mask-image);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: cover;
+  mask-type: alpha;
+  opacity: 0;
+  transition-duration: 500ms;
+  transition-property: opacity;
+}
+
+:global(.dark) .container.loaded .colorMatte {
+  opacity: 100%;
+}
