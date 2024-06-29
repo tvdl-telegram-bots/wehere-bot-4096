@@ -39,4 +39,33 @@
   b {
     font-weight: 600;
   }
+
+  a {
+    all: unset;
+    display: inline;
+
+    &,
+    &:any-link {
+      color: var(--accent-a11);
+      cursor: var(--cursor-link);
+      text-decoration-line: none;
+      text-decoration-style: solid;
+      text-decoration-thickness: min(2px, max(1px, 0.05em));
+      text-underline-offset: calc(0.025em + 2px);
+      text-decoration-color: var(--accent-a5);
+    }
+
+    &:hover {
+      text-decoration-line: underline;
+    }
+
+    &:focus-visible {
+      text-decoration-line: none;
+      border-radius: calc(0.07em * var(--radius-factor));
+      outline-color: var(--focus-8);
+      outline-width: 2px;
+      outline-style: solid;
+      outline-offset: 2px;
+    }
+  }
 }

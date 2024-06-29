@@ -47,6 +47,7 @@ export function useThreadLogic({
       state.withNewIncomingMessage({
         direction: event.direction,
         text: event.text,
+        entities: event.entities,
         createdAt: event.createdAt,
       })
     );

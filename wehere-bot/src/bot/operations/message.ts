@@ -172,6 +172,7 @@ async function notifyPusher(
     await ctx.pusher.trigger(sub.pusherChannelId, "new-message", {
       direction: message.direction,
       text: message.text,
+      entities: message.entities,
       createdAt: message.createdAt,
     } satisfies NewMessage$PusherEvent);
   });
