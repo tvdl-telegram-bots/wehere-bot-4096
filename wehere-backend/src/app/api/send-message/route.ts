@@ -23,7 +23,7 @@ import type { Result$SendMessage$WehereBackend as Result } from "./typing";
 import { Params$SendMessage$WehereBackend as Params } from "./typing";
 
 // https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#maxduration
-export const maxDuration = 60;
+export const maxDuration = 24;
 
 export const POST = withDefaultRouteHandler(async (request, ctx) => {
   const api = await createApi(ENV);

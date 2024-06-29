@@ -15,7 +15,7 @@ import type { Result$CreateThread as Result } from "./typing";
 import { Params$CreateThread as Params } from "./typing";
 
 // https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#maxduration
-export const maxDuration = 60;
+export const maxDuration = 24;
 
 export const POST = withDefaultRouteHandler(async (request) => {
   const params = await request.json().then(Params.parse).catch(throws400);
