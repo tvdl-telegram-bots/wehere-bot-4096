@@ -15,7 +15,7 @@ type Props = {
 
 export default function PieceViewer({ className, style, piece }: Props) {
   return (
-    <Box className={cx(styles.container, className)} style={style}>
+    <Box className={cx(styles.container, className)} style={style} py="2">
       <Balloon
         direction={getPieceDirection(piece)}
         text={piece.payload.text}

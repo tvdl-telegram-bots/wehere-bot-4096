@@ -124,129 +124,139 @@ export default function PageHome({ className, style }: Props) {
   );
 
   return (
-    <ChatLayout
-      className={cx(styles.container, className)}
-      style={style}
-      activePage={{ type: "home" }}
-    >
-      <Dialog.Root open={busy || leaving}>
-        <WehereTheme asChild>
-          <Dialog.Content>
-            <Flex align="center" justify="center" direction="column" gap="4">
-              {leaving ? (
-                <Text align="center" weight="bold" size="4">
-                  {"Đang chuyển hướng..."}
-                </Text>
-              ) : (
-                <>
-                  <Text align="center" weight="bold" size="4" color="gray">
-                    {"Đang kết nối"}
+    <WehereTheme>
+      <ChatLayout
+        className={cx(styles.container, className)}
+        style={style}
+        activePage={{ type: "home" }}
+      >
+        <Dialog.Root open={busy || leaving}>
+          <WehereTheme asChild>
+            <Dialog.Content>
+              <Flex align="center" justify="center" direction="column" gap="4">
+                {leaving ? (
+                  <Text align="center" weight="bold" size="4">
+                    {"Đang chuyển hướng..."}
                   </Text>
-                  {resolvedConnectionRemark ? (
+                ) : (
+                  <>
+                    <Text align="center" weight="bold" size="4" color="gray">
+                      {"Đang kết nối"}
+                    </Text>
+                    {resolvedConnectionRemark ? (
+                      <RichTextViewer
+                        className={styles.dialogDescription}
+                        text={resolvedConnectionRemark.text || ""}
+                        entities={resolvedConnectionRemark.entities || []}
+                        unstyled={["a", "b", "i", "p", "u"]}
+                      />
+                    ) : undefined}
+                  </>
+                )}
+                <Box width="80%" asChild>
+                  <Progress duration="20s" />
+                </Box>
+                <Button
+                  variant="surface"
+                  onClick={() => abortController?.abort()}
+                  disabled={!abortController}
+                >
+                  {"Hủy kết nối"}
+                </Button>
+              </Flex>
+            </Dialog.Content>
+          </WehereTheme>
+        </Dialog.Root>
+        <Flex
+          direction="column"
+          position="absolute"
+          inset="0"
+          align="center"
+          p="2"
+        >
+          <Box position="relative" width="100%" {...flex.soft}>
+            {!messages.length ? (
+              <Flex
+                position="absolute"
+                inset="0"
+                justify="center"
+                align="center"
+              >
+                <Flex direction="column" gap="2" align="center">
+                  <Image
+                    className={cx(styles.logo, styles.hideIfWindowTooShort)}
+                    src={pngLogoColor}
+                    alt="WeHere"
+                  />
+                  {welcomeMessage ? (
                     <RichTextViewer
-                      className={styles.dialogDescription}
-                      text={resolvedConnectionRemark.text || ""}
-                      entities={resolvedConnectionRemark.entities || []}
+                      className={styles.description}
+                      text={welcomeMessage.text || ""}
+                      entities={welcomeMessage.entities || []}
                       unstyled={["a", "b", "i", "p", "u"]}
                     />
                   ) : undefined}
-                </>
-              )}
-              <Box width="80%" asChild>
-                <Progress duration="20s" />
-              </Box>
-              <Button
-                variant="surface"
-                onClick={() => abortController?.abort()}
-                disabled={!abortController}
-              >
-                {"Hủy kết nối"}
-              </Button>
-            </Flex>
-          </Dialog.Content>
-        </WehereTheme>
-      </Dialog.Root>
-      <Flex
-        direction="column"
-        position="absolute"
-        inset="0"
-        align="center"
-        p="2"
-      >
-        <Box position="relative" width="100%" {...flex.soft}>
-          {!messages.length ? (
-            <Flex position="absolute" inset="0" justify="center" align="center">
-              <Flex direction="column" gap="2" align="center">
-                <Image
-                  className={cx(styles.logo, styles.hideIfWindowTooShort)}
-                  src={pngLogoColor}
-                  alt="WeHere"
-                />
-                {welcomeMessage ? (
-                  <RichTextViewer
-                    className={styles.description}
-                    text={welcomeMessage.text || ""}
-                    entities={welcomeMessage.entities || []}
-                    unstyled={["a", "b", "i", "p", "u"]}
-                  />
-                ) : undefined}
+                </Flex>
               </Flex>
-            </Flex>
-          ) : (
-            <SmartScrollArea
-              className={styles.viewport}
-              minChildKey={minChildKey}
-              maxChildKey={maxChildKey}
-              fill
-            >
-              <Box className={styles.content} position="relative">
-                {messages.map((m) => (
-                  <Box key={m.createdAt} py="2">
-                    <Balloon
-                      direction={m.direction}
-                      text={m.text}
-                      entities={m.entities}
-                      delay={m.direction === "from_angel" ? "800ms" : "200ms"}
-                    />
-                  </Box>
-                ))}
-              </Box>
-            </SmartScrollArea>
-          )}
-        </Box>
-        <Flex
-          className={styles.inputArea}
-          {...flex.hard}
-          direction="column"
-          width="100%"
-          gap="2"
-        >
-          {startingQuestions ? (
-            <StartingQuestionSelect
-              className={styles.hideIfWindowTooShort}
-              questions={startingQuestions}
-              onSelect={(q) =>
-                setMessages((m) => [
-                  ...m,
-                  {
-                    createdAt: Date.now() - Math.random(),
-                    text: q.prompt.text,
-                    entities: q.prompt.entities,
-                    direction: "from_mortal",
-                  },
-                  {
-                    createdAt: Date.now() + Math.random(),
-                    text: q.answer.text,
-                    entities: q.answer.entities,
-                    direction: "from_angel",
-                  },
-                ])
-              }
+            ) : (
+              <SmartScrollArea
+                className={styles.viewport}
+                minChildKey={minChildKey}
+                maxChildKey={maxChildKey}
+                fill
+              >
+                <Box className={styles.content} position="relative">
+                  {messages.map((m) => (
+                    <Box key={m.createdAt} py="2">
+                      <Balloon
+                        direction={m.direction}
+                        text={m.text}
+                        entities={m.entities}
+                        delay={m.direction === "from_angel" ? "800ms" : "200ms"}
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              </SmartScrollArea>
+            )}
+          </Box>
+          <Flex
+            className={styles.inputArea}
+            {...flex.hard}
+            direction="column"
+            width="100%"
+            gap="2"
+          >
+            {startingQuestions ? (
+              <StartingQuestionSelect
+                className={styles.hideIfWindowTooShort}
+                questions={startingQuestions}
+                onSelect={(q) =>
+                  setMessages((m) => [
+                    ...m,
+                    {
+                      createdAt: Date.now() - Math.random(),
+                      text: q.prompt.text,
+                      entities: q.prompt.entities,
+                      direction: "from_mortal",
+                    },
+                    {
+                      createdAt: Date.now() + Math.random(),
+                      text: q.answer.text,
+                      entities: q.answer.entities,
+                      direction: "from_angel",
+                    },
+                  ])
+                }
+              />
+            ) : undefined}
+            <Composer
+              disabled={busy || !handleSubmit}
+              onSubmit={handleSubmit}
             />
-          ) : undefined}
-          <Composer disabled={busy || !handleSubmit} onSubmit={handleSubmit} />
+          </Flex>
         </Flex>
-      </Flex>
-    </ChatLayout>
+      </ChatLayout>
+    </WehereTheme>
   );
 }

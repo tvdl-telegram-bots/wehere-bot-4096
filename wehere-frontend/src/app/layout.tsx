@@ -3,7 +3,6 @@ import { Roboto } from "next/font/google";
 import React from "react";
 import { Result$GetTemplates$WehereBackend } from "wehere-backend/src/app/api/get-templates/typing";
 
-import WehereTheme from "../components/WehereTheme";
 import { SERVER_ENV } from "../env/server";
 import { getUrl, httpGet } from "../utils/shared";
 
@@ -21,7 +20,12 @@ const roboto = Roboto({
 export async function generateMetadata(): Promise<Metadata> {
   const data = await httpGet(
     getUrl(SERVER_ENV.WEHERE_BACKEND_ORIGIN, "/api/get-templates"),
-    { cache: "default" }
+    {
+      cache: "force-cache",
+      next: {
+        revalidate: 60, // https://nextjs.org/docs/app/api-reference/functions/fetch#optionsnextrevalidate
+      },
+    }
   ).then(Result$GetTemplates$WehereBackend.parse);
 
   return {
@@ -41,12 +45,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // console.log(cookies().getAll());
   return (
     <html lang="vi">
-      <body className={roboto.className}>
-        <WehereTheme>{children}</WehereTheme>
-      </body>
+      <body className={roboto.className}>{children}</body>
     </html>
   );
 }

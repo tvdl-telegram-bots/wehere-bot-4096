@@ -1,17 +1,17 @@
 import React from "react";
 
 import { SWRFallbackProvider } from "../components/SWRFallbackProvider";
+import { FallbackBuilder } from "../components/SWRFallbackProvider/classes";
 import PageHome from "../containers/PageHome";
 
-import { handle$GetTemplates } from "./api/get-templates/handle";
-
 export default async function Route() {
-  const fallback_GetTemplates = await handle$GetTemplates();
+  const fallback = await new FallbackBuilder()
+    .pushPreset("cookie:theme")
+    .pushPreset("/api/get-templates")
+    .build();
 
   return (
-    <SWRFallbackProvider
-      fallback={{ "/api/get-templates": fallback_GetTemplates }}
-    >
+    <SWRFallbackProvider fallback={fallback}>
       <PageHome />
     </SWRFallbackProvider>
   );

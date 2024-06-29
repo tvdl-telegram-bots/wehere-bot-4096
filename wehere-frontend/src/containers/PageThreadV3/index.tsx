@@ -80,83 +80,85 @@ export default function PageThreadV3({
     : epoch;
 
   return (
-    <ChatLayout
-      className={cx(styles.container, className)}
-      style={style}
-      activePage={{ type: "thread", threadId }}
-      slotRightOnTopBar={
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <IconButton variant="ghost" color="gray">
-              <ChevronDownIcon width="16px" height="16px" />
-            </IconButton>
-          </DropdownMenu.Trigger>
-          <WehereTheme asChild>
-            <DropdownMenu.Content>
-              <DropdownMenu.Item
-                onClick={deleteThread}
-                disabled={!deleteThread}
-              >
-                {"Xóa cuộc trò chuyện"}
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </WehereTheme>
-        </DropdownMenu.Root>
-      }
-    >
-      <Flex direction="column" position="absolute" inset="0" align="center">
-        <Box position="relative" width="100%" {...flex.soft}>
-          <SmartScrollArea
-            className={styles.viewport}
-            minChildKey={minChildKey}
-            maxChildKey={maxChildKey}
-            fill
-          >
-            <Box className={styles.content} position="relative">
-              {!api.state.noMorePrevMessages ? (
-                <Flex
-                  className={styles.autoTriggerContainer}
-                  position="absolute"
-                  top="0"
-                  left="0"
-                  right="0"
-                  justify="center"
-                  align="center"
+    <WehereTheme>
+      <ChatLayout
+        className={cx(styles.container, className)}
+        style={style}
+        activePage={{ type: "thread", threadId }}
+        slotRightOnTopBar={
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <IconButton variant="ghost" color="gray">
+                <ChevronDownIcon width="16px" height="16px" />
+              </IconButton>
+            </DropdownMenu.Trigger>
+            <WehereTheme asChild>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item
+                  onClick={deleteThread}
+                  disabled={!deleteThread}
                 >
-                  <AutoTrigger
-                    onClick={api.loadPrevMessages}
-                    disabled={api.state.noMorePrevMessages}
-                    labelReady="Tải các tin nhắn trước đó"
-                    labelBusy="Đang tải các tin nhắn trước đó..."
-                    labelDisabled="Không còn tin nhắn nào trước đó."
-                    height="60px"
-                  />
-                </Flex>
-              ) : api.state.priorEpochMessages.length > 20 ? (
-                <Flex
-                  className={styles.labelNoMorePrevMessages}
-                  width="100%"
-                  justify="center"
-                  align="center"
-                >
-                  <Text size="2" color="gray">
-                    {"Không còn tin nhắn nào trước đó."}
-                  </Text>
-                </Flex>
-              ) : undefined}
-              {pieces.map((piece) => (
-                <PieceViewer key={getPieceTime(piece)} piece={piece} />
-              ))}
-            </Box>
-          </SmartScrollArea>
-        </Box>
-        <Box className={styles.composerContainer} width="100%" {...flex.hard}>
-          <Composer
-            disabled={!api.sendMessage}
-            onSubmit={(text) => void api.sendMessage?.(text)}
-          />
-        </Box>
-      </Flex>
-    </ChatLayout>
+                  {"Xóa cuộc trò chuyện"}
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </WehereTheme>
+          </DropdownMenu.Root>
+        }
+      >
+        <Flex direction="column" position="absolute" inset="0" align="center">
+          <Box position="relative" width="100%" {...flex.soft}>
+            <SmartScrollArea
+              className={styles.viewport}
+              minChildKey={minChildKey}
+              maxChildKey={maxChildKey}
+              fill
+            >
+              <Box className={styles.content} position="relative">
+                {!api.state.noMorePrevMessages ? (
+                  <Flex
+                    className={styles.autoTriggerContainer}
+                    position="absolute"
+                    top="0"
+                    left="0"
+                    right="0"
+                    justify="center"
+                    align="center"
+                  >
+                    <AutoTrigger
+                      onClick={api.loadPrevMessages}
+                      disabled={api.state.noMorePrevMessages}
+                      labelReady="Tải các tin nhắn trước đó"
+                      labelBusy="Đang tải các tin nhắn trước đó..."
+                      labelDisabled="Không còn tin nhắn nào trước đó."
+                      height="60px"
+                    />
+                  </Flex>
+                ) : api.state.priorEpochMessages.length > 20 ? (
+                  <Flex
+                    className={styles.labelNoMorePrevMessages}
+                    width="100%"
+                    justify="center"
+                    align="center"
+                  >
+                    <Text size="2" color="gray">
+                      {"Không còn tin nhắn nào trước đó."}
+                    </Text>
+                  </Flex>
+                ) : undefined}
+                {pieces.map((piece) => (
+                  <PieceViewer key={getPieceTime(piece)} piece={piece} />
+                ))}
+              </Box>
+            </SmartScrollArea>
+          </Box>
+          <Box className={styles.composerContainer} width="100%" {...flex.hard}>
+            <Composer
+              disabled={!api.sendMessage}
+              onSubmit={(text) => void api.sendMessage?.(text)}
+            />
+          </Box>
+        </Flex>
+      </ChatLayout>
+    </WehereTheme>
   );
 }
