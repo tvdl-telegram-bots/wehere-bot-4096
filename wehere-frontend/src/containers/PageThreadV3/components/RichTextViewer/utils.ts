@@ -100,6 +100,9 @@ function toStep(entity: Telegram.MessageEntity): Step | undefined {
 }
 
 export function toDoc(text: string, entities: Telegram.MessageEntity[]): Node {
+  if (!text) {
+    return schema.node("doc", null, schema.node("message", null, []));
+  }
   let node = schema.node("message", null, [schema.text(text)]);
   const steps = entities.map(toStep).filter(doesExist);
   for (const step of steps) {
