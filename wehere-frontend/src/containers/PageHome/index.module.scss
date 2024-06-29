@@ -41,7 +41,13 @@
   }
 }
 
-@media (max-height: 600px) {
+@media (max-height: 560px) {
+  .hideIfWindowShort {
+    display: none;
+  }
+}
+
+@media (max-height: 400px) {
   .hideIfWindowTooShort {
     display: none;
   }

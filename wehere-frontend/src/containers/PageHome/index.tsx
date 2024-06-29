@@ -184,7 +184,12 @@ export default function PageHome({ className, style }: Props) {
                 align="center"
               >
                 <Flex direction="column" gap="2" align="center">
-                  <Flex width="180px" height="180px" position="relative">
+                  <Flex
+                    className={styles.hideIfWindowShort}
+                    width="180px"
+                    height="180px"
+                    position="relative"
+                  >
                     <Logo fill />
                   </Flex>
                   {welcomeMessage ? (
