@@ -1,3 +1,5 @@
+import React from "react";
+
 import PackageJson from "../../package.json";
 
 export default function Route() {

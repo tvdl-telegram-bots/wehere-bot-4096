@@ -15,6 +15,7 @@
   "devDependencies": {
     "@types/html-escaper": "^3",
     "@types/node": "^20",
+    "eslint": "^9.6.0",
     "nodemon": "^3.1.4",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
@@ -24,6 +25,7 @@
   "scripts": {
     "build": "scripts/compile-ftl.sh && tsc",
     "dev:bot": "nodemon src/bot-only.ts",
-    "postinstall": "scripts/compile-ftl.sh"
+    "postinstall": "scripts/compile-ftl.sh",
+    "lint": "eslint src/"
   }
 }

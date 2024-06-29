@@ -1,16 +1,20 @@
 {
   "name": "wehere-bot-4096",
+  "homepage": "https://wehere.chat",
   "repository": {
     "type": "git",
     "url": "git@github.com:tvdl-telegram-bots/wehere-bot-4096.git"
   },
   "author": "Kien Nguyen <kc97ble@gmail.com>",
-  "packageManager": "yarn@4.2.2",
   "workspaces": [
     "wehere-bot",
     "wehere-backend",
     "wehere-frontend"
   ],
+  "scripts": {
+    "postinstall": "sort-package-json",
+    "lint": "yarn workspaces foreach -A run lint"
+  },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
     "@stylistic/eslint-plugin-js": "^2.1.0",
@@ -21,10 +25,9 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc-fb9a90fa48-20240614",
     "globals": "^15.2.0",
     "prettier": "^3.3.2",
+    "sort-package-json": "^2.10.0",
     "tsconfig-paths": "^4.2.0",
     "typescript-eslint": "^7.8.0"
   },
-  "scripts": {
-    "lint": "eslint 'wehere-bot/**'"
-  }
+  "packageManager": "yarn@4.2.2"
 }
