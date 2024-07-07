@@ -9,10 +9,11 @@ import styles from "./index.module.scss";
 type Props = {
   className?: string;
   style?: React.CSSProperties;
+  active?: boolean;
   fill: true;
 };
 
-export default function Logo({ className, style }: Props) {
+export default function Logo({ className, style, active }: Props) {
   const [src, setSrc] = React.useState<string>();
 
   return (
@@ -39,6 +40,7 @@ export default function Logo({ className, style }: Props) {
         fill
       />
       <Flex className={styles.colorMatte} position="absolute" inset="0"></Flex>
+      {active ? <div className={styles.activeIndicator}></div> : undefined}
     </Flex>
   );
 }

@@ -27,3 +27,13 @@
 :global(.dark) .container.loaded .colorMatte {
   opacity: 100%;
 }
+
+.activeIndicator {
+  background-color: var(--green-9);
+  position: absolute;
+  left: 75.3553%;
+  top: 75.3553%;
+  right: 4.6447%;
+  bottom: 4.6447%;
+  border-radius: 50%;
+}

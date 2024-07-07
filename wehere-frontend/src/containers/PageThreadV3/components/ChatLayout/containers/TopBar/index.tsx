@@ -1,7 +1,6 @@
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { Box, Flex, IconButton, Text } from "@radix-ui/themes";
 import cx from "clsx";
-import Image from "next/image";
 import React from "react";
 import useSWR from "swr";
 import { Result$GetStatus } from "wehere-frontend/src/app/api/get-status/typing";
@@ -12,7 +11,6 @@ import { httpGet } from "wehere-frontend/src/utils/shared";
 import SideBarDialog from "../../components/SideBarDialog";
 import type { ActivePage } from "../../types";
 
-import pngLogoColor from "./assets/logo-color.png";
 import styles from "./index.module.scss";
 import { formatAvailability } from "./utils";
 
@@ -21,6 +19,7 @@ type Props = {
   style?: React.CSSProperties;
   activePage?: ActivePage;
   slotRight?: React.ReactNode;
+  active?: boolean;
   fill: true;
 };
 
@@ -70,7 +69,7 @@ export default function TopBar({
           height="32px"
           position="relative"
         >
-          <Logo fill />
+          <Logo active={availability?.type === "available"} fill />
         </Box>
         <Flex direction="column">
           <Text size="2" weight="bold" color="gray" highContrast>
