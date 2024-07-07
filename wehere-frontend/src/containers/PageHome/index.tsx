@@ -2,7 +2,6 @@
 
 import { Box, Button, Dialog, Flex, Progress, Text } from "@radix-ui/themes";
 import cx from "clsx";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import useSWR from "swr";
@@ -32,7 +31,6 @@ import ChatLayout from "../PageThreadV3/components/ChatLayout";
 import RichTextViewer from "../PageThreadV3/components/RichTextViewer";
 import SmartScrollArea from "../PageThreadV3/components/SmartScrollArea";
 
-import pngLogoColor from "./assets/logo-color.png";
 import Balloon from "./components/Balloon";
 import Composer from "./components/Composer";
 import StartingQuestionSelect from "./components/StartingQuestionSelect";
