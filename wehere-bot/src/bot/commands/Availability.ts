@@ -6,7 +6,11 @@ import { html } from "wehere-bot/src/utils/format";
 import { getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 import { z } from "zod";
 
-import { getAvailability, setAvailability } from "../operations/availability";
+import {
+  getAvailability,
+  notifyChangedAvailability,
+  setAvailability,
+} from "../operations/availability";
 import { getRole } from "../operations/role";
 
 const $ = new CommandBuilder("availability");
@@ -64,16 +68,7 @@ $.route("/set", async (ctx) => {
     .transform((value) => value === "true");
   const value = Boolean.parse(url.searchParams.get("value"));
   await setAvailability(ctx, { value });
-  await ctx.replyHtml(
-    value
-      ? ctx.t("html-we-are-available") //
-      : ctx.t("html-we-are-unavailable"),
-    {
-      reply_markup: getInlineKeyboard(ctx, {
-        newValue: !value,
-      }),
-    }
-  );
+  await notifyChangedAvailability(ctx);
 });
 
 const Availability = $.build();
