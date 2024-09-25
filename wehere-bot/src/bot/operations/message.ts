@@ -3,12 +3,15 @@ import type { Db, WithoutId } from "mongodb";
 import type { BotContext } from "wehere-bot/src/types";
 import type {
   ChatId,
+  MessageId,
   NewMessage$PusherEvent,
 } from "wehere-bot/src/typing/common";
 import type {
   PersistentDeadMessage,
-  PersistentThreadMessage,
+  PersistentObjectId,
 } from "wehere-bot/src/typing/server";
+import { PersistentThreadMessage } from "wehere-bot/src/typing/server";
+import { PersistentSentMessage } from "wehere-bot/src/typing/server";
 import {
   PersistentAngelSubscription,
   PersistentMortalSubscription,
@@ -54,6 +57,35 @@ export async function createMessage(
 
 type EssentialContext = Pick<BotContext, "db" | "api" | "i18n" | "pusher">;
 
+async function createSentMessage(
+  ctx: EssentialContext,
+  sentMessage: WithoutId<PersistentSentMessage>
+): Promise<PersistentSentMessage> {
+  const ack = await ctx.db.collection("sent_message").insertOne(sentMessage);
+  return { _id: ack.insertedId, ...sentMessage };
+}
+
+export async function readThreadMessage_givenSentMessage(
+  ctx: Pick<BotContext, "db">,
+  chatId: ChatId,
+  messageId: MessageId
+): Promise<PersistentThreadMessage | undefined> {
+  const sentMessage = await ctx.db
+    .collection("sent_message")
+    .findOne({ chatId, messageId })
+    .then((doc) => PersistentSentMessage.parse(doc))
+    .catch(() => undefined);
+  if (!sentMessage) {
+    return undefined;
+  }
+  const threadMessage = await ctx.db
+    .collection("thread_message")
+    .findOne(sentMessage.threadMessageId)
+    .then((doc) => PersistentThreadMessage.parse(doc))
+    .catch(() => undefined);
+  return threadMessage;
+}
+
 async function notifyMortals(
   ctx: EssentialContext,
   message: PersistentThreadMessage,
@@ -69,14 +101,24 @@ async function notifyMortals(
     .filter((sub) => !excludesChats.includes(sub.chatId))
     .map(async (sub) => {
       if (message.originChatId && message.originMessageId) {
-        await ctx.api.copyMessage(
+        const msg1 = await ctx.api.copyMessage(
           sub.chatId,
           message.originChatId,
           message.originMessageId
         );
+        await createSentMessage(ctx, {
+          chatId: sub.chatId,
+          messageId: msg1.message_id,
+          threadMessageId: message._id,
+        });
       } else if (message.text) {
-        await ctx.api.sendMessage(sub.chatId, message.text, {
+        const msg1 = await ctx.api.sendMessage(sub.chatId, message.text, {
           entities: message.entities || undefined,
+        });
+        await createSentMessage(ctx, {
+          chatId: sub.chatId,
+          messageId: msg1.message_id,
+          threadMessageId: message._id,
         });
       } else {
         throw new Error("invalid message", { cause: { message } });
@@ -120,35 +162,48 @@ async function notifyAngels(
         : undefined;
 
     if (message.text && message.plainText) {
-      await ctx.api.sendMessage(
+      const msg1 = await ctx.api.sendMessage(
         sub.chatId,
         [subject, html.literal(message.text)].join("\n"),
         { parse_mode: "HTML", reply_markup: keyboard }
       );
+      await createSentMessage(ctx, {
+        chatId: sub.chatId,
+        messageId: msg1.message_id,
+        threadMessageId: message._id,
+      });
     } else if (message.originChatId && message.originMessageId) {
       const msg1 = await ctx.api.sendMessage(
         sub.chatId,
         subject,
         { parse_mode: "HTML", reply_markup: keyboard } //
       );
-
-      await ctx.api.copyMessage(
+      const msg2 = await ctx.api.copyMessage(
         sub.chatId,
         message.originChatId,
         message.originMessageId,
         { reply_parameters: { message_id: msg1.message_id } }
       );
+      await createSentMessage(ctx, {
+        chatId: sub.chatId,
+        messageId: msg2.message_id,
+        threadMessageId: message._id,
+      });
     } else if (message.text) {
       const msg1 = await ctx.api.sendMessage(
         sub.chatId,
         subject,
         { parse_mode: "HTML", reply_markup: keyboard } //
       );
-
-      await ctx.api.sendMessage(sub.chatId, message.text, {
+      const msg2 = await ctx.api.sendMessage(sub.chatId, message.text, {
         reply_markup: keyboard,
         entities: message.entities || undefined,
         reply_parameters: { message_id: msg1.message_id },
+      });
+      await createSentMessage(ctx, {
+        chatId: sub.chatId,
+        messageId: msg2.message_id,
+        threadMessageId: message._id,
       });
     } else {
       throw new Error("invalid message", { cause: { message } });
@@ -203,4 +258,72 @@ export async function createDeadMessage(
 ): Promise<PersistentDeadMessage> {
   const ack = await ctx.db.collection("dead_message").insertOne(message);
   return { _id: ack.insertedId, ...message };
+}
+
+export async function updateMessageEmoji(
+  ctx: Pick<BotContext, "db">,
+  threadMessageId: PersistentObjectId,
+  emoji: string | undefined
+) {
+  await ctx.db
+    .collection("thread_message")
+    .updateOne(
+      { _id: threadMessageId },
+      emoji ? { $set: { emoji } } : { $unset: { emoji: true } }
+    );
+}
+
+export async function notifyAngelsAboutReaction(
+  ctx: EssentialContext,
+  threadMessage: PersistentThreadMessage,
+  emoji: string | undefined
+) {
+  const tasks: (() => Promise<void>)[] = [];
+
+  const angels = await ctx.db
+    .collection("angel_subscription")
+    .find()
+    .toArray()
+    .then(parseDocs(PersistentAngelSubscription));
+
+  const thread = await ctx.db
+    .collection("thread")
+    .findOne({ _id: threadMessage.threadId })
+    .then((doc) => PersistentThread.parse(doc));
+
+  for (const angel of angels) {
+    const locale = await getChatLocale(ctx, angel.chatId);
+
+    const sentMessage = await ctx.db
+      .collection("sent_message")
+      .findOne({
+        threadMessageId: threadMessage._id,
+        chatId: angel.chatId,
+      })
+      .then((doc) => PersistentSentMessage.parse(doc))
+      .catch(() => undefined);
+
+    tasks.push(async () => {
+      const subject = !emoji
+        ? ctx.i18n.withLocale(locale)("html-mortal-unset-reactions", {
+            user: html.strong(html.literal(formatThread(thread))),
+          })
+        : ctx.i18n.withLocale(locale)("html-mortal-set-reactions", {
+            user: html.strong(html.literal(formatThread(thread))),
+            reactions: emoji,
+          });
+
+      await ctx.api.sendMessage(angel.chatId, subject, {
+        parse_mode: "HTML",
+        reply_parameters: sentMessage
+          ? { message_id: sentMessage.messageId }
+          : undefined,
+      });
+    });
+  }
+
+  await joinPromisesGracefully(
+    ctx,
+    tasks.map((t) => t())
+  );
 }

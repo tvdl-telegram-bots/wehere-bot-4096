@@ -5,13 +5,20 @@ import type {
   PersistentThread,
   PersistentThreadMessage,
 } from "wehere-bot/src/typing/server";
+import type { ReactionType } from "wehere-bot/src/typing/telegram";
 import { nonNullable } from "wehere-bot/src/utils/assert";
 import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
 import { isMessagePlainText } from "wehere-bot/src/utils/format";
 
 import { autoReply, isAutoReplyNeeded } from "../operations/availability";
 import { getChatLocale } from "../operations/chat_";
-import { createMessage, notifyNewMessage } from "../operations/message";
+import {
+  createMessage,
+  notifyAngelsAboutReaction,
+  notifyNewMessage,
+  readThreadMessage_givenSentMessage,
+  updateMessageEmoji,
+} from "../operations/message";
 import { getThread_givenMortalChatId } from "../operations/thread_";
 
 function composeMessage({
@@ -48,9 +55,41 @@ const handleMessage = withDefaultErrorHandler(async (ctx) => {
   shouldAutoReply && (await autoReply(ctx, { threadId, locale }));
 });
 
+function getEmoji(
+  olds: ReactionType[],
+  news: ReactionType[]
+): string | undefined {
+  const toEmoji = (r: ReactionType) => {
+    switch (r.type) {
+      case "emoji":
+        return r.emoji;
+      case "custom_emoji":
+        return r.custom_emoji_id;
+    }
+  };
+
+  const oldEmojis = olds.map(toEmoji);
+  const newEmojis = news.map(toEmoji).reverse();
+  return newEmojis.find((x) => !oldEmojis.includes(x));
+}
+
+const handleMessageReaction = withDefaultErrorHandler(async (ctx) => {
+  const reaction = nonNullable(ctx.messageReaction);
+  const threadMessage = await readThreadMessage_givenSentMessage(
+    ctx,
+    reaction.chat.id,
+    reaction.message_id
+  );
+  if (!threadMessage) return;
+  const emoji = getEmoji(reaction.old_reaction, reaction.new_reaction);
+  await updateMessageEmoji(ctx, threadMessage._id, emoji);
+  await notifyAngelsAboutReaction(ctx, threadMessage, emoji);
+});
+
 const MortalSay = {
   commandName: "mortal_say",
   handleMessage,
+  handleMessageReaction,
 } satisfies Command;
 
 export default MortalSay;

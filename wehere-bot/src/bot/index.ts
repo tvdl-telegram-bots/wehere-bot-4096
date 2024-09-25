@@ -129,6 +129,18 @@ export async function createBot(
     }
   });
 
+  bot.on("message_reaction", async (ctx) => {
+    const reaction = ctx.messageReaction;
+    const sender = reaction.user;
+    if (!sender) return;
+    const role = await getRole(ctx, sender.id);
+    if (role === "mortal") {
+      return await MortalSay.handleMessageReaction(ctx);
+    } else {
+      // TODO:
+    }
+  });
+
   bot.on("message::bot_command", async (ctx) => {
     if (ctx.msg.text?.startsWith("/sub")) {
       ctx.reply("Did you mean /subscription?");
