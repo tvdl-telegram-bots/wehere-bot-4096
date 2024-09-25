@@ -66,6 +66,8 @@ text-template-opengraph-title = Tiêu đề trang (og:title)
 text-template-opengraph-description = Mô tả trang (og:description)
 text-template-about-description = Về chúng tôi
 html-please-update-availability = Vui lòng kiểm tra trạng thái hiện tại.
+html-mortal-unset-reactions = {$user} đã gỡ biểu tượng cảm xúc.
+html-mortal-set-reactions = {$user} đã bảy tỏ cảm xúc {$reactions}.
 
 html-template-not-set =
     Tin nhắn mẫu chưa được đặt.

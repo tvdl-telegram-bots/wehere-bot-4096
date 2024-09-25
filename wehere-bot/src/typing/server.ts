@@ -113,8 +113,17 @@ export const PersistentThreadMessage = z.object({
   originMessageId: MessageId.nullish(),
   text: z.string().nullish(),
   entities: Telegram.MessageEntity.array().nullish(),
+  emoji: z.string().nullish(), // the last reaction from the proper sender
   plainText: z.boolean().nullish(),
   createdAt: Timestamp, // unique
+});
+
+export type PersistentSentMessage = z.infer<typeof PersistentSentMessage>;
+export const PersistentSentMessage = z.object({
+  _id: PersistentObjectId,
+  chatId: ChatId, // composite primary key
+  messageId: MessageId, // composite primary key
+  threadMessageId: PersistentObjectId,
 });
 
 export type PersistentChat = z.infer<typeof PersistentChat>;

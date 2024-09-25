@@ -19,4 +19,5 @@ export type Command = {
   middleware?: Middleware<BotContext>;
   handleMessage?: (ctx: BotContext) => Promise<void>;
   handleCallbackQuery?: (ctx: BotContext) => Promise<void>;
+  handleMessageReaction?: (ctx: BotContext) => Promise<void>;
 };

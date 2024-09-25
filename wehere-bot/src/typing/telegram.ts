@@ -1,3 +1,4 @@
+import type * as GrammyTypes from "grammy/types";
 import { z } from "zod";
 
 export type User = z.infer<typeof User>;
@@ -65,3 +66,8 @@ export const MessageEntity = z.union([
   TextLinkMessageEntity,
   TextMentionMessageEntity,
 ]);
+
+export type ReactionType = GrammyTypes.ReactionType;
+export const ReactionType = z.custom<ReactionType>((obj) => {
+  return ["emoji", "custom_emoji", "paid"].includes(obj?.type);
+});

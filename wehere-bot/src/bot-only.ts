@@ -28,7 +28,9 @@ async function main() {
   const i18n = await createI18n(FTL);
   const pusher = await createPusher(ENV);
   const bot = await createBot(ENV.TELEGRAM_BOT_TOKEN, { db, i18n, pusher });
-  await bot.start();
+  await bot.start({
+    allowed_updates: ["message", "callback_query", "message_reaction"],
+  });
 }
 
 main().catch((e) => {
