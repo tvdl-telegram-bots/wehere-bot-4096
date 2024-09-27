@@ -37,6 +37,8 @@ export type MessageDirection = z.infer<typeof MessageDirection>;
 export const ThreadPlatform = z.enum(["web", "telegram"]);
 export type ThreadPlatform = z.infer<typeof ThreadPlatform>;
 
+// TODO: there should be only 2 roles: "mortal" and "angel"
+// Then, we can create function isAdmin.
 export const Role = z.enum(["mortal", "angel", "admin"]);
 export type Role = z.infer<typeof Role>;
 
@@ -108,3 +110,28 @@ export const TemplateKey = z.enum([
   "opengraph_description",
   "about_description", // description on about page
 ]);
+
+export type Emoji = z.infer<typeof Emoji>;
+export const Emoji = Object.assign(z.string(), {
+  fromReactionType: (value: Telegram.ReactionType): string => {
+    switch (value.type) {
+      case "emoji":
+        return value.emoji;
+      case "custom_emoji":
+        return value.custom_emoji_id;
+      default:
+        return "";
+    }
+  },
+  intoReactionType: (value: string): Telegram.ReactionType => {
+    if (value > String.fromCharCode(127)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return { type: "emoji", emoji: value as any };
+    } else {
+      return { type: "custom_emoji", custom_emoji_id: value };
+    }
+  },
+});
+
+export type Side = z.infer<typeof Side>;
+export const Side = z.enum(["mortal", "angel"]);

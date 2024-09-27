@@ -16,10 +16,10 @@ export class CommandBuilder {
   }
 
   route(
-    route: string,
+    route: "message_reaction" | `/${string}`,
     handler: (ctx: BotContext & InjectedContext$WithTranslate) => void
   ) {
-    assert(route.startsWith("/"));
+    assert(route.startsWith("/") || route === "message_reaction");
     this.routes[route] = withReplyHtml(handler);
   }
 
@@ -27,6 +27,7 @@ export class CommandBuilder {
     return {
       commandName: this.commandName,
       handleMessage: this.routes["/"] || undefined,
+      handleMessageReaction: this.routes["message_reaction"] || undefined,
       handleCallbackQuery: async (ctx) => {
         if (ctx.url?.host) {
           const handler = this.routes[ctx.url.pathname || "/"];
