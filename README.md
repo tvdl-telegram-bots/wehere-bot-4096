@@ -19,6 +19,5 @@ TODO: consider to have `<RichTextViewer variant=<"unstyled" | "default">>`
 TODO: use collection `config` to store availability and schedule
 TODO: use template to reply mortal when they type /start
 TODO: update the URL to set webhook
-TODO: for reactions, split into two tasks: 1. Angel can send (one) reaction. 2. Mortal can send reactions. For each "sent message", the reaction shown is the latest reaction from the "proper direaction".
-TODO: add "sent messages" to DB so that we keep the relation between thread messages and sent messages
+TODO: differentiate web user and telegram user
 ```

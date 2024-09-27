@@ -15,7 +15,12 @@ import { readAngelSubscription } from "../operations/angel";
 import {
   createDeadMessage,
   createMessage,
+  getLastAddedEmoji,
+  notifyAngelsAboutReaction,
+  notifyMortalAboutReaction,
   notifyNewMessage,
+  readThreadMessage_givenSentMessage,
+  updateMessageEmoji,
 } from "../operations/message";
 import { getThread_givenThreadId } from "../operations/thread_";
 
@@ -134,6 +139,20 @@ $.route("/", async (ctx) => {
   const persistentThreadMessage = await createMessage(ctx, { message });
   await notifyNewMessage(ctx, { message: persistentThreadMessage });
   await warnIfMessageTooComplexForWeb(ctx, threadId);
+});
+
+$.route("message_reaction", async (ctx) => {
+  const reaction = nonNullable(ctx.messageReaction);
+  const threadMessage = await readThreadMessage_givenSentMessage(
+    ctx,
+    reaction.chat.id,
+    reaction.message_id
+  );
+  if (!threadMessage || threadMessage.direction !== "from_mortal") return;
+  const emoji = getLastAddedEmoji(reaction.old_reaction, reaction.new_reaction);
+  await updateMessageEmoji(ctx, threadMessage._id, "angel", emoji);
+  await notifyMortalAboutReaction(ctx, threadMessage, "angel", emoji);
+  await notifyAngelsAboutReaction(ctx, threadMessage, "angel", emoji);
 });
 
 const AngelSay = $.build();

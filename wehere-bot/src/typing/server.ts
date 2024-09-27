@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import {
   ChatId,
+  Emoji,
   Locale,
   MessageDirection,
   MessageId,
@@ -113,7 +114,8 @@ export const PersistentThreadMessage = z.object({
   originMessageId: MessageId.nullish(),
   text: z.string().nullish(),
   entities: Telegram.MessageEntity.array().nullish(),
-  emoji: z.string().nullish(), // the last reaction from the proper sender
+  angelEmoji: Emoji.nullish(), // emoji from angel (at most one)
+  mortalEmoji: Emoji.nullish(), // emoji from mortal (at most one)
   plainText: z.boolean().nullish(),
   createdAt: Timestamp, // unique
 });

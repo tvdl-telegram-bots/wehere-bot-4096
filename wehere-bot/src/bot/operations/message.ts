@@ -1,10 +1,12 @@
 import { InlineKeyboard } from "grammy";
 import type { Db, WithoutId } from "mongodb";
 import type { BotContext } from "wehere-bot/src/types";
-import type {
-  ChatId,
-  MessageId,
-  NewMessage$PusherEvent,
+import type { Side } from "wehere-bot/src/typing/common";
+import {
+  Emoji,
+  type ChatId,
+  type MessageId,
+  type NewMessage$PusherEvent,
 } from "wehere-bot/src/typing/common";
 import type {
   PersistentDeadMessage,
@@ -18,6 +20,7 @@ import {
   PersistentPusherSubscription,
   PersistentThread,
 } from "wehere-bot/src/typing/server";
+import type { ReactionType } from "wehere-bot/src/typing/telegram";
 import { parseDocs } from "wehere-bot/src/utils/array";
 import {
   formatErrorAsObject,
@@ -263,19 +266,32 @@ export async function createDeadMessage(
 export async function updateMessageEmoji(
   ctx: Pick<BotContext, "db">,
   threadMessageId: PersistentObjectId,
-  emoji: string | undefined
+  from: Side,
+  emoji: Emoji | undefined
 ) {
   await ctx.db
     .collection("thread_message")
     .updateOne(
       { _id: threadMessageId },
-      emoji ? { $set: { emoji } } : { $unset: { emoji: true } }
+      from == "mortal"
+        ? { $set: { mortalEmoji: emoji || null } }
+        : { $set: { angelEmoji: emoji || null } }
     );
+}
+
+export function getLastAddedEmoji(
+  olds: ReactionType[],
+  news: ReactionType[]
+): string | undefined {
+  const oldEmojis = olds.map(Emoji.fromReactionType);
+  const newEmojis = news.map(Emoji.fromReactionType).reverse();
+  return newEmojis.find((x) => !oldEmojis.includes(x));
 }
 
 export async function notifyAngelsAboutReaction(
   ctx: EssentialContext,
   threadMessage: PersistentThreadMessage,
+  from: Side,
   emoji: string | undefined
 ) {
   const tasks: (() => Promise<void>)[] = [];
@@ -304,14 +320,19 @@ export async function notifyAngelsAboutReaction(
       .catch(() => undefined);
 
     tasks.push(async () => {
-      const subject = !emoji
-        ? ctx.i18n.withLocale(locale)("html-mortal-unset-reactions", {
-            user: html.strong(html.literal(formatThread(thread))),
-          })
-        : ctx.i18n.withLocale(locale)("html-mortal-set-reactions", {
-            user: html.strong(html.literal(formatThread(thread))),
-            reactions: emoji,
-          });
+      const reactionSentBy =
+        from === "mortal"
+          ? html.strong(html.literal(formatThread(thread)))
+          : html.strong("🏢 WeHere");
+      const subject = emoji
+        ? ctx.i18n.withLocale(locale)(
+            "html-user-set-reactions", //
+            { user: reactionSentBy, reactions: emoji }
+          )
+        : ctx.i18n.withLocale(locale)(
+            "html-user-unset-reactions", //
+            { user: reactionSentBy }
+          );
 
       await ctx.api.sendMessage(angel.chatId, subject, {
         parse_mode: "HTML",
@@ -319,11 +340,40 @@ export async function notifyAngelsAboutReaction(
           ? { message_id: sentMessage.messageId }
           : undefined,
       });
+
+      if (
+        sentMessage &&
+        from === "mortal" &&
+        threadMessage.direction === "from_angel"
+      ) {
+        await ctx.api.setMessageReaction(
+          sentMessage.chatId,
+          sentMessage.messageId,
+          emoji ? [Emoji.intoReactionType(emoji)] : []
+        );
+      }
     });
   }
 
   await joinPromisesGracefully(
     ctx,
     tasks.map((t) => t())
+  );
+}
+
+export async function notifyMortalAboutReaction(
+  ctx: EssentialContext,
+  threadMessage: PersistentThreadMessage,
+  _from: "angel",
+  emoji: string | undefined
+) {
+  if (!threadMessage.originChatId || !threadMessage.originMessageId) {
+    return;
+  }
+
+  await ctx.api.setMessageReaction(
+    threadMessage.originChatId,
+    threadMessage.originMessageId,
+    emoji ? [Emoji.intoReactionType(emoji)] : []
   );
 }

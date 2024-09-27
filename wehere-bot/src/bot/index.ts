@@ -137,7 +137,7 @@ export async function createBot(
     if (role === "mortal") {
       return await MortalSay.handleMessageReaction(ctx);
     } else {
-      // TODO:
+      return await AngelSay.handleMessageReaction?.(ctx);
     }
   });
 
