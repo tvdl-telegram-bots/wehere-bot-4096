@@ -13,6 +13,7 @@
     "zod": "^3.23.6"
   },
   "devDependencies": {
+    "@inquirer/prompts": "^6.0.1",
     "@types/html-escaper": "^3",
     "@types/node": "^20",
     "eslint": "^9.6.0",
