@@ -1,4 +1,5 @@
 import {
+  Emoji,
   Entities,
   MessageDirection,
   TemplateKey,
@@ -13,6 +14,7 @@ export const ThreadMessage = z.object({
   text: z.string().nullish(),
   entities: Telegram.MessageEntity.array().nullish(),
   createdAt: Timestamp,
+  emoji: Emoji.nullish(),
 });
 
 export type OutgoingMessage = z.infer<typeof OutgoingMessage>;
@@ -22,6 +24,7 @@ export const OutgoingMessage = z.object({
   entities: Telegram.MessageEntity.array().nullish(),
   createdAt: Timestamp.nullish(), // from server
   composedAt: Timestamp, // from client
+  emoji: Emoji.nullish(),
 });
 
 export type IncomingMessage = z.infer<typeof IncomingMessage>;
@@ -30,6 +33,7 @@ export const IncomingMessage = z.object({
   text: z.string().nullish(),
   entities: Telegram.MessageEntity.array().nullish(),
   createdAt: Timestamp,
+  emoji: Emoji.nullish(),
 });
 
 export type Availability = z.infer<typeof Availability>;

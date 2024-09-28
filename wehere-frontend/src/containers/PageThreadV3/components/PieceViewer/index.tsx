@@ -20,6 +20,7 @@ export default function PieceViewer({ className, style, piece }: Props) {
         direction={getPieceDirection(piece)}
         text={piece.payload.text}
         entities={piece.payload.entities}
+        emoji={piece.payload.emoji}
       />
     </Box>
   );

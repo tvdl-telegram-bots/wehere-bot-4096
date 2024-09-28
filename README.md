@@ -18,6 +18,8 @@ TODO: a mechanism to authenticate
 TODO: consider to have `<RichTextViewer variant=<"unstyled" | "default">>`
 TODO: use collection `config` to store availability and schedule
 TODO: use template to reply mortal when they type /start
-TODO: update the URL to set webhook
+TODO: show emoji updates in real time
+TODO: use composedAt (or localId) to compare
 TODO: differentiate web user and telegram user
+TODO: remove PersistentChat
 ```

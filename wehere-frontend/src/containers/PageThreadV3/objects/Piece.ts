@@ -57,7 +57,7 @@ export function toSortedPieces(state: ThreadState): Piece[] {
   const b = [
     ...state.incomingMessages.map(fromIncomingMessage),
     ...state.outgoingMessages
-      .filter((m) => !state.incomingMessages.some((m0) => m0.text === m.text))
+      .filter((m) => !state.incomingMessages.some((m0) => m0.text === m.text)) // TODO: use composedAt to compare instead
       .map(fromOutgoingMessage),
   ]
     .toSorted((a, b) => getPieceTime(a) - getPieceTime(b))
