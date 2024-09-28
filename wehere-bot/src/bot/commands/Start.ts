@@ -1,5 +1,5 @@
 import { InlineKeyboard } from "grammy";
-import { getThread_givenMortalChatId } from "wehere-bot/src/bot/operations/thread_";
+import { getThread_givenMortalChatId } from "wehere-bot/src/bot/operations/thread";
 import type { Command } from "wehere-bot/src/types";
 import type { TemplateKey, UserId } from "wehere-bot/src/typing/common";
 import type { PersistentThread } from "wehere-bot/src/typing/server";

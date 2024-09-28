@@ -16,7 +16,7 @@ import {
   createMessage,
   notifyNewMessage,
 } from "wehere-bot/src/bot/operations/message";
-import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/thread_";
+import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/thread";
 import type { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 
 import type { Result$SendMessage$WehereBackend as Result } from "./typing";

@@ -5,7 +5,7 @@ import {
 import { createJsonResponse } from "wehere-backend/src/lib/backend/utils";
 import { withDefaultRouteHandler } from "wehere-backend/src/utils/handler";
 import { toPipeline } from "wehere-backend/src/utils/pipeline";
-import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/thread_";
+import { getThread_givenThreadId } from "wehere-bot/src/bot/operations/thread";
 import { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 import { parseDocs } from "wehere-bot/src/utils/array";
 

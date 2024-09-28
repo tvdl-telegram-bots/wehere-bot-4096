@@ -22,7 +22,7 @@ import {
   readThreadMessage_givenSentMessage,
   updateMessageEmoji,
 } from "../operations/message";
-import { getThread_givenThreadId } from "../operations/thread_";
+import { getThread_givenThreadId } from "../operations/thread";
 
 const $ = new CommandBuilder("angel_say");
 
