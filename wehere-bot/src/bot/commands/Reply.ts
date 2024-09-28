@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { setAngelSubscription } from "../operations/angel";
 import { getChatLocale } from "../operations/chat_";
-import { getThread_givenThreadId } from "../operations/thread_";
+import { getThread_givenThreadId } from "../operations/thread";
 
 const handleCallbackQuery = withDefaultErrorHandler(async (ctx) => {
   const msg0 = nonNullable(ctx.callbackQuery?.message);

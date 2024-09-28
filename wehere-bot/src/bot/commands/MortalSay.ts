@@ -19,7 +19,7 @@ import {
   readThreadMessage_givenSentMessage,
   updateMessageEmoji,
 } from "../operations/message";
-import { getThread_givenMortalChatId } from "../operations/thread_";
+import { getThread_givenMortalChatId } from "../operations/thread";
 
 function composeMessage({
   thread,
