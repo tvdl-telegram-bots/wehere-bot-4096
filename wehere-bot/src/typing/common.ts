@@ -133,5 +133,11 @@ export const Emoji = Object.assign(z.string(), {
   },
 });
 
+export type EmojiUpdated$PusherEvent = z.infer<typeof EmojiUpdated$PusherEvent>;
+export const EmojiUpdated$PusherEvent = z.object({
+  threadMessageCreatedAt: Timestamp,
+  emoji: Emoji.nullable(),
+});
+
 export type Side = z.infer<typeof Side>;
 export const Side = z.enum(["mortal", "angel"]);

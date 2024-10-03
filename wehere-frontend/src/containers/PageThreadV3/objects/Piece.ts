@@ -70,5 +70,19 @@ export function toSortedPieces(state: ThreadState): Piece[] {
     const q = j == b.length ? Number.MAX_VALUE : getPieceTime(b[j]);
     p < q ? c.push(a[i++]) : p > q ? c.push(b[j++]) : j++;
   }
+
+  c.forEach((piece, index, array) => {
+    const timestamp = piece.payload.createdAt;
+    if (typeof timestamp === "number") {
+      const newEmoji = state.emojiDict.get(timestamp);
+      if (newEmoji !== undefined) {
+        array[index] = {
+          ...piece,
+          payload: { ...piece.payload, emoji: newEmoji },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any;
+      }
+    }
+  });
   return c;
 }

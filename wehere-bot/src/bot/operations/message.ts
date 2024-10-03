@@ -1,7 +1,10 @@
 import { InlineKeyboard } from "grammy";
 import type { Db, WithoutId } from "mongodb";
 import type { BotContext } from "wehere-bot/src/types";
-import type { Side } from "wehere-bot/src/typing/common";
+import type {
+  EmojiUpdated$PusherEvent,
+  Side,
+} from "wehere-bot/src/typing/common";
 import {
   Emoji,
   type ChatId,
@@ -376,4 +379,25 @@ export async function notifyMortalAboutReaction(
     threadMessage.originMessageId,
     emoji ? [Emoji.intoReactionType(emoji)] : []
   );
+}
+
+export async function notifyPusherAboutReaction(
+  ctx: EssentialContext,
+  threadMessage: PersistentThreadMessage,
+  emoji: Emoji | undefined
+) {
+  const pusherSubs = await ctx.db
+    .collection("pusher_subscription")
+    .find({ threadId: threadMessage.threadId })
+    .toArray()
+    .then(parseDocs(PersistentPusherSubscription));
+
+  const promises = pusherSubs.map(async (sub) => {
+    await ctx.pusher.trigger(sub.pusherChannelId, "emoji-updated", {
+      threadMessageCreatedAt: threadMessage.createdAt,
+      emoji: emoji || null,
+    } satisfies EmojiUpdated$PusherEvent);
+  });
+
+  await joinPromisesGracefully(ctx, promises);
 }

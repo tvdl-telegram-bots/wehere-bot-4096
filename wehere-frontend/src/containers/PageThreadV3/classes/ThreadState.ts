@@ -1,9 +1,12 @@
+import type { Emoji, Timestamp } from "wehere-bot/src/typing/common";
 import { assert } from "wehere-bot/src/utils/assert";
 import type {
   IncomingMessage,
   OutgoingMessage,
   ThreadMessage,
 } from "wehere-frontend/src/typing/common";
+
+import { ImmutableMap } from "./ImmutableMap";
 
 export class ThreadState {
   public readonly epoch: number;
@@ -12,6 +15,7 @@ export class ThreadState {
   public readonly outgoingMessages: OutgoingMessage[]; // order not guaranteed
   public readonly incomingMessages: IncomingMessage[]; // order not guaranteed
   public readonly noMorePrevMessages: boolean;
+  public readonly emojiDict: ImmutableMap<Timestamp, Emoji | null>;
 
   constructor(init: {
     epoch: number;
@@ -20,6 +24,7 @@ export class ThreadState {
     outgoingMessages: OutgoingMessage[];
     incomingMessages: IncomingMessage[];
     noMorePrevMessages: boolean;
+    emojiDict: ImmutableMap<Timestamp, Emoji | null>;
   }) {
     this.epoch = init.epoch;
     this.priorEpochMessages = init.priorEpochMessages;
@@ -27,6 +32,7 @@ export class ThreadState {
     this.outgoingMessages = init.outgoingMessages;
     this.incomingMessages = init.incomingMessages;
     this.noMorePrevMessages = init.noMorePrevMessages;
+    this.emojiDict = init.emojiDict;
 
     if (process.env.NODE_ENV !== "production") {
       this.check();
@@ -41,6 +47,7 @@ export class ThreadState {
       outgoingMessages: [],
       incomingMessages: [],
       noMorePrevMessages: false,
+      emojiDict: new ImmutableMap(),
     });
   }
 
@@ -67,6 +74,7 @@ export class ThreadState {
       outgoingMessages: this.outgoingMessages,
       incomingMessages: this.incomingMessages,
       noMorePrevMessages: this.noMorePrevMessages,
+      emojiDict: this.emojiDict,
     };
   }
 
@@ -152,6 +160,13 @@ export class ThreadState {
     return new ThreadState({
       ...this.toPlainObject(),
       incomingMessages: [...this.incomingMessages, message],
+    });
+  }
+
+  withEmojiUpdated(threadMessageCreatedAt: Timestamp, emoji: Emoji | null) {
+    return new ThreadState({
+      ...this.toPlainObject(),
+      emojiDict: this.emojiDict.set(threadMessageCreatedAt, emoji),
     });
   }
 }

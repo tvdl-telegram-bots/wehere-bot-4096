@@ -1,7 +1,10 @@
 import Pusher from "pusher-js";
 import React from "react";
 import type { PusherClientConfig } from "wehere-bot/src/typing/common";
-import { NewMessage$PusherEvent } from "wehere-bot/src/typing/common";
+import {
+  EmojiUpdated$PusherEvent,
+  NewMessage$PusherEvent,
+} from "wehere-bot/src/typing/common";
 import type { Params$GetNextMessages } from "wehere-frontend/src/app/api/get-next-messages/typing";
 import { Result$GetNextMessages } from "wehere-frontend/src/app/api/get-next-messages/typing";
 import type { Params$GetPrevMessages } from "wehere-frontend/src/app/api/get-prev-messages/typing";
@@ -53,6 +56,13 @@ export function useThreadLogic({
     );
   }, []);
 
+  const handleEmojiUpdated = React.useCallback((rawEvent: unknown) => {
+    const event = EmojiUpdated$PusherEvent.parse(rawEvent);
+    setState((state) =>
+      state.withEmojiUpdated(event.threadMessageCreatedAt, event.emoji)
+    );
+  }, []);
+
   const pusherClientConfig_appKey = pusherClientConfig?.appKey;
   const pusherClientConfig_cluster = pusherClientConfig?.cluster;
 
@@ -68,6 +78,7 @@ export function useThreadLogic({
     });
     const channel = pusher.subscribe(pusherChannelId);
     channel.bind("new-message", handleIncomingMessage);
+    channel.bind("emoji-updated", handleEmojiUpdated);
     return () => void channel.unbind("new-message", handleIncomingMessage);
   }, [
     pusherChannelId,

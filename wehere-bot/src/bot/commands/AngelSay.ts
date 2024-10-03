@@ -19,6 +19,7 @@ import {
   notifyAngelsAboutReaction,
   notifyMortalAboutReaction,
   notifyNewMessage,
+  notifyPusherAboutReaction,
   readThreadMessage_givenSentMessage,
   updateMessageEmoji,
 } from "../operations/message";
@@ -153,6 +154,7 @@ $.route("message_reaction", async (ctx) => {
   await updateMessageEmoji(ctx, threadMessage._id, "angel", emoji);
   await notifyMortalAboutReaction(ctx, threadMessage, "angel", emoji);
   await notifyAngelsAboutReaction(ctx, threadMessage, "angel", emoji);
+  await notifyPusherAboutReaction(ctx, threadMessage, emoji);
 });
 
 const AngelSay = $.build();
