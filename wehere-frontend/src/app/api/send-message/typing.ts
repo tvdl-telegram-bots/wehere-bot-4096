@@ -1,3 +1,4 @@
+import { Nonce } from "wehere-bot/src/typing/common";
 import { ThreadMessage } from "wehere-frontend/src/typing/common";
 import { z } from "zod";
 
@@ -6,6 +7,7 @@ export const Params$SendMessage = z.object({
   threadId: z.string(),
   threadPassword: z.string(),
   text: z.string(),
+  nonce: Nonce,
 });
 
 export type Result$SendMessage = z.infer<typeof Result$SendMessage>;

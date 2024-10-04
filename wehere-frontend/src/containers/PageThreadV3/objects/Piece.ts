@@ -40,9 +40,20 @@ export function getPieceTime(piece: Piece): number {
     case "ThreadMessage":
       return piece.payload.createdAt;
     case "OutgoingMessage":
-      return piece.payload.createdAt || piece.payload.composedAt;
+      return piece.payload.sentAt || piece.payload.composedAt;
     case "IncomingMessage":
       return piece.payload.createdAt;
+  }
+}
+
+export function getPieceKey(piece: Piece): number {
+  switch (piece.type) {
+    case "ThreadMessage":
+      return piece.payload.nonce || piece.payload.createdAt;
+    case "OutgoingMessage":
+      return piece.payload.nonce;
+    case "IncomingMessage":
+      return piece.payload.nonce || piece.payload.createdAt;
   }
 }
 
@@ -57,7 +68,7 @@ export function toSortedPieces(state: ThreadState): Piece[] {
   const b = [
     ...state.incomingMessages.map(fromIncomingMessage),
     ...state.outgoingMessages
-      .filter((m) => !state.incomingMessages.some((m0) => m0.text === m.text))
+      .filter((m) => !state.incomingMessages.some((m0) => m0.nonce === m.nonce))
       .map(fromOutgoingMessage),
   ]
     .toSorted((a, b) => getPieceTime(a) - getPieceTime(b))

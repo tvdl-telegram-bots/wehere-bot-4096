@@ -53,6 +53,7 @@ export const POST = withDefaultRouteHandler(async (request, ctx) => {
     entities: params.entities,
     plainText: true,
     createdAt: Date.now(),
+    nonce: params.nonce,
   };
 
   // TODO: Currently, auto reply causes timeout. Let's optimize to handle within 10 seconds. Or find another way.

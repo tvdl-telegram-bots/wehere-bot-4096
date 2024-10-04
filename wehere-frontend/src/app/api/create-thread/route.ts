@@ -5,6 +5,7 @@ import {
 } from "wehere-backend/src/app/api/send-message/typing";
 import { throws400 } from "wehere-backend/src/lib/backend/errors";
 import { createJsonResponse } from "wehere-backend/src/lib/backend/utils";
+import { Nonce } from "wehere-bot/src/typing/common";
 import { nonNullable } from "wehere-bot/src/utils/assert";
 import { SERVER_ENV } from "wehere-frontend/src/env/server";
 import type { ThreadMessage } from "wehere-frontend/src/typing/common";
@@ -32,6 +33,7 @@ export const POST = withDefaultRouteHandler(async (request) => {
         text: m.text,
         threadId: data_createThread.thread._id.toHexString(),
         threadPassword: data_createThread.thread.password,
+        nonce: Nonce.generate(),
       } satisfies Params$SendMessage$WehereBackend
     ).then(Result$SendMessage$WehereBackend.parse);
     sentMessages.push({
@@ -39,6 +41,7 @@ export const POST = withDefaultRouteHandler(async (request) => {
       text: data_sendMessage.persistentThreadMessage.text,
       entities: data_sendMessage.persistentThreadMessage.entities,
       createdAt: data_sendMessage.persistentThreadMessage.createdAt,
+      nonce: data_sendMessage.persistentThreadMessage.nonce,
     });
   }
 

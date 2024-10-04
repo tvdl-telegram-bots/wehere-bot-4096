@@ -83,14 +83,6 @@ export const PusherClientConfig = z.object({
   cluster: z.string(),
 });
 
-export type NewMessage$PusherEvent = z.infer<typeof NewMessage$PusherEvent>;
-export const NewMessage$PusherEvent = z.object({
-  direction: MessageDirection,
-  text: z.string().nullish(),
-  entities: Telegram.MessageEntity.array().nullish(),
-  createdAt: Timestamp,
-});
-
 export type TemplateKey = z.infer<typeof TemplateKey>;
 export const TemplateKey = z.enum([
   "auto_reply_when_available",
@@ -135,3 +127,10 @@ export const Emoji = Object.assign(z.string(), {
 
 export type Side = z.infer<typeof Side>;
 export const Side = z.enum(["mortal", "angel"]);
+
+export type Nonce = z.infer<typeof Nonce>;
+export const Nonce = Object.assign(z.number(), {
+  generate: () => {
+    return Math.floor(Math.random() * 2 ** 32);
+  },
+});
