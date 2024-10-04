@@ -1,6 +1,6 @@
 import { createJsonResponse } from "wehere-backend/src/lib/backend/utils";
 import { withDefaultRouteHandler } from "wehere-backend/src/utils/handler";
-import { createPusherSubscription } from "wehere-bot/src/bot/operations/pusher_";
+import { createPusherSubscription } from "wehere-bot/src/bot/operations/pusher";
 import { createThread } from "wehere-bot/src/bot/operations/thread";
 
 import type { Result$CreateThread$WehereBackend as Result } from "./typing";

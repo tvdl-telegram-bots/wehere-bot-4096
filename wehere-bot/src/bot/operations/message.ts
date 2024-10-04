@@ -6,8 +6,8 @@ import {
   Emoji,
   type ChatId,
   type MessageId,
-  type NewMessage$PusherEvent,
 } from "wehere-bot/src/typing/common";
+import type { IncomingMessageEvent } from "wehere-bot/src/typing/pusher";
 import type {
   PersistentDeadMessage,
   PersistentObjectId,
@@ -227,12 +227,13 @@ async function notifyPusher(
     .then(parseDocs(PersistentPusherSubscription));
 
   const promises = pusherSubs.map(async (sub) => {
-    await ctx.pusher.trigger(sub.pusherChannelId, "new-message", {
+    await ctx.pusher.trigger(sub.pusherChannelId, "IncomingMessageEvent", {
       direction: message.direction,
       text: message.text,
       entities: message.entities,
       createdAt: message.createdAt,
-    } satisfies NewMessage$PusherEvent);
+      nonce: message.nonce,
+    } satisfies IncomingMessageEvent);
   });
 
   await joinPromisesGracefully(ctx, promises);

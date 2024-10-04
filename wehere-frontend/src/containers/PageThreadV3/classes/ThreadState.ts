@@ -1,3 +1,4 @@
+import type { Nonce } from "wehere-bot/src/typing/common";
 import { assert } from "wehere-bot/src/utils/assert";
 import type {
   IncomingMessage,
@@ -113,11 +114,11 @@ export class ThreadState {
     });
   }
 
-  withAcknowledgedOutgoingMessage(composedAt: number, createdAt: number) {
+  withAcknowledgedOutgoingMessage(nonce: Nonce, createdAt: number) {
     return new ThreadState({
       ...this.toPlainObject(),
       outgoingMessages: this.outgoingMessages.map((item) =>
-        item.composedAt === composedAt ? { ...item, createdAt } : item
+        item.nonce === nonce ? { ...item, sentAt: createdAt } : item
       ),
     });
   }
@@ -134,16 +135,11 @@ export class ThreadState {
       ...this.toPlainObject(),
       outgoingMessages: this.outgoingMessages.filter(
         (item) =>
-          !item.createdAt ||
-          !this.sinceEpochMessages.some(
-            (jtem) => jtem.createdAt === item.createdAt
-          )
+          !this.sinceEpochMessages.some((jtem) => jtem.nonce === item.nonce)
       ),
       incomingMessages: this.incomingMessages.filter(
         (item) =>
-          !this.sinceEpochMessages.some(
-            (jtem) => jtem.createdAt === item.createdAt
-          )
+          !this.sinceEpochMessages.some((jtem) => jtem.nonce === item.nonce)
       ),
     });
   }

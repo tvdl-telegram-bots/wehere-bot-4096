@@ -1,3 +1,4 @@
+import { Nonce } from "wehere-bot/src/typing/common";
 import { PersistentThreadMessage } from "wehere-bot/src/typing/server";
 import * as Telegram from "wehere-bot/src/typing/telegram";
 import { z } from "zod";
@@ -10,6 +11,7 @@ export const Params$SendMessage$WehereBackend = z.object({
   threadPassword: z.string().nullish(),
   text: z.string(),
   entities: Telegram.MessageEntity.array().nullish(),
+  nonce: Nonce.nullish(),
 });
 
 export type Result$SendMessage$WehereBackend = z.infer<

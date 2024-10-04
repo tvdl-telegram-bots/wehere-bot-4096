@@ -1,7 +1,8 @@
 import Pusher from "pusher-js";
 import React from "react";
 import type { PusherClientConfig } from "wehere-bot/src/typing/common";
-import { NewMessage$PusherEvent } from "wehere-bot/src/typing/common";
+import { Nonce } from "wehere-bot/src/typing/common";
+import { IncomingMessageEvent } from "wehere-bot/src/typing/pusher";
 import type { Params$GetNextMessages } from "wehere-frontend/src/app/api/get-next-messages/typing";
 import { Result$GetNextMessages } from "wehere-frontend/src/app/api/get-next-messages/typing";
 import type { Params$GetPrevMessages } from "wehere-frontend/src/app/api/get-prev-messages/typing";
@@ -42,13 +43,14 @@ export function useThreadLogic({
   }, []);
 
   const handleIncomingMessage = React.useCallback((rawEvent: unknown) => {
-    const event = NewMessage$PusherEvent.parse(rawEvent);
+    const event = IncomingMessageEvent.parse(rawEvent);
     setState((state) =>
       state.withNewIncomingMessage({
         direction: event.direction,
         text: event.text,
         entities: event.entities,
         createdAt: event.createdAt,
+        nonce: event.nonce,
       })
     );
   }, []);
@@ -67,8 +69,9 @@ export function useThreadLogic({
       cluster: pusherClientConfig_cluster,
     });
     const channel = pusher.subscribe(pusherChannelId);
-    channel.bind("new-message", handleIncomingMessage);
-    return () => void channel.unbind("new-message", handleIncomingMessage);
+    channel.bind("IncomingMessageEvent", handleIncomingMessage);
+    return () =>
+      void channel.unbind("IncomingMessageEvent", handleIncomingMessage);
   }, [
     pusherChannelId,
     handleIncomingMessage,
@@ -114,6 +117,7 @@ export function useThreadLogic({
           composedAt: Date.now(),
           direction: "from_mortal",
           text,
+          nonce: Nonce.generate(),
         };
         setState((state) => state.withNewOutgoingMessage(outgoingMessage));
 
@@ -123,6 +127,7 @@ export function useThreadLogic({
             threadId,
             threadPassword,
             text: outgoingMessage.text,
+            nonce: outgoingMessage.nonce,
           } satisfies Params$SendMessage
         ).then(Result$SendMessage.parse);
 

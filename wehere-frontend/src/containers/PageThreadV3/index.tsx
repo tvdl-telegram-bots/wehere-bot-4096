@@ -26,7 +26,7 @@ import PieceViewer from "./components/PieceViewer";
 import SmartScrollArea from "./components/SmartScrollArea";
 import { useThreadLogic } from "./hooks/useThreadLogic";
 import styles from "./index.module.scss";
-import { getPieceTime, toSortedPieces } from "./objects/Piece";
+import { getPieceKey, getPieceTime, toSortedPieces } from "./objects/Piece";
 
 type Props = {
   className?: string;
@@ -146,7 +146,7 @@ export default function PageThreadV3({
                   </Flex>
                 ) : undefined}
                 {pieces.map((piece) => (
-                  <PieceViewer key={getPieceTime(piece)} piece={piece} />
+                  <PieceViewer key={getPieceKey(piece)} piece={piece} />
                 ))}
               </Box>
             </SmartScrollArea>
