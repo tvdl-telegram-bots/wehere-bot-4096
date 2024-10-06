@@ -1,7 +1,6 @@
 import { InlineKeyboard } from "grammy";
 import type { Db, WithoutId } from "mongodb";
 import type { BotContext } from "wehere-bot/src/types";
-import type { Side } from "wehere-bot/src/typing/common";
 import {
   Emoji,
   Locale,
@@ -266,7 +265,7 @@ export async function createDeadMessage(
 export async function updateMessageEmoji(
   ctx: Pick<BotContext, "db">,
   threadMessageId: PersistentObjectId,
-  from: Side,
+  from: "angel" | "mortal",
   emoji: Emoji | undefined
 ) {
   await ctx.db
@@ -291,7 +290,7 @@ export function getLastAddedEmoji(
 export async function notifyAngelsAboutReaction(
   ctx: EssentialContext,
   threadMessage: PersistentThreadMessage,
-  from: Side,
+  from: "angel" | "mortal",
   emoji: string | undefined
 ) {
   const tasks: (() => Promise<void>)[] = [];
