@@ -9,7 +9,10 @@ import type { Params$GetPrevMessages } from "wehere-frontend/src/app/api/get-pre
 import { Result$GetPrevMessages } from "wehere-frontend/src/app/api/get-prev-messages/typing";
 import type { Params$SendMessage } from "wehere-frontend/src/app/api/send-message/typing";
 import { Result$SendMessage } from "wehere-frontend/src/app/api/send-message/typing";
-import type { OutgoingMessage } from "wehere-frontend/src/typing/common";
+import {
+  VariantMessage,
+  type OutgoingMessage,
+} from "wehere-frontend/src/typing/common";
 import {
   getUrl,
   httpGet,
@@ -46,6 +49,7 @@ export function useThreadLogic({
     const event = IncomingMessageEvent.parse(rawEvent);
     setState((state) =>
       state.withNewIncomingMessage({
+        type: "IncomingMessage",
         direction: event.direction,
         text: event.text,
         entities: event.entities,
@@ -114,6 +118,7 @@ export function useThreadLogic({
   const sendMessage = threadPassword
     ? async (text: string) => {
         const outgoingMessage: OutgoingMessage = {
+          type: "OutgoingMessage",
           composedAt: Date.now(),
           direction: "from_mortal",
           text,
@@ -165,10 +170,53 @@ export function useThreadLogic({
     return () => abortController.abort();
   }, [state_newestTimestamp, threadId, threadPassword]);
 
+  const sortedMessages: VariantMessage[] = React.useMemo(() => {
+    const creationSet = new Set();
+    state.priorEpochMessages.forEach((m) => creationSet.add(m.createdAt));
+    state.sinceEpochMessages.forEach((m) => creationSet.add(m.createdAt));
+
+    const nonceSet = new Set();
+    state.priorEpochMessages.forEach((m) => m.nonce && nonceSet.add(m.nonce));
+    state.sinceEpochMessages.forEach((m) => m.nonce && nonceSet.add(m.nonce));
+    state.incomingMessages.forEach((m) => m.nonce && nonceSet.add(m.nonce));
+
+    const a = state.priorEpochMessages.toReversed();
+    const b = state.sinceEpochMessages;
+    const c = state.incomingMessages.filter(
+      (m) => !creationSet.has(m.createdAt)
+    );
+    const d = state.outgoingMessages.filter((m) => !nonceSet.has(m.nonce));
+    return mergeSortedLists<VariantMessage>([a, b, c, d], (x) =>
+      VariantMessage.getTimestamp(x)
+    );
+  }, [state]);
+
   return {
     state,
     loadPrevMessages,
     loadNextMessages,
     sendMessage,
+    sortedMessages,
   };
+}
+
+function mergeSortedLists<T>(lists: T[][], keyfn: (value: T) => number) {
+  const tops: [number, number, number][] = [];
+  lists.forEach((values, i) => {
+    if (values.length) {
+      tops.push([keyfn(values[0]), i, 0]);
+    }
+  });
+
+  const results: T[] = [];
+  while (tops.length) {
+    tops.sort((x, y) => y[0] - x[0]);
+    const [_, i, j] = tops.pop()!;
+    const values = lists[i];
+    results.push(values[j]);
+    if (j + 1 < values.length) {
+      tops.push([keyfn(values[j + 1]), i, j + 1]);
+    }
+  }
+  return results;
 }

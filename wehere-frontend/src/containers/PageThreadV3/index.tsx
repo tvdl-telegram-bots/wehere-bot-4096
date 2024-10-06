@@ -14,6 +14,7 @@ import React from "react";
 import useSWR from "swr";
 import { Result$GetStatus } from "wehere-frontend/src/app/api/get-status/typing";
 import WehereTheme from "wehere-frontend/src/components/WehereTheme";
+import { VariantMessage } from "wehere-frontend/src/typing/common";
 import { flex } from "wehere-frontend/src/utils/frontend";
 import { httpGet } from "wehere-frontend/src/utils/shared";
 
@@ -22,11 +23,10 @@ import { useThreadDb } from "../PageHome/hooks/useThreadDb";
 
 import AutoTrigger from "./components/AutoTrigger";
 import ChatLayout from "./components/ChatLayout";
-import PieceViewer from "./components/PieceViewer";
 import SmartScrollArea from "./components/SmartScrollArea";
+import VariantMessageViewer from "./components/VariantMessageViewer";
 import { useThreadLogic } from "./hooks/useThreadLogic";
 import styles from "./index.module.scss";
-import { getPieceKey, getPieceTime, toSortedPieces } from "./objects/Piece";
 
 type Props = {
   className?: string;
@@ -72,11 +72,12 @@ export default function PageThreadV3({
     epoch,
   });
 
-  const pieces = React.useMemo(() => toSortedPieces(api.state), [api.state]);
-
-  const minChildKey = pieces.length ? getPieceTime(pieces[0]) : epoch;
-  const maxChildKey = pieces.length
-    ? getPieceTime(pieces[pieces.length - 1])
+  const variantMessages = api.sortedMessages;
+  const minChildKey = variantMessages.length
+    ? VariantMessage.getTimestamp(variantMessages[0])
+    : epoch;
+  const maxChildKey = variantMessages.length
+    ? VariantMessage.getTimestamp(variantMessages[variantMessages.length - 1])
     : epoch;
 
   return (
@@ -145,8 +146,11 @@ export default function PageThreadV3({
                     </Text>
                   </Flex>
                 ) : undefined}
-                {pieces.map((piece) => (
-                  <PieceViewer key={getPieceKey(piece)} piece={piece} />
+                {variantMessages.map((m) => (
+                  <VariantMessageViewer
+                    key={VariantMessage.getKey(m)}
+                    variantMessage={m}
+                  />
                 ))}
               </Box>
             </SmartScrollArea>

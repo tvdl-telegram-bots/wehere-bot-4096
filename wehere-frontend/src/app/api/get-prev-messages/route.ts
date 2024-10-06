@@ -28,6 +28,7 @@ export const GET = withDefaultRouteHandler(async (request) => {
 
   const result: Result = {
     messages: data.messages.map((m) => ({
+      type: "ThreadMessage",
       direction: m.direction,
       text: m.text,
       entities: m.entities,
