@@ -24,6 +24,7 @@ export const POST = withDefaultRouteHandler(async (request, _ctx) => {
   ).then(Result$SendMessage$WehereBackend.parse);
 
   const message: ThreadMessage = {
+    type: "ThreadMessage",
     createdAt: data.persistentThreadMessage.createdAt,
     direction: data.persistentThreadMessage.direction,
     text: data.persistentThreadMessage.text,

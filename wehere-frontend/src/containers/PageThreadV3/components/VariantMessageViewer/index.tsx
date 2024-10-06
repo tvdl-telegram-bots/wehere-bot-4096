@@ -2,24 +2,27 @@ import { Box } from "@radix-ui/themes";
 import cx from "clsx";
 import React from "react";
 import Balloon from "wehere-frontend/src/containers/PageHome/components/Balloon";
-
-import { getPieceDirection, type Piece } from "../../objects/Piece";
+import type { VariantMessage } from "wehere-frontend/src/typing/common";
 
 import styles from "./index.module.scss";
 
 type Props = {
   className?: string;
   style?: React.CSSProperties;
-  piece: Piece;
+  variantMessage: VariantMessage;
 };
 
-export default function PieceViewer({ className, style, piece }: Props) {
+export default function VariantMessageViewer({
+  className,
+  style,
+  variantMessage,
+}: Props) {
   return (
     <Box className={cx(styles.container, className)} style={style} py="2">
       <Balloon
-        direction={getPieceDirection(piece)}
-        text={piece.payload.text}
-        entities={piece.payload.entities}
+        direction={variantMessage.direction}
+        text={variantMessage.text}
+        entities={variantMessage.entities}
       />
     </Box>
   );

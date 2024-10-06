@@ -37,6 +37,7 @@ export const POST = withDefaultRouteHandler(async (request) => {
       } satisfies Params$SendMessage$WehereBackend
     ).then(Result$SendMessage$WehereBackend.parse);
     sentMessages.push({
+      type: "ThreadMessage",
       direction: data_sendMessage.persistentThreadMessage.direction,
       text: data_sendMessage.persistentThreadMessage.text,
       entities: data_sendMessage.persistentThreadMessage.entities,
