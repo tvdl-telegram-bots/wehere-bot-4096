@@ -39,11 +39,15 @@ export type ThreadPlatform = z.infer<typeof ThreadPlatform>;
 
 // TODO: there should be only 2 roles: "mortal" and "angel"
 // Then, we can create function isAdmin.
-export const Role = z.enum(["mortal", "angel", "admin"]);
 export type Role = z.infer<typeof Role>;
+export const Role = z.enum(["mortal", "angel", "admin"]);
 
-export const Locale = z.enum(["en", "vi"]);
 export type Locale = z.infer<typeof Locale>;
+export const Locale = Object.assign(z.enum(["en", "vi"]), {
+  orDefault: (value: "en" | "vi" | null | undefined) => {
+    return value || "vi";
+  },
+});
 
 export type Entities = z.infer<typeof Entities>;
 export const Entities = Telegram.MessageEntity.array();

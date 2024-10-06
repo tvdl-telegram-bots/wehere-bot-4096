@@ -70,6 +70,7 @@ export const PersistentMortalSubscription = z.object({
   chatId: ChatId, // primary key
   threadId: z.instanceof(ObjectId).nullish(),
   updatedAt: Timestamp.nullish(),
+  locale: Locale.nullish(),
 });
 
 export type PersistentTinyurl = z.infer<typeof PersistentTinyurl>;
@@ -104,6 +105,7 @@ export const PersistentAngelSubscription = z.object({
   chatId: ChatId, // primary key
   replyingToThreadId: z.instanceof(ObjectId).nullish(),
   updatedAt: Timestamp.nullish(),
+  locale: Locale.nullish(),
 });
 
 export type PersistentThreadMessage = z.infer<typeof PersistentThreadMessage>;
@@ -128,14 +130,6 @@ export const PersistentSentMessage = z.object({
   chatId: ChatId, // composite primary key
   messageId: MessageId, // composite primary key
   threadMessageId: PersistentObjectId,
-});
-
-export type PersistentChat = z.infer<typeof PersistentChat>;
-export const PersistentChat = z.object({
-  _id: PersistentObjectId,
-  chatId: ChatId,
-  locale: Locale.nullish(),
-  updatedAt: Timestamp.nullish(),
 });
 
 export type PersistentRole = z.infer<typeof PersistentRole>;

@@ -5,8 +5,7 @@ import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
 import { formatThread, html } from "wehere-bot/src/utils/format";
 import { z } from "zod";
 
-import { setAngelSubscription } from "../operations/angel";
-import { getChatLocale } from "../operations/chat_";
+import { getAngelLocale, setAngelSubscription } from "../operations/angel";
 import { getThread_givenThreadId } from "../operations/thread";
 
 const handleCallbackQuery = withDefaultErrorHandler(async (ctx) => {
@@ -24,7 +23,7 @@ const handleCallbackQuery = withDefaultErrorHandler(async (ctx) => {
     { replyingToThreadId: threadId, updatedAt: Date.now() }
   );
 
-  const locale = await getChatLocale(ctx, msg0.chat.id);
+  const locale = await getAngelLocale(ctx, msg0.chat.id);
   await ctx.api.sendMessage(
     nonNullable(msg0.chat.id),
     ctx.i18n.withLocale(locale)("html-replying-to", {
