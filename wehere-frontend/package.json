@@ -19,7 +19,7 @@
     "clsx": "^2.1.1",
     "idb-keyval": "^6.2.1",
     "milligram": "^1.4.1",
-    "next": "14.2.3",
+    "next": "^14.2.14",
     "normalize.css": "^8.0.1",
     "prosemirror-model": "^1.21.1",
     "prosemirror-state": "^1.4.3",
@@ -37,7 +37,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.3",
+    "eslint-config-next": "^14.2.14",
     "sharp": "^0.33.4",
     "typescript": "^5"
   }
