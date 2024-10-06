@@ -129,8 +129,8 @@ export const Emoji = Object.assign(z.string(), {
   },
 });
 
-export type Side = z.infer<typeof Side>;
-export const Side = z.enum(["mortal", "angel"]);
+export type MessageSender = z.infer<typeof MessageSender>;
+export const MessageSender = z.enum(["mortal", "angel", "system"]);
 
 export type Nonce = z.infer<typeof Nonce>;
 export const Nonce = Object.assign(z.number(), {
