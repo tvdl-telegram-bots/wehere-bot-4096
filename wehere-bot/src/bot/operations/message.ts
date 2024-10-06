@@ -4,6 +4,7 @@ import type { BotContext } from "wehere-bot/src/types";
 import type { Side } from "wehere-bot/src/typing/common";
 import {
   Emoji,
+  Locale,
   type ChatId,
   type MessageId,
 } from "wehere-bot/src/typing/common";
@@ -28,8 +29,6 @@ import {
   formatThread,
   html,
 } from "wehere-bot/src/utils/format";
-
-import { getChatLocale } from "./chat_";
 
 export async function joinPromisesGracefully(
   ctx: { db: Db },
@@ -154,8 +153,8 @@ async function notifyAngels(
           `(${html.strong(html.literal(formatThread(thread)))})`,
         ].join(" ");
 
-  const promises: Promise<void>[] = angels.map(async (sub) => {
-    const locale = await getChatLocale(ctx, sub.chatId);
+  const promises: Promise<void>[] = angels.map(async (angel) => {
+    const locale = Locale.orDefault(angel.locale);
     const keyboard =
       message.direction === "from_mortal"
         ? new InlineKeyboard().text(
@@ -166,45 +165,45 @@ async function notifyAngels(
 
     if (message.text && message.plainText) {
       const msg1 = await ctx.api.sendMessage(
-        sub.chatId,
+        angel.chatId,
         [subject, html.literal(message.text)].join("\n"),
         { parse_mode: "HTML", reply_markup: keyboard }
       );
       await createSentMessage(ctx, {
-        chatId: sub.chatId,
+        chatId: angel.chatId,
         messageId: msg1.message_id,
         threadMessageId: message._id,
       });
     } else if (message.originChatId && message.originMessageId) {
       const msg1 = await ctx.api.sendMessage(
-        sub.chatId,
+        angel.chatId,
         subject,
         { parse_mode: "HTML", reply_markup: keyboard } //
       );
       const msg2 = await ctx.api.copyMessage(
-        sub.chatId,
+        angel.chatId,
         message.originChatId,
         message.originMessageId,
         { reply_parameters: { message_id: msg1.message_id } }
       );
       await createSentMessage(ctx, {
-        chatId: sub.chatId,
+        chatId: angel.chatId,
         messageId: msg2.message_id,
         threadMessageId: message._id,
       });
     } else if (message.text) {
       const msg1 = await ctx.api.sendMessage(
-        sub.chatId,
+        angel.chatId,
         subject,
         { parse_mode: "HTML", reply_markup: keyboard } //
       );
-      const msg2 = await ctx.api.sendMessage(sub.chatId, message.text, {
+      const msg2 = await ctx.api.sendMessage(angel.chatId, message.text, {
         reply_markup: keyboard,
         entities: message.entities || undefined,
         reply_parameters: { message_id: msg1.message_id },
       });
       await createSentMessage(ctx, {
-        chatId: sub.chatId,
+        chatId: angel.chatId,
         messageId: msg2.message_id,
         threadMessageId: message._id,
       });
@@ -309,7 +308,7 @@ export async function notifyAngelsAboutReaction(
     .then((doc) => PersistentThread.parse(doc));
 
   for (const angel of angels) {
-    const locale = await getChatLocale(ctx, angel.chatId);
+    const locale = Locale.orDefault(angel.locale);
 
     const sentMessage = await ctx.db
       .collection("sent_message")

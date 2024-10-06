@@ -19,5 +19,6 @@ TODO: consider to have `<RichTextViewer variant=<"unstyled" | "default">>`
 TODO: use collection `config` to store availability and schedule
 TODO: use template to reply mortal when they type /start
 TODO: update the URL to set webhook
-TODO: differentiate web user and telegram user
+TODO: allow angel and mortal to set languages, also, use the user preferred languages
+TODO: add cached functions in context such as getRole, getLocale
 ```

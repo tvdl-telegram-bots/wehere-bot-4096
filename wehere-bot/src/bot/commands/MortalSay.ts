@@ -10,7 +10,6 @@ import { withDefaultErrorHandler } from "wehere-bot/src/utils/error";
 import { isMessagePlainText } from "wehere-bot/src/utils/format";
 
 import { autoReply, isAutoReplyNeeded } from "../operations/availability";
-import { getChatLocale } from "../operations/chat_";
 import {
   createMessage,
   getLastAddedEmoji,
@@ -19,6 +18,7 @@ import {
   readThreadMessage_givenSentMessage,
   updateMessageEmoji,
 } from "../operations/message";
+import { getMortalLocale } from "../operations/mortal";
 import { getThread_givenMortalChatId } from "../operations/thread";
 
 function composeMessage({
@@ -42,7 +42,7 @@ function composeMessage({
 
 const handleMessage = withDefaultErrorHandler(async (ctx) => {
   const msg0 = nonNullable(ctx.message);
-  const locale = await getChatLocale(ctx, msg0.chat.id);
+  const locale = await getMortalLocale(ctx, msg0.chat.id);
   const thread = await getThread_givenMortalChatId(ctx, msg0.chat.id);
   const threadId = thread._id;
   const message = composeMessage({ thread, message: msg0 });

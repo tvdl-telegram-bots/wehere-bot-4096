@@ -2,7 +2,9 @@ import type { TranslationContext } from "@moebius/fluent";
 import type { RawApi } from "grammy";
 import type { BotContext } from "wehere-bot/src/types";
 
-import { getChatLocale } from "../bot/operations/chat_";
+import { getAngelLocale } from "../bot/operations/angel";
+import { getMortalLocale } from "../bot/operations/mortal";
+import { getRole } from "../bot/operations/role";
 
 import { nonNullable } from "./assert";
 import { html } from "./format";
@@ -52,7 +54,12 @@ export function withReplyHtml<OtherArgs extends unknown[]>(
 ) {
   return async (ctx: BotContext, ...otherArgs: OtherArgs) => {
     const chat = nonNullable(ctx.chat);
-    const locale = await getChatLocale(ctx, chat.id);
+    // TODO: use a middleware to store the cached locale and role
+    const role = ctx.from?.id ? await getRole(ctx, ctx.from.id) : "mortal";
+    const locale =
+      role === "mortal"
+        ? await getMortalLocale(ctx, chat.id)
+        : await getAngelLocale(ctx, chat.id);
     const t = ctx.i18n.withLocale(locale);
     const replyHtml: ReplyHtml = (text, other) =>
       ctx.api.sendMessage(chat.id, text, { parse_mode: "HTML", ...other });

@@ -2,7 +2,8 @@ import { InlineKeyboard } from "grammy";
 import type { Db } from "mongodb";
 import type { WithoutId } from "mongodb";
 import type { BotContext } from "wehere-bot/src/types";
-import type { Locale, Timestamp } from "wehere-bot/src/typing/common";
+import type { Timestamp } from "wehere-bot/src/typing/common";
+import { Locale } from "wehere-bot/src/typing/common";
 import type { PersistentAngelSubscription } from "wehere-bot/src/typing/server";
 import {
   PersistentThreadMessage,
@@ -13,7 +14,6 @@ import { html } from "wehere-bot/src/utils/format";
 import { getWehereUrlV2 } from "wehere-bot/src/utils/parse";
 
 import { getAngelSubscriptions } from "./angel";
-import { getChatLocale } from "./chat_";
 import {
   createMessage,
   joinPromisesGracefully,
@@ -33,7 +33,7 @@ export async function notifyChangedAvailability(
     await getAngelSubscriptions(ctx);
   const availability = await getAvailability(ctx);
   const promises: Promise<void>[] = angels.map(async (angel) => {
-    const locale = await getChatLocale(ctx, angel.chatId);
+    const locale = Locale.orDefault(angel.locale);
     await ctx.api.sendMessage(
       angel.chatId,
       availability.value
@@ -159,7 +159,7 @@ export async function remindAllAngelsToUpdateAvailability(
 ) {
   const angels = await getAngelSubscriptions(ctx);
   const promises = angels.map(async (angel) => {
-    const locale = await getChatLocale(ctx, angel.chatId);
+    const locale = Locale.orDefault(angel.locale);
     await ctx.api.sendMessage(
       angel.chatId,
       html.i(
