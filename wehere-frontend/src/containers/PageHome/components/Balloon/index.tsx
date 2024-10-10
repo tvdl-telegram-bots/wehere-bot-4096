@@ -2,7 +2,11 @@ import { Flex } from "@radix-ui/themes";
 import cx from "clsx";
 import type { CSSProperties } from "react";
 import React from "react";
-import type { Entities, MessageDirection } from "wehere-bot/src/typing/common";
+import type {
+  Emoji,
+  Entities,
+  MessageDirection,
+} from "wehere-bot/src/typing/common";
 import RichTextViewer from "wehere-frontend/src/containers/PageThreadV3/components/RichTextViewer";
 
 import styles from "./index.module.scss";
@@ -18,6 +22,7 @@ type Props = {
   direction: MessageDirection;
   text: string | null | undefined;
   entities: Entities | null | undefined;
+  emoji?: Emoji | null | undefined;
   delay?: CSSProperties["animationDelay"];
 };
 
@@ -27,6 +32,7 @@ export default function Balloon({
   direction,
   text,
   entities,
+  emoji,
   delay,
 }: Props) {
   return (
@@ -34,12 +40,16 @@ export default function Balloon({
       className={cx(styles.container, className, DIRECTION[direction])}
       style={{ ...style, "--delay": delay } as CSSProperties}
     >
-      <RichTextViewer
-        className={styles.content}
-        text={text || ""}
-        entities={entities || []}
-        unstyled={["a", "b", "i", "p", "u"]}
-      />
+      <Flex className={styles.content}>
+        <RichTextViewer
+          text={text || ""}
+          entities={entities || []}
+          unstyled={["a", "b", "i", "p", "u"]}
+        />
+        {emoji ? (
+          <Flex className={styles.emojiContainer}>{emoji}</Flex>
+        ) : undefined}
+      </Flex>
     </Flex>
   );
 }

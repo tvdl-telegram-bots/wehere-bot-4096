@@ -22,6 +22,7 @@ import {
   readThreadMessage_givenSentMessage,
   updateMessageEmoji,
 } from "../operations/message";
+import { notifyPusher$ReactionUpdateEvent } from "../operations/reaction";
 import { getThread_givenThreadId } from "../operations/thread";
 
 const $ = new CommandBuilder("angel_say");
@@ -153,6 +154,11 @@ $.route("message_reaction", async (ctx) => {
   await updateMessageEmoji(ctx, threadMessage._id, "angel", emoji);
   await notifyMortalAboutReaction(ctx, threadMessage, "angel", emoji);
   await notifyAngelsAboutReaction(ctx, threadMessage, "angel", emoji);
+  await notifyPusher$ReactionUpdateEvent(ctx, threadMessage.threadId, {
+    messageCreatedAt: threadMessage.createdAt,
+    messageNonce: threadMessage.nonce,
+    angelEmoji: emoji || null,
+  });
 });
 
 const AngelSay = $.build();

@@ -34,6 +34,8 @@ export const GET = withDefaultRouteHandler(async (request) => {
       entities: m.entities,
       createdAt: m.createdAt,
       nonce: m.nonce,
+      angelEmoji: m.angelEmoji || null,
+      mortalEmoji: m.mortalEmoji || null,
     })),
   };
 

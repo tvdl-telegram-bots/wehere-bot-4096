@@ -1,4 +1,5 @@
 import {
+  Emoji,
   Entities,
   MessageDirection,
   Nonce,
@@ -12,6 +13,8 @@ export type BaseMessage = z.infer<typeof BaseMessage>;
 export const BaseMessage = z.object({
   direction: MessageDirection,
   entities: Telegram.MessageEntity.array().nullish(),
+  angelEmoji: Emoji.nullable(),
+  mortalEmoji: Emoji.nullable(),
 });
 
 export type ThreadMessage = z.infer<typeof ThreadMessage>;

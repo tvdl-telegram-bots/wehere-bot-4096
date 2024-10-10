@@ -1,4 +1,4 @@
-import type { Nonce } from "wehere-bot/src/typing/common";
+import type { Emoji, Nonce, Timestamp } from "wehere-bot/src/typing/common";
 import { assert } from "wehere-bot/src/utils/assert";
 import type {
   IncomingMessage,
@@ -6,12 +6,23 @@ import type {
   ThreadMessage,
 } from "wehere-frontend/src/typing/common";
 
+import { ImmutableMap } from "./ImmutableMap";
+
+// TODO: Let's change ThreadState to:
+// - oldCursor (nullable), newCursor, oldMessages, newMessages
+// - optimisticUpdates (OutgoingMessage, IncomingMessage, MessageUpdate, MessageReactionUpdate)
+// - dirtyMessages: Map<Timestamp, Timestamp>
+
 export class ThreadState {
   public readonly epoch: number;
   public readonly priorEpochMessages: ThreadMessage[]; // sorted descending
   public readonly sinceEpochMessages: ThreadMessage[]; // sorted ascending
+  // optimistic updates
   public readonly outgoingMessages: OutgoingMessage[]; // order not guaranteed
   public readonly incomingMessages: IncomingMessage[]; // order not guaranteed
+  public readonly angelEmojiDict: ImmutableMap<Timestamp, Emoji | null>;
+  public readonly mortalEmojiDict: ImmutableMap<Timestamp, Emoji | null>;
+  // flags
   public readonly noMorePrevMessages: boolean;
 
   constructor(init: {
@@ -20,6 +31,8 @@ export class ThreadState {
     priorEpochMessages: ThreadMessage[];
     outgoingMessages: OutgoingMessage[];
     incomingMessages: IncomingMessage[];
+    angelEmojiDict: ImmutableMap<Timestamp, Emoji | null>;
+    mortalEmojiDict: ImmutableMap<Timestamp, Emoji | null>;
     noMorePrevMessages: boolean;
   }) {
     this.epoch = init.epoch;
@@ -27,6 +40,8 @@ export class ThreadState {
     this.sinceEpochMessages = init.sinceEpochMessages;
     this.outgoingMessages = init.outgoingMessages;
     this.incomingMessages = init.incomingMessages;
+    this.angelEmojiDict = init.angelEmojiDict;
+    this.mortalEmojiDict = init.mortalEmojiDict;
     this.noMorePrevMessages = init.noMorePrevMessages;
 
     if (process.env.NODE_ENV !== "production") {
@@ -41,6 +56,8 @@ export class ThreadState {
       priorEpochMessages: [],
       outgoingMessages: [],
       incomingMessages: [],
+      angelEmojiDict: new ImmutableMap(),
+      mortalEmojiDict: new ImmutableMap(),
       noMorePrevMessages: false,
     });
   }
@@ -67,6 +84,8 @@ export class ThreadState {
       priorEpochMessages: this.priorEpochMessages,
       outgoingMessages: this.outgoingMessages,
       incomingMessages: this.incomingMessages,
+      angelEmojiDict: this.angelEmojiDict,
+      mortalEmojiDict: this.mortalEmojiDict,
       noMorePrevMessages: this.noMorePrevMessages,
     };
   }

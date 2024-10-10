@@ -20,4 +20,6 @@ TODO: use collection `config` to store availability and schedule
 TODO: use template to reply mortal when they type /start
 TODO: allow angel and mortal to set languages, also, use the user preferred languages
 TODO: add cached functions in context such as getRole, getLocale
+TODO: allow admins to check and read errors from db
+TODO: use immer for ThreadState
 ```

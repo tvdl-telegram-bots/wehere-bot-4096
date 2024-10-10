@@ -266,32 +266,32 @@ export async function updateMessageEmoji(
   ctx: Pick<BotContext, "db">,
   threadMessageId: PersistentObjectId,
   from: "angel" | "mortal",
-  emoji: Emoji | undefined
+  emoji: Emoji | null
 ) {
   await ctx.db
     .collection("thread_message")
     .updateOne(
       { _id: threadMessageId },
       from == "mortal"
-        ? { $set: { mortalEmoji: emoji || null } }
-        : { $set: { angelEmoji: emoji || null } }
+        ? { $set: { mortalEmoji: emoji } }
+        : { $set: { angelEmoji: emoji } }
     );
 }
 
 export function getLastAddedEmoji(
   olds: ReactionType[],
   news: ReactionType[]
-): string | undefined {
+): string | null {
   const oldEmojis = olds.map(Emoji.fromReactionType);
   const newEmojis = news.map(Emoji.fromReactionType).reverse();
-  return newEmojis.find((x) => !oldEmojis.includes(x));
+  return newEmojis.find((x) => !oldEmojis.includes(x)) || null;
 }
 
 export async function notifyAngelsAboutReaction(
   ctx: EssentialContext,
   threadMessage: PersistentThreadMessage,
   from: "angel" | "mortal",
-  emoji: string | undefined
+  emoji: string | null
 ) {
   const tasks: (() => Promise<void>)[] = [];
 
@@ -364,7 +364,7 @@ export async function notifyMortalAboutReaction(
   ctx: EssentialContext,
   threadMessage: PersistentThreadMessage,
   _from: "angel",
-  emoji: string | undefined
+  emoji: string | null
 ) {
   if (!threadMessage.originChatId || !threadMessage.originMessageId) {
     return;

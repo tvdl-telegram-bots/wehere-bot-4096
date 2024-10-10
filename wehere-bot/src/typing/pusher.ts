@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { MessageDirection, Nonce, Timestamp } from "./common";
+import { Emoji, MessageDirection, Nonce, Timestamp } from "./common";
 import * as Telegram from "./telegram";
 
 export type IncomingMessageEvent = z.infer<typeof IncomingMessageEvent>;
@@ -11,3 +11,14 @@ export const IncomingMessageEvent = z.object({
   createdAt: Timestamp,
   nonce: Nonce.nullish(),
 });
+
+export type ReactionUpdateEvent = z.infer<typeof ReactionUpdateEvent>;
+export const ReactionUpdateEvent = Object.assign(
+  z.object({
+    messageCreatedAt: Timestamp,
+    messageNonce: Nonce.nullish(),
+    angelEmoji: Emoji.nullish(),
+    mortalEmoji: Emoji.nullish(),
+  }),
+  { name: "ReactionUpdateEvent" } as const
+);
