@@ -1,3 +1,4 @@
+import { Timestamp } from "wehere-bot/src/typing/common";
 import {
   PersistentObjectId,
   PersistentThreadMessage,
@@ -27,4 +28,5 @@ export type Result$GetMessages$WehereBackend = z.input<
 >;
 export const Result$GetMessages$WehereBackend = z.object({
   messages: PersistentThreadMessage.array(),
+  nextCursor: Timestamp.nullable(),
 });

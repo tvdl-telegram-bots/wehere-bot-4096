@@ -1,0 +1,25 @@
+.viewport {
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  box-sizing: border-box;
+  padding: 0 var(--space-4);
+  width: 100%;
+  max-width: 800px;
+}
+
+.composerContainer {
+  box-sizing: border-box;
+  padding: var(--space-2) var(--space-4);
+  max-width: 800px;
+}
+
+.autoTriggerContainer {
+  z-index: 2;
+}
+
+.labelNoMorePrevMessages {
+  padding: var(--space-4);
+}

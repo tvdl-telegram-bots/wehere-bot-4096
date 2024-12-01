@@ -50,24 +50,33 @@ const _VariantMessage = z.discriminatedUnion("type", [
   OutgoingMessage,
 ]);
 export type VariantMessage = z.infer<typeof _VariantMessage>;
-export const VariantMessage = Object.assign(_VariantMessage, {
-  getTimestamp: (value: VariantMessage): Timestamp => {
-    switch (value.type) {
-      case "OutgoingMessage":
-        return value.sentAt || value.composedAt;
-      default:
-        return value.createdAt;
-    }
-  },
 
-  getKey: (value: VariantMessage): Timestamp => {
-    switch (value.type) {
-      case "OutgoingMessage":
-        return value.nonce;
-      default:
-        return value.nonce || value.createdAt;
-    }
-  },
+function _getTimestamp$VariantMessage(value: VariantMessage): Timestamp {
+  switch (value.type) {
+    case "OutgoingMessage":
+      return value.sentAt || value.composedAt;
+    default:
+      return value.createdAt;
+  }
+}
+
+function _compare$VariantMessage(a: VariantMessage, b: VariantMessage): number {
+  return _getTimestamp$VariantMessage(a) - _getTimestamp$VariantMessage(b);
+}
+
+function _getKey$VariantMessage(value: VariantMessage): Timestamp {
+  switch (value.type) {
+    case "OutgoingMessage":
+      return value.nonce;
+    default:
+      return value.nonce || value.createdAt;
+  }
+}
+
+export const VariantMessage = Object.assign(_VariantMessage, {
+  getTimestamp: _getTimestamp$VariantMessage,
+  compare: _compare$VariantMessage,
+  getKey: _getKey$VariantMessage,
 });
 
 export type Availability = z.infer<typeof Availability>;

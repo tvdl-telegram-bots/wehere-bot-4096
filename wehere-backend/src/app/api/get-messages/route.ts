@@ -14,6 +14,19 @@ import { Params$GetMessages$WehereBackend as Params } from "./typing";
 
 export const dynamic = "force-dynamic";
 
+function getCursorType(
+  params: Params
+): "since" | "after" | "until" | "prior" | undefined {
+  switch (params.order) {
+    case "asc":
+      return params.after ? "after" : params.since ? "since" : undefined;
+    case "des":
+      return params.prior ? "prior" : params.until ? "until" : undefined;
+    default:
+      return undefined;
+  }
+}
+
 export const GET = withDefaultRouteHandler(async (request, ctx) => {
   const url = new URL(request.url);
   const query = Object.fromEntries(url.searchParams.entries());
@@ -30,11 +43,13 @@ export const GET = withDefaultRouteHandler(async (request, ctx) => {
     );
   }
 
+  const limit = params.limit || 10;
+
   const messages = await ctx.db
     .collection("thread_message")
     .aggregate(
       toPipeline(function* () {
-        const { since, after, prior, until, order, limit } = params;
+        const { since, after, prior, until, order } = params;
         yield { $match: { threadId: params.threadId } };
         yield since ? { $match: { createdAt: { $gte: since } } } : undefined;
         yield after ? { $match: { createdAt: { $gt: after } } } : undefined;
@@ -42,11 +57,30 @@ export const GET = withDefaultRouteHandler(async (request, ctx) => {
         yield until ? { $match: { createdAt: { $lte: until } } } : undefined;
         yield order === "asc" ? { $sort: { createdAt: +1 } } : undefined;
         yield order === "des" ? { $sort: { createdAt: -1 } } : undefined;
-        yield { $limit: limit || 10 };
+        yield { $limit: limit };
       })
     )
     .toArray()
     .then(parseDocs(PersistentThreadMessage));
 
-  return createJsonResponse(200, { messages } satisfies Result);
+  const cursorType = getCursorType(params);
+
+  if (
+    !cursorType ||
+    (messages.length < limit && params.order === "des") ||
+    (!messages.length && params.order === "asc")
+  ) {
+    return createJsonResponse(200, {
+      messages,
+      nextCursor: null,
+    } satisfies Result);
+  } else {
+    return createJsonResponse(200, {
+      messages:
+        cursorType === "after" || cursorType === "prior"
+          ? messages
+          : messages.slice(0, -1),
+      nextCursor: messages[messages.length - 1].createdAt,
+    } satisfies Result);
+  }
 });

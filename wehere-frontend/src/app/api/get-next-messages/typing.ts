@@ -1,3 +1,4 @@
+import { Timestamp } from "wehere-bot/src/typing/common";
 import { ThreadMessage } from "wehere-frontend/src/typing/common";
 import { z } from "zod";
 
@@ -11,4 +12,5 @@ export const Params$GetNextMessages = z.object({
 export type Result$GetNextMessages = z.input<typeof Result$GetNextMessages>;
 export const Result$GetNextMessages = z.object({
   messages: ThreadMessage.array(),
+  nextCursor: Timestamp.nullable(),
 });

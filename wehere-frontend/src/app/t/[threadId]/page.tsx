@@ -1,7 +1,7 @@
 import React from "react";
 import { SWRFallbackProvider } from "wehere-frontend/src/components/SWRFallbackProvider";
 import { FallbackBuilder } from "wehere-frontend/src/components/SWRFallbackProvider/classes";
-import PageThreadV3 from "wehere-frontend/src/containers/PageThreadV3";
+import PageThreadV4 from "wehere-frontend/src/containers/PageThreadV4";
 import { z } from "zod";
 
 const Params = z.object({
@@ -16,7 +16,7 @@ export default async function Route(ctx: { params: unknown }) {
     .build();
   return (
     <SWRFallbackProvider fallback={fallback}>
-      <PageThreadV3 threadId={params.threadId} epoch={Date.now()} />
+      <PageThreadV4 threadId={params.threadId} epoch={Date.now()} />
     </SWRFallbackProvider>
   );
 }

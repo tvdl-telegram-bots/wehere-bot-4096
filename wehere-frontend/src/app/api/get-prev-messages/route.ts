@@ -14,13 +14,14 @@ export const GET = withDefaultRouteHandler(async (request) => {
     threadId: url.searchParams.get("threadId"),
     threadPassword: url.searchParams.get("threadPassword"),
     prior: url.searchParams.get("prior"),
+    until: url.searchParams.get("until"),
   });
 
   const data = await httpGet(
     getUrl(SERVER_ENV.WEHERE_BACKEND_ORIGIN, "/api/get-messages", {
       threadId: params.threadId,
       threadPassword: params.threadPassword,
-      prior: params.prior,
+      ...(params.until ? { until: params.prior } : { prior: params.prior }),
       order: "des",
     } satisfies Params$GetMessages$WehereBackend),
     { cache: "no-cache" }
@@ -35,6 +36,7 @@ export const GET = withDefaultRouteHandler(async (request) => {
       createdAt: m.createdAt,
       nonce: m.nonce,
     })),
+    nextCursor: data.nextCursor,
   };
 
   return createJsonResponse(200, result);
