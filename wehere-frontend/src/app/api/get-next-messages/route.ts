@@ -35,6 +35,7 @@ export const GET = withDefaultRouteHandler(async (request) => {
       createdAt: m.createdAt,
       nonce: m.nonce,
     })),
+    nextCursor: data.nextCursor,
   };
 
   return createJsonResponse(200, result);

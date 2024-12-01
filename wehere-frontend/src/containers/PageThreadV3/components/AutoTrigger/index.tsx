@@ -30,10 +30,12 @@ export default function AutoTrigger({
   const [container, setContainer] = React.useState<Element | null>(null);
   const [numTrialsRemaining, setNumTrialsRemaining] = React.useState(8);
 
-  const handleClick = onClick
-    ? async () => {
+  const trigger = onClick
+    ? async (isAutoTriggered: boolean) => {
         setBusy(true);
-        setNumTrialsRemaining((value) => Math.max(value - 1, 0));
+        setNumTrialsRemaining((value) =>
+          isAutoTriggered ? Math.max(value - 1, 0) : 8
+        );
         try {
           await Promise.resolve(onClick());
         } finally {
@@ -52,10 +54,10 @@ export default function AutoTrigger({
       isContainerGonnaVisible &&
       !busy &&
       !disabled &&
-      handleClick &&
+      trigger &&
       numTrialsRemaining > 0
     ) {
-      handleClick();
+      trigger(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -63,7 +65,7 @@ export default function AutoTrigger({
     busy,
     disabled,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    !handleClick,
+    !trigger,
     numTrialsRemaining,
   ]);
 
@@ -100,8 +102,8 @@ export default function AutoTrigger({
         <Button
           className={styles.slowlyAppear}
           key={3}
-          disabled={!handleClick}
-          onClick={handleClick}
+          disabled={!trigger}
+          onClick={() => trigger?.(false)}
           variant="solid"
         >
           {labelReady}
